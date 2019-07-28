@@ -26,7 +26,7 @@ static char BASED_CODE THIS_FILE[] = __FILE__;
 
 DocType doctypes[CMAX_IMAGE_FORMATS] =
 {
-	{ -1, TRUE, TRUE, _T("Supported files"), _T("*.bmp;*.gif;*.jpg;*.jpeg;*.png;*.ico;*.tif;*.tiff;*.tga;*.pcx;*.wbmp;*.wmf;*.emf;*.j2k;*.jp2;*.jbg;*.j2c;*.jpc;*.pgx;*.pnm;*.pgm;*.ppm;*.ras;*.mng;*.jng;*.ska;*.nef;*.crw;*.cr2;*.mrw;*.raf;*.erf;*.3fr;*.dcr;*.raw;*.dng;*.pef;*.x3f;*.arw;*.sr2;*.mef;*.orf") },
+	{ -1, TRUE, TRUE, _T("Supported files"), _T("*.bmp;*.gif;*.jpg;*.jpeg;*.png;*.ico;*.tif;*.tiff;*.tga;*.pcx;*.wbmp;*.wmf;*.emf;*.j2k;*.jp2;*.jbg;*.j2c;*.jpc;*.pgx;*.pnm;*.pgm;*.ppm;*.ras;*.mng;*.jng;*.ska;*.nef;*.crw;*.cr2;*.mrw;*.raf;*.erf;*.3fr;*.dcr;*.raw;*.dng;*.pef;*.x3f;*.arw;*.sr2;*.mef;*.orf;*.psd") },
 #if CXIMAGE_SUPPORT_BMP
 	{ CXIMAGE_FORMAT_BMP, TRUE, TRUE, _T("BMP files"), _T("*.bmp") },
 #endif
@@ -82,7 +82,10 @@ DocType doctypes[CMAX_IMAGE_FORMATS] =
 	{ CXIMAGE_FORMAT_SKA, TRUE, TRUE, _T("SKA files"), _T("*.ska") },
 #endif
 #if CXIMAGE_SUPPORT_RAW
-	{ CXIMAGE_FORMAT_RAW, TRUE, FALSE, _T("RAW files"), _T("*.nef;*.crw;*.cr2;*.mrw;*.raf;*.erf;*.3fr;*.dcr;*.raw;*.dng;*.pef;*.x3f;*.arw;*.sr2;*.mef;*.orf") }
+	{ CXIMAGE_FORMAT_RAW, TRUE, FALSE, _T("RAW files"), _T("*.nef;*.crw;*.cr2;*.mrw;*.raf;*.erf;*.3fr;*.dcr;*.raw;*.dng;*.pef;*.x3f;*.arw;*.sr2;*.mef;*.orf") },
+#endif
+#if CXIMAGE_SUPPORT_PSD
+	{ CXIMAGE_FORMAT_PSD, TRUE, FALSE, _T("PSD files"), _T("*.psd") }
 #endif
 };
 
@@ -510,7 +513,8 @@ void CDemoApp::OnImageFromBitmap()
 	}*/
 
 	CxImage* newImage = new CxImage();
-	if (!newImage->LoadResource(FindResource(NULL,MAKEINTRESOURCE(IDB_BITMAP1),RT_BITMAP),CXIMAGE_FORMAT_BMP)){
+	HRSRC handle = FindResource(NULL,MAKEINTRESOURCE(IDB_BITMAP1),RT_BITMAP);
+	if (!newImage->LoadResource(handle,CXIMAGE_FORMAT_BMP)){
 		CString s = newImage->GetLastError();
 		AfxMessageBox(s);
 		delete newImage;
@@ -566,6 +570,7 @@ void CDemoApp::OnCximageLoadiconresource()
 //	CxImage my_image;
 //	my_image.CreateFromHICON(my_Icon);
 //	DestroyIcon(my_Icon);
+//	*newImage = my_image;
 
 	CDemoDoc *doc = (CDemoDoc *)demoTemplate->OpenDocumentFile(NULL);
 	if (doc){

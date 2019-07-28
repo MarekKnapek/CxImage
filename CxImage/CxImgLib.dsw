@@ -3,7 +3,7 @@ Microsoft Developer Studio Workspace File, Format Version 6.00
 
 ###############################################################################
 
-Project: "CxImage"=".\cximage\cximage.dsp" - Package Owner=<4>
+Project: "CxImage"=.\cximage\cximage.dsp - Package Owner=<4>
 
 Package=<5>
 {{{
@@ -15,46 +15,7 @@ Package=<4>
 
 ###############################################################################
 
-Project: "CxImageCrtDll"=".\CxImage\CxImageDLL\CxImageCrtDll.dsp" - Package Owner=<4>
-
-Package=<5>
-{{{
-}}}
-
-Package=<4>
-{{{
-    Begin Project Dependency
-    Project_Dep_Name j2k
-    End Project Dependency
-    Begin Project Dependency
-    Project_Dep_Name jbig
-    End Project Dependency
-    Begin Project Dependency
-    Project_Dep_Name jpeg
-    End Project Dependency
-    Begin Project Dependency
-    Project_Dep_Name png
-    End Project Dependency
-    Begin Project Dependency
-    Project_Dep_Name tiff
-    End Project Dependency
-    Begin Project Dependency
-    Project_Dep_Name zlib
-    End Project Dependency
-    Begin Project Dependency
-    Project_Dep_Name jasper
-    End Project Dependency
-    Begin Project Dependency
-    Project_Dep_Name mng
-    End Project Dependency
-    Begin Project Dependency
-    Project_Dep_Name libdcr
-    End Project Dependency
-}}}
-
-###############################################################################
-
-Project: "CxImageMfcDll"=".\CxImage\CxImageDLL\cximagemfcdll.dsp" - Package Owner=<4>
+Project: "CxImageCrtDll"=.\CxImage\CxImageDLL\CxImageCrtDll.dsp - Package Owner=<4>
 
 Package=<5>
 {{{
@@ -89,11 +50,56 @@ Package=<4>
     Begin Project Dependency
     Project_Dep_Name libdcr
     End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name libpsd
+    End Project Dependency
 }}}
 
 ###############################################################################
 
-Project: "demo"=".\demo\demo.dsp" - Package Owner=<4>
+Project: "CxImageMfcDll"=.\CxImage\CxImageDLL\cximagemfcdll.dsp - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+    Begin Project Dependency
+    Project_Dep_Name j2k
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name jbig
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name jpeg
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name png
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name tiff
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name zlib
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name jasper
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name mng
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name libdcr
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name libpsd
+    End Project Dependency
+}}}
+
+###############################################################################
+
+Project: "demo"=.\demo\demo.dsp - Package Owner=<4>
 
 Package=<5>
 {{{
@@ -137,11 +143,14 @@ Package=<4>
     Begin Project Dependency
     Project_Dep_Name libdcr
     End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name libpsd
+    End Project Dependency
 }}}
 
 ###############################################################################
 
-Project: "demoDll"=".\demo\demoDLL.dsp" - Package Owner=<4>
+Project: "demoDll"=.\demo\demoDLL.dsp - Package Owner=<4>
 
 Package=<5>
 {{{
@@ -156,7 +165,7 @@ Package=<4>
 
 ###############################################################################
 
-Project: "jasper"=".\jasper\jasper.dsp" - Package Owner=<4>
+Project: "jasper"=.\jasper\jasper.dsp - Package Owner=<4>
 
 Package=<5>
 {{{
@@ -168,7 +177,7 @@ Package=<4>
 
 ###############################################################################
 
-Project: "jbig"=".\jbig\jbig.dsp" - Package Owner=<4>
+Project: "jbig"=.\jbig\jbig.dsp - Package Owner=<4>
 
 Package=<5>
 {{{
@@ -180,7 +189,7 @@ Package=<4>
 
 ###############################################################################
 
-Project: "jpeg"=".\jpeg\Jpeg.dsp" - Package Owner=<4>
+Project: "jpeg"=.\jpeg\Jpeg.dsp - Package Owner=<4>
 
 Package=<5>
 {{{
@@ -192,7 +201,7 @@ Package=<4>
 
 ###############################################################################
 
-Project: "libdcr"=".\raw\libdcr.dsp" - Package Owner=<4>
+Project: "libdcr"=.\raw\libdcr.dsp - Package Owner=<4>
 
 Package=<5>
 {{{
@@ -204,7 +213,7 @@ Package=<4>
 
 ###############################################################################
 
-Project: "mng"=".\mng\mng.dsp" - Package Owner=<4>
+Project: "libpsd"=.\libpsd\libpsd.dsp - Package Owner=<4>
 
 Package=<5>
 {{{
@@ -216,7 +225,7 @@ Package=<4>
 
 ###############################################################################
 
-Project: "png"=".\png\png.dsp" - Package Owner=<4>
+Project: "mng"=.\mng\mng.dsp - Package Owner=<4>
 
 Package=<5>
 {{{
@@ -228,7 +237,7 @@ Package=<4>
 
 ###############################################################################
 
-Project: "tiff"=".\tiff\Tiff.dsp" - Package Owner=<4>
+Project: "png"=.\png\png.dsp - Package Owner=<4>
 
 Package=<5>
 {{{
@@ -240,7 +249,19 @@ Package=<4>
 
 ###############################################################################
 
-Project: "zlib"=".\zlib\zlib.dsp" - Package Owner=<4>
+Project: "tiff"=.\tiff\Tiff.dsp - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+}}}
+
+###############################################################################
+
+Project: "zlib"=.\zlib\zlib.dsp - Package Owner=<4>
 
 Package=<5>
 {{{

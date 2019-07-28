@@ -1,4 +1,4 @@
-/* $Header: /cvsroot/osrs/libtiff/libtiff/tif_version.c,v 1.2 2000/11/13 14:42:38 warmerda Exp $ */
+/* $Header: /cvs/maptools/cvsroot/libtiff/libtiff/tif_version.c,v 1.2.2.1 2010-06-08 18:50:43 bfriesen Exp $ */
 /*
  * Copyright (c) 1992-1997 Sam Leffler
  * Copyright (c) 1992-1997 Silicon Graphics, Inc.
@@ -24,10 +24,17 @@
  */
 #include "tiffiop.h"
 
-static const char TIFFVersion[] = "LibTIFF 3.5.7";
+static const char TIFFVersion[] = TIFFLIB_VERSION_STR;
 
 const char*
 TIFFGetVersion(void)
 {
 	return (TIFFVersion);
 }
+/*
+ * Local Variables:
+ * mode: c
+ * c-basic-offset: 8
+ * fill-column: 78
+ * End:
+ */

@@ -28,6 +28,10 @@ public:
 // Dialog Data
 	//{{AFX_DATA(DlgOptions)
 	enum { IDD = IDD_OPTIONS };
+	CButton	m_rEnc25;
+	CButton	m_rEnc24;
+	CButton	m_rEnc23;
+	CButton	m_rEnc22;
 	CButton	m_chkJpgOpt;
 	CxTargetButton	m_info;
 	CButton	m_rEnc21;

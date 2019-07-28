@@ -221,6 +221,10 @@ SOURCE=.\ximapng.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\ximapsd.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\ximaraw.cpp
 # End Source File
 # Begin Source File
@@ -267,6 +271,10 @@ SOURCE=.\xmemfile.cpp
 # Begin Group "Header Files"
 
 # PROP Default_Filter "h;hpp;hxx;hm;inl"
+# Begin Source File
+
+SOURCE=.\stdint.h
+# End Source File
 # Begin Source File
 
 SOURCE=.\xfile.h
@@ -322,6 +330,10 @@ SOURCE=.\ximapcx.h
 # Begin Source File
 
 SOURCE=.\ximapng.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\ximapsd.h
 # End Source File
 # Begin Source File
 

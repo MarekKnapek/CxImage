@@ -266,6 +266,8 @@ BEGIN_MESSAGE_MAP(CDemoDoc, CDocument)
 	ON_COMMAND(ID_VIEW_PLAYANIMATION, OnViewPlayanimation)
 	ON_UPDATE_COMMAND_UI(ID_FILTERS_ADDSHADOW, OnUpdateFiltersAddshadow)
 	ON_COMMAND(ID_FILTERS_ADDSHADOW, OnFiltersAddshadow)
+	ON_COMMAND(ID_CXIMAGE_TRACE, OnCximageTrace)
+	ON_UPDATE_COMMAND_UI(ID_CXIMAGE_TRACE, OnUpdateCximageTrace)
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
@@ -433,7 +435,7 @@ BOOL CDemoDoc::OnOpenDocument(LPCTSTR lpszPathName)
 		} else {
 			if (type == CXIMAGE_FORMAT_GIF){
 				image->SetRetreiveAllFrames(true);
-				image->SetFrame(image->GetNumFrames()-1);
+				//image->SetFrame(image->GetNumFrames()-1);
 				image->Load(filename, type);
 				s = _T("Play animation?");
 				if (AfxMessageBox(s,MB_YESNO)==IDYES){
@@ -692,6 +694,8 @@ void CDemoDoc::OnUpdateCximageGaussian5x5(CCmdUI* pCmdUI)
 {	if(image==0 || hThread) pCmdUI->Enable(0);}
 void CDemoDoc::OnUpdateCximageContour(CCmdUI* pCmdUI) 
 {	if(image==0 || hThread) pCmdUI->Enable(0);}
+void CDemoDoc::OnUpdateCximageTrace(CCmdUI* pCmdUI) 
+{	if(image==0 || hThread) pCmdUI->Enable(0);}
 void CDemoDoc::OnUpdateCximageLesscontrast(CCmdUI* pCmdUI) 
 {	if(image==0 || hThread) pCmdUI->Enable(0);}
 void CDemoDoc::OnUpdateCximageJitter(CCmdUI* pCmdUI) 
@@ -825,6 +829,7 @@ void CDemoDoc::OnEditCopy()
 	CxImage* iSrc = image;
 
 	//copy only the selected region box
+#if CXIMAGE_SUPPORT_SELECTION
 	CxImage iSel;
 	if (image->SelectionIsValid()){
 		RECT r;
@@ -834,6 +839,7 @@ void CDemoDoc::OnEditCopy()
 		image->Crop(r, &iSel);
 		iSrc = &iSel;
 	}
+#endif //CXIMAGE_SUPPORT_SELECTION
 
 	// standard DIB image
 	HANDLE hDIB=iSrc->CopyToHandle();
@@ -1070,6 +1076,12 @@ void /*unsigned long _stdcall*/ RunCxImageThread(void *lpParam)
 	case ID_CXIMAGE_CONTOUR:
 		status = pDoc->image->Contour();
 		break;
+	case ID_CXIMAGE_TRACE:
+		{
+			RGBQUAD c = {0,0,0,0};
+			status = pDoc->image->Trace(c,c);
+		}
+		break;
 	case ID_CXIMAGE_ADDNOISE:
 		status = pDoc->image->Noise(25);
 		break;
@@ -1081,6 +1093,7 @@ void /*unsigned long _stdcall*/ RunCxImageThread(void *lpParam)
 		break;
 	case ID_CXIMAGE_BLURSELBORDER:
 		{
+#if CXIMAGE_SUPPORT_SELECTION
 			CxImage iSel1,iSel2;
 			pDoc->image->SelectionSplit(&iSel1);
 			pDoc->image->SelectionSplit(&iSel2);
@@ -1090,6 +1103,7 @@ void /*unsigned long _stdcall*/ RunCxImageThread(void *lpParam)
 			pDoc->image->SelectionSet(iSel2);
 			pDoc->image->GaussianBlur();
 			pDoc->image->SelectionSet(iSel1);
+#endif //CXIMAGE_SUPPORT_SELECTION
 			break;
 		}
 	case ID_CXIMAGE_SELECTIVEBLUR:
@@ -1118,13 +1132,13 @@ void /*unsigned long _stdcall*/ RunCxImageThread(void *lpParam)
 		break;
 	case ID_CXIMAGE_EMBOSS:
 		{
-		long kernel[]={0,0,-1,0,0,0,1,0,0};
+		int32_t kernel[]={0,0,-1,0,0,0,1,0,0};
 		status = pDoc->image->Filter(kernel,3,-1,127);
 		break;
 		}
 	case ID_CXIMAGE_BLUR:
 		{
-		long kernel[]={1,1,1,1,1,1,1,1,1};
+		int32_t kernel[]={1,1,1,1,1,1,1,1,1};
 		status = pDoc->image->Filter(kernel,3,9,0);
 		break;
 		}
@@ -1144,19 +1158,19 @@ void /*unsigned long _stdcall*/ RunCxImageThread(void *lpParam)
 		}
 	case ID_CXIMAGE_SOFTEN:
 		{
-		long kernel[]={1,1,1,1,8,1,1,1,1};
+		int32_t kernel[]={1,1,1,1,8,1,1,1,1};
 		status = pDoc->image->Filter(kernel,3,16,0);
 		break;
 		}
 	case ID_CXIMAGE_SHARPEN:
 		{
-		long kernel[]={-1,-1,-1,-1,15,-1,-1,-1,-1};
+		int32_t kernel[]={-1,-1,-1,-1,15,-1,-1,-1,-1};
 		status = pDoc->image->Filter(kernel,3,7,0);
 		break;
 		}
 	case ID_CXIMAGE_EDGE:
 		{
-		long kernel[]={-1,-1,-1,-1,8,-1,-1,-1,-1};
+		int32_t kernel[]={-1,-1,-1,-1,8,-1,-1,-1,-1};
 		status = pDoc->image->Filter(kernel,3,-1,255);
 		break;
 		}
@@ -1216,8 +1230,8 @@ void /*unsigned long _stdcall*/ RunCxImageThread(void *lpParam)
 			CxImage tmp;
 			tmp.Copy(*(pDoc->image),true,false,false);
 			tmp.ConvertColorSpace(2,0);
-			long u[256];
-			long v[256];
+			int32_t u[256];
+			int32_t v[256];
 			tmp.Histogram(0,u,v,0,0);
 			int umin = 255;
 			int umax = 0;
@@ -1244,8 +1258,8 @@ void /*unsigned long _stdcall*/ RunCxImageThread(void *lpParam)
 			CxImage tmp;
 			tmp.Copy(*(pDoc->image),true,false,false);
 			tmp.ConvertColorSpace(2,0);
-			long u[256];
-			long v[256];
+			int32_t u[256];
+			int32_t v[256];
 			tmp.Histogram(0,u,v,0,0);
 			int umin = 255;
 			int umax = 0;
@@ -1757,9 +1771,9 @@ void CDemoDoc::OnCximageThreshold()
 		return;
 	}
 	iContrastMask.GrayScale();
-	long edge[]={-1,-1,-1,-1,8,-1,-1,-1,-1};
+	int32_t edge[]={-1,-1,-1,-1,8,-1,-1,-1,-1};
 	iContrastMask.Filter(edge,3,1,0);
-	long blur[]={1,1,1,1,1,1,1,1,1};
+	int32_t blur[]={1,1,1,1,1,1,1,1,1};
 	iContrastMask.Filter(blur,3,9,0);
 
 	if (image->IsGrayScale()){
@@ -2131,10 +2145,12 @@ void CDemoDoc::OnCximageCrop()
 		
 	else // freehand selection
 	{
+#if CXIMAGE_SUPPORT_SELECTION
 		image->SelectionGetBox(r);
 		r.bottom = image->GetHeight() - 1 -r.bottom; 
 		r.top = image->GetHeight() - 1 -r.top; 
 		image->Crop(r);
+#endif //CXIMAGE_SUPPORT_SELECTION
 	}
 #else
 	image->SelectionGetBox(r);
@@ -2690,6 +2706,12 @@ void CDemoDoc::OnCximageContour()
 	hThread=(HANDLE)_beginthread(RunCxImageThread,0,this);
 }
 //////////////////////////////////////////////////////////////////////////////
+void CDemoDoc::OnCximageTrace() 
+{
+	m_MenuCommand=ID_CXIMAGE_TRACE;
+	hThread=(HANDLE)_beginthread(RunCxImageThread,0,this);
+}
+//////////////////////////////////////////////////////////////////////////////
 void CDemoDoc::OnCximageLesscontrast() 
 {
 	m_MenuCommand=ID_CXIMAGE_LESSCONTRAST;
@@ -3215,6 +3237,7 @@ void CDemoDoc::OnViewToolsFloodfill()
 void CDemoDoc::OnCximageRemoveselection() 
 {
 	if (image==NULL) return;
+#if CXIMAGE_SUPPORT_SELECTION
 	image->SelectionDelete();
 
 	POSITION pos = GetFirstViewPosition();
@@ -3222,6 +3245,7 @@ void CDemoDoc::OnCximageRemoveselection()
 	if (pView) pView->KillTimer(1);
 	pView->m_SelShift=0;
 	m_NumSel=0;
+#endif //CXIMAGE_SUPPORT_SELECTION
 
 	UpdateAllViews(NULL);
 }
@@ -3337,6 +3361,7 @@ void CDemoDoc::PlayNextFrame()
 void CDemoDoc::OnFiltersAddshadow() 
 {
 	if (image==NULL) return;
+#if CXIMAGE_SUPPORT_SELECTION
 	DlgShadow dlg;
 
 	dlg.m_x = theApp.m_Filters.ShadowX;
@@ -3405,5 +3430,6 @@ void CDemoDoc::OnFiltersAddshadow()
 		UpdateStatusBar();
 		SetCursor(LoadCursor(0,IDC_ARROW));
 	}
+#endif //CXIMAGE_SUPPORT_SELECTION
 }
 //////////////////////////////////////////////////////////////////////////////

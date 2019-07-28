@@ -138,11 +138,19 @@ LIB32=link.exe -lib
 # Name "jpeg - Win32 Unicode Release"
 # Begin Source File
 
+SOURCE=.\jaricom.c
+# End Source File
+# Begin Source File
+
 SOURCE=.\Jcapimin.c
 # End Source File
 # Begin Source File
 
 SOURCE=.\Jcapistd.c
+# End Source File
+# Begin Source File
+
+SOURCE=.\jcarith.c
 # End Source File
 # Begin Source File
 
@@ -194,10 +202,6 @@ SOURCE=.\Jcparam.c
 # End Source File
 # Begin Source File
 
-SOURCE=.\Jcphuff.c
-# End Source File
-# Begin Source File
-
 SOURCE=.\Jcprepct.c
 # End Source File
 # Begin Source File
@@ -215,6 +219,10 @@ SOURCE=.\Jdapimin.c
 # Begin Source File
 
 SOURCE=.\Jdapistd.c
+# End Source File
+# Begin Source File
+
+SOURCE=.\jdarith.c
 # End Source File
 # Begin Source File
 
@@ -270,10 +278,6 @@ SOURCE=.\Jdmerge.c
 # End Source File
 # Begin Source File
 
-SOURCE=.\Jdphuff.c
-# End Source File
-# Begin Source File
-
 SOURCE=.\Jdpostct.c
 # End Source File
 # Begin Source File
@@ -315,10 +319,6 @@ SOURCE=.\Jidctfst.c
 # Begin Source File
 
 SOURCE=.\Jidctint.c
-# End Source File
-# Begin Source File
-
-SOURCE=.\Jidctred.c
 # End Source File
 # Begin Source File
 

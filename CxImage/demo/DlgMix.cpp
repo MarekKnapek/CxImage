@@ -117,6 +117,8 @@ BOOL DlgMix::OnInitDialog()
 	m_cbOpType.SetItemData(m_cbOpType.GetCount()-1, (DWORD)CxImage::OpSub);
 	m_cbOpType.AddString(_T("OpSrcBlend"));
 	m_cbOpType.SetItemData(m_cbOpType.GetCount()-1, (DWORD)CxImage::OpSrcBlend);
+	m_cbOpType.AddString(_T("OpBlendAlpha"));
+	m_cbOpType.SetItemData(m_cbOpType.GetCount()-1, (DWORD)CxImage::OpBlendAlpha);
 	m_cbOpType.SetCurSel(0);
 
 

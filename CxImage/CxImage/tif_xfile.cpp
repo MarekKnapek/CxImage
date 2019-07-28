@@ -12,6 +12,7 @@
 #if CXIMAGE_SUPPORT_TIF
 
 #include "../tiff/tiffiop.h"
+#include "../tiff/tiffvers.h"
 
 #include "xfile.h"
 
@@ -93,7 +94,9 @@ _TIFFFdOpen(void* fd, const char* name, const char* mode)
 	    _tiffReadProcEx, _tiffWriteProcEx, _tiffSeekProcEx, _tiffCloseProcEx,
 	    _tiffSizeProcEx, _tiffMapProcEx, _tiffUnmapProcEx);
 	if (tif)
-		tif->tif_fd = fd;
+	{
+		tif->tif_fd = (int)fd;
+	}
 	return (tif);
 }
 

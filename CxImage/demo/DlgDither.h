@@ -21,6 +21,8 @@ public:
 // Dialog Data
 	//{{AFX_DATA(DlgDither)
 	enum { IDD = IDD_DITHER };
+	CButton	m_r10;
+	CButton	m_r9;
 	CxTargetButton	m_ok;
 	CxTargetButton	m_canc;
 	CButton	m_r8;

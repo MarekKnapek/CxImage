@@ -42,8 +42,8 @@ public:
 	BYTE	m_FloodSelect;
 
 	typedef struct FiltersParams_t {
-		long	Kernel5x5[25];
-		long	Kernel3x3[9];
+		int32_t	Kernel5x5[25];
+		int32_t	Kernel3x3[9];
 		long	kSize;
 		long	kBias;
 		long	kDivisor;

@@ -264,6 +264,10 @@ SOURCE=..\ximapng.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=..\ximapsd.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=..\ximaraw.cpp
 # End Source File
 # Begin Source File
@@ -373,6 +377,10 @@ SOURCE=..\ximapcx.h
 # Begin Source File
 
 SOURCE=..\ximapng.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\ximapsd.h
 # End Source File
 # Begin Source File
 

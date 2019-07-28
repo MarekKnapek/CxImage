@@ -53,7 +53,8 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo
 LINK32=link.exe
 # ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:console /debug /machine:I386 /pdbtype:sept
-# ADD LINK32 ../png/Debug/png.lib ../jpeg/Debug/jpeg.lib ../zlib/Debug/zlib.lib ../tiff/Debug/tiff.lib ../jbig/Debug/jbig.lib ../cximage/Debug/cximage.lib /nologo /subsystem:console /debug /machine:I386 /out:"../bin/consoled.exe" /pdbtype:sept
+# ADD LINK32 ../png/Debug/png.lib ../jpeg/Debug/jpeg.lib ../zlib/Debug/zlib.lib ../tiff/Debug/tiff.lib ../jbig/Debug/jbig.lib ../raw/Debug/libdcr.lib ../libpsd/Debug/libpsd.lib ../cximage/Debug/cximage.lib /nologo /subsystem:console /debug /machine:I386 /out:"../bin/consoled.exe" /pdbtype:sept
+# SUBTRACT LINK32 /pdb:none
 
 !ELSEIF  "$(CFG)" == "Console - Win32 Release"
 
@@ -78,7 +79,8 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo
 LINK32=link.exe
 # ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:console /machine:I386
-# ADD LINK32 ../png/Release/png.lib ../jpeg/Release/jpeg.lib ../zlib/Release/zlib.lib ../tiff/Release/tiff.lib ../jbig/Release/jbig.lib ../cximage/Release/cximage.lib /nologo /subsystem:console /machine:I386 /out:"../bin/console.exe"
+# ADD LINK32 ../png/Release/png.lib ../jpeg/Release/jpeg.lib ../zlib/Release/zlib.lib ../tiff/Release/tiff.lib ../jbig/Release/jbig.lib ../raw/Release/libdcr.lib ../libpsd/Release/libpsd.lib ../cximage/Release/cximage.lib /nologo /subsystem:console /machine:I386 /out:"../bin/console.exe"
+# SUBTRACT LINK32 /pdb:none
 
 !ELSEIF  "$(CFG)" == "Console - Win32 Unicode Debug"
 
@@ -105,7 +107,8 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo
 LINK32=link.exe
 # ADD BASE LINK32 ../png/Debug/png.lib ../jpeg/Debug/jpeg.lib ../zlib/Debug/zlib.lib ../tiff/Debug/tiff.lib ../jbig/Debug/jbig.lib ../cximage/Debug/cximage.lib /nologo /subsystem:console /debug /machine:I386 /out:"../bin/consoled.exe" /pdbtype:sept
-# ADD LINK32 ../png/Unicode_Debug/png.lib ../jpeg/Unicode_Debug/jpeg.lib ../zlib/Unicode_Debug/zlib.lib ../tiff/Unicode_Debug/tiff.lib ../jbig/Unicode_Debug/jbig.lib ../cximage/Unicode_Debug/cximage.lib /nologo /subsystem:console /debug /machine:I386 /out:"../bin/consoledu.exe" /pdbtype:sept
+# ADD LINK32 ../png/Unicode_Debug/png.lib ../jpeg/Unicode_Debug/jpeg.lib ../zlib/Unicode_Debug/zlib.lib ../tiff/Unicode_Debug/tiff.lib ../jbig/Unicode_Debug/jbig.lib ../raw/Unicode_Debug/libdcr.lib ../libpsd/Unicode_Debug/libpsd.lib ../cximage/Unicode_Debug/cximage.lib /nologo /subsystem:console /debug /machine:I386 /out:"../bin/consoledu.exe" /pdbtype:sept
+# SUBTRACT LINK32 /pdb:none
 
 !ELSEIF  "$(CFG)" == "Console - Win32 Unicode Release"
 
@@ -131,7 +134,8 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo
 LINK32=link.exe
 # ADD BASE LINK32 ../png/Release/png.lib ../jpeg/Release/jpeg.lib ../zlib/Release/zlib.lib ../tiff/Release/tiff.lib ../jbig/Release/jbig.lib ../cximage/Release/cximage.lib /nologo /subsystem:console /machine:I386 /out:"../bin/console.exe"
-# ADD LINK32 ../png/Unicode_Release/png.lib ../jpeg/Unicode_Release/jpeg.lib ../zlib/Unicode_Release/zlib.lib ../tiff/Unicode_Release/tiff.lib ../jbig/Unicode_Release/jbig.lib ../cximage/Unicode_Release/cximage.lib /nologo /subsystem:console /machine:I386 /out:"../bin/consoleu.exe"
+# ADD LINK32 ../png/Unicode_Release/png.lib ../jpeg/Unicode_Release/jpeg.lib ../zlib/Unicode_Release/zlib.lib ../tiff/Unicode_Release/tiff.lib ../jbig/Unicode_Release/jbig.lib ../raw/Unicode_Release/libdcr.lib ../libpsd/Unicode_Release/libpsd.lib ../cximage/Unicode_Release/cximage.lib /nologo /subsystem:console /machine:I386 /out:"../bin/consoleu.exe"
+# SUBTRACT LINK32 /pdb:none
 
 !ENDIF 
 

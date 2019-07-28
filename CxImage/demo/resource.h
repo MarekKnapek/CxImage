@@ -137,12 +137,16 @@
 #define IDC_EDIT5x2                     1025
 #define IDC_STATIC_RADIUS               1026
 #define IDC_EDIT5x3                     1026
+#define IDC_RADIO22                     1026
 #define IDC_DST                         1027
 #define IDC_EDIT5x4                     1027
+#define IDC_RADIO23                     1027
 #define IDC_SRC                         1028
 #define IDC_EDIT5x5                     1028
+#define IDC_RADIO24                     1028
 #define IDC_OP                          1029
 #define IDC_LOAD2                       1029
+#define IDC_RADIO25                     1029
 #define IDC_BUTTON1                     1030
 #define IDC_SAVE2                       1030
 #define IDC_PICTURE                     1031
@@ -297,6 +301,7 @@
 #define ID_VIEW_NEXTFRAME               33030
 #define ID_VIEW_PLAYANIMATION           33033
 #define ID_FILTERS_ADDSHADOW            33034
+#define ID_CXIMAGE_TRACE                33035
 #define ID_INDICATOR1                   59142
 #define ID_INDICATOR2                   59143
 #define ID_INDICATOR3                   59144
@@ -308,7 +313,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_3D_CONTROLS                     1
 #define _APS_NEXT_RESOURCE_VALUE        176
-#define _APS_NEXT_COMMAND_VALUE         33035
+#define _APS_NEXT_COMMAND_VALUE         33036
 #define _APS_NEXT_CONTROL_VALUE         1042
 #define _APS_NEXT_SYMED_VALUE           101
 #endif

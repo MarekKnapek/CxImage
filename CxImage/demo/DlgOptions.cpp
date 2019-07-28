@@ -33,6 +33,10 @@ void DlgOptions::DoDataExchange(CDataExchange* pDX)
 {
 	CDialog::DoDataExchange(pDX);
 	//{{AFX_DATA_MAP(DlgOptions)
+	DDX_Control(pDX, IDC_RADIO25, m_rEnc25);
+	DDX_Control(pDX, IDC_RADIO24, m_rEnc24);
+	DDX_Control(pDX, IDC_RADIO23, m_rEnc23);
+	DDX_Control(pDX, IDC_RADIO22, m_rEnc22);
 	DDX_Control(pDX, IDC_CHECK5, m_chkJpgOpt);
 	DDX_Control(pDX, IDEXIF, m_info);
 	DDX_Control(pDX, IDC_RADIO21,m_rEnc21);
@@ -85,7 +89,7 @@ BOOL DlgOptions::OnInitDialog()
 	m_canc.SetIcon(IDI_R,BS_LEFT);
 	m_info.SetIcon(IDI_B,BS_LEFT);
 
-	m_info.EnableWindow(m_exif && m_exif->m_exifinfo.IsExif);
+	m_info.EnableWindow(m_exif && m_exif->GetExifInfo()->IsExif);
 
 	switch(m_Opt_tif)
 	{
@@ -124,13 +128,28 @@ BOOL DlgOptions::OnInitDialog()
 		m_rEnc8.SetCheck(1);
 	}
 
-	switch(m_Opt_png)
+	switch(m_Opt_png & 0x01)
 	{
 	case 1:
 		m_rEnc12.SetCheck(1);
 		break;
 	default:
 		m_rEnc11.SetCheck(1);
+	}
+
+	switch(m_Opt_png >> 1)
+	{
+	case 1:
+		m_rEnc23.SetCheck(1);
+		break;
+	case 2:
+		m_rEnc24.SetCheck(1);
+		break;
+	case 3:
+		m_rEnc25.SetCheck(1);
+		break;
+	default:
+		m_rEnc22.SetCheck(1);
 	}
 
 	if (m_Opt_jpg & CxImageJPG::ENCODE_PROGRESSIVE){
@@ -187,6 +206,11 @@ void DlgOptions::OnOK()
 	if (m_rEnc11.GetCheck()) m_Opt_png = 0;
 	if (m_rEnc12.GetCheck()) m_Opt_png = 1;
 
+	if (m_rEnc22.GetCheck()) m_Opt_png |= 8;	// default compression
+	else if (m_rEnc23.GetCheck()) m_Opt_png |= 2;	// no compression
+	else if (m_rEnc24.GetCheck()) m_Opt_png |= 4;	// best speed
+	else if (m_rEnc25.GetCheck()) m_Opt_png |= 6;	// best compression
+
 #if CXIMAGE_SUPPORT_JPG
 	if (m_rEnc13.GetCheck()) m_Opt_jpg = 0;
 	if (m_rEnc14.GetCheck()) m_Opt_jpg = CxImageJPG::ENCODE_PROGRESSIVE;
@@ -212,79 +236,79 @@ void DlgOptions::OnExif()
 	CString s,t;
 	s=_T("");
 
-    if (m_exif->m_exifinfo.CameraMake[0]){
-        t.Format(_T("Camera make  : %s\n"),m_exif->m_exifinfo.CameraMake); s+=t;
-        t.Format(_T("Camera model : %s\n"),m_exif->m_exifinfo.CameraModel); s+=t;
+    if (m_exif->GetExifInfo()->CameraMake[0]){
+        t.Format(_T("Camera make  : %s\n"),m_exif->GetExifInfo()->CameraMake); s+=t;
+        t.Format(_T("Camera model : %s\n"),m_exif->GetExifInfo()->CameraModel); s+=t;
     }
-    if (m_exif->m_exifinfo.DateTime[0]){
-        t.Format(_T("Date/Time    : %s\n"),m_exif->m_exifinfo.DateTime); s+=t;
+    if (m_exif->GetExifInfo()->DateTime[0]){
+        t.Format(_T("Date/Time    : %s\n"),m_exif->GetExifInfo()->DateTime); s+=t;
     }
-    if (m_exif->m_exifinfo.Version[0]){
-        t.Format(_T("Exif version : %s\n"),m_exif->m_exifinfo.Version); s+=t;
+    if (m_exif->GetExifInfo()->Version[0]){
+        t.Format(_T("Exif version : %s\n"),m_exif->GetExifInfo()->Version); s+=t;
     }
 
-    t.Format(_T("Width x Height   : %d x %d\n"),m_exif->m_exifinfo.Width, m_exif->m_exifinfo.Height); s+=t;
+    t.Format(_T("Width x Height   : %d x %d\n"),m_exif->GetExifInfo()->Width, m_exif->GetExifInfo()->Height); s+=t;
 
-	if ((m_exif->m_exifinfo.ResolutionUnit!=0)&&(m_exif->m_exifinfo.Xresolution!=0)){
-		t.Format(_T("X resolution (dpi) : %5.1f\n"),m_exif->m_exifinfo.Xresolution/m_exif->m_exifinfo.ResolutionUnit); s+=t;
+	if ((m_exif->GetExifInfo()->ResolutionUnit!=0)&&(m_exif->GetExifInfo()->Xresolution!=0)){
+		t.Format(_T("X resolution (dpi) : %5.1f\n"),m_exif->GetExifInfo()->Xresolution/m_exif->GetExifInfo()->ResolutionUnit); s+=t;
 	}
-	if ((m_exif->m_exifinfo.ResolutionUnit!=0)&&(m_exif->m_exifinfo.Yresolution!=0)){
-		t.Format(_T("Y resolution (dpi) : %5.1f\n"),m_exif->m_exifinfo.Yresolution/m_exif->m_exifinfo.ResolutionUnit); s+=t;
+	if ((m_exif->GetExifInfo()->ResolutionUnit!=0)&&(m_exif->GetExifInfo()->Yresolution!=0)){
+		t.Format(_T("Y resolution (dpi) : %5.1f\n"),m_exif->GetExifInfo()->Yresolution/m_exif->GetExifInfo()->ResolutionUnit); s+=t;
 	}
 
-    if (m_exif->m_exifinfo.Orientation > 1){
-        t.Format(_T("Orientation  : %s\n"), m_exif->m_exifinfo.Orientation); s+=t;
+    if (m_exif->GetExifInfo()->Orientation > 1){
+        t.Format(_T("Orientation  : %d\n"), m_exif->GetExifInfo()->Orientation); s+=t;
     }
-    if (m_exif->m_exifinfo.IsColor == 0){
+    if (m_exif->GetExifInfo()->IsColor == 0){
         t.Format(_T("Color/bw     : Black and white\n")); s+=t;
     }
-    if (m_exif->m_exifinfo.FlashUsed >= 0){
-        t.Format(_T("Flash used   : %s\n"),m_exif->m_exifinfo.FlashUsed ? _T("Yes") : _T("No")); s+=t;
+    if (m_exif->GetExifInfo()->FlashUsed >= 0){
+        t.Format(_T("Flash used   : %s\n"),m_exif->GetExifInfo()->FlashUsed ? _T("Yes") : _T("No")); s+=t;
     }
-    if (m_exif->m_exifinfo.FocalLength){
-        t.Format(_T("Focal length : %4.1fmm"),(double)m_exif->m_exifinfo.FocalLength); s+=t;
-        if (m_exif->m_exifinfo.CCDWidth){
+    if (m_exif->GetExifInfo()->FocalLength){
+        t.Format(_T("Focal length : %4.1fmm"),(double)m_exif->GetExifInfo()->FocalLength); s+=t;
+        if (m_exif->GetExifInfo()->CCDWidth){
             t.Format(_T("  (35mm equivalent: %dmm)"),
-                        (int)(m_exif->m_exifinfo.FocalLength/m_exif->m_exifinfo.CCDWidth*36 + 0.5)); s+=t;
+                        (int)(m_exif->GetExifInfo()->FocalLength/m_exif->GetExifInfo()->CCDWidth*36 + 0.5)); s+=t;
         }
         t.Format(_T("\n")); s+=t;
     }
 
-    if (m_exif->m_exifinfo.CCDWidth){
-        t.Format(_T("CCD width    : %4.2fmm\n"),(double)m_exif->m_exifinfo.CCDWidth); s+=t;
+    if (m_exif->GetExifInfo()->CCDWidth){
+        t.Format(_T("CCD width    : %4.2fmm\n"),(double)m_exif->GetExifInfo()->CCDWidth); s+=t;
     }
 
-    if (m_exif->m_exifinfo.ExposureTime){
-        t.Format(_T("Exposure time:%6.3f s "),(double)m_exif->m_exifinfo.ExposureTime); s+=t;
-        if (m_exif->m_exifinfo.ExposureTime <= 0.5){
-            t.Format(_T(" (1/%d)"),(int)(0.5 + 1/m_exif->m_exifinfo.ExposureTime)); s+=t;
+    if (m_exif->GetExifInfo()->ExposureTime){
+        t.Format(_T("Exposure time:%6.3f s "),(double)m_exif->GetExifInfo()->ExposureTime); s+=t;
+        if (m_exif->GetExifInfo()->ExposureTime <= 0.5){
+            t.Format(_T(" (1/%d)"),(int)(0.5 + 1/m_exif->GetExifInfo()->ExposureTime)); s+=t;
         }
         t.Format(_T("\n")); s+=t;
     }
-	if (m_exif->m_exifinfo.Brightness){
-		t.Format(_T("Brightness : %6.3f\n"),m_exif->m_exifinfo.Brightness); s+=t;
+	if (m_exif->GetExifInfo()->Brightness){
+		t.Format(_T("Brightness : %6.3f\n"),m_exif->GetExifInfo()->Brightness); s+=t;
 	}
-    if (m_exif->m_exifinfo.ApertureFNumber){
-        t.Format(_T("Aperture     : f/%3.1f\n"),(double)m_exif->m_exifinfo.ApertureFNumber); s+=t;
+    if (m_exif->GetExifInfo()->ApertureFNumber){
+        t.Format(_T("Aperture     : f/%3.1f\n"),(double)m_exif->GetExifInfo()->ApertureFNumber); s+=t;
     }
-    if (m_exif->m_exifinfo.Distance){
-        if (m_exif->m_exifinfo.Distance < 0){
+    if (m_exif->GetExifInfo()->Distance){
+        if (m_exif->GetExifInfo()->Distance < 0){
             t.Format(_T("Focus dist.  : Infinite\n")); s+=t;
         }else{
-            t.Format(_T("Focus dist.  : %4.2fm\n"),(double)m_exif->m_exifinfo.Distance); s+=t;
+            t.Format(_T("Focus dist.  : %4.2fm\n"),(double)m_exif->GetExifInfo()->Distance); s+=t;
         }
     }
 
 
-    if (m_exif->m_exifinfo.ISOequivalent){ // 05-jan-2001 vcs
-        t.Format(_T("ISO equiv.   : %2d\n"),(int)m_exif->m_exifinfo.ISOequivalent); s+=t;
+    if (m_exif->GetExifInfo()->ISOequivalent){ // 05-jan-2001 vcs
+        t.Format(_T("ISO equiv.   : %2d\n"),(int)m_exif->GetExifInfo()->ISOequivalent); s+=t;
     }
-    if (m_exif->m_exifinfo.ExposureBias){ // 05-jan-2001 vcs
-        t.Format(_T("Exposure bias:%4.2f\n"),(double)m_exif->m_exifinfo.ExposureBias); s+=t;
+    if (m_exif->GetExifInfo()->ExposureBias){ // 05-jan-2001 vcs
+        t.Format(_T("Exposure bias:%4.2f\n"),(double)m_exif->GetExifInfo()->ExposureBias); s+=t;
     }
         
-    if (m_exif->m_exifinfo.Whitebalance){ // 05-jan-2001 vcs
-        switch(m_exif->m_exifinfo.Whitebalance) {
+    if (m_exif->GetExifInfo()->Whitebalance){ // 05-jan-2001 vcs
+        switch(m_exif->GetExifInfo()->Whitebalance) {
         case 1:
             t.Format(_T("Whitebalance : sunny\n")); s+=t;
             break;
@@ -298,8 +322,8 @@ void DlgOptions::OnExif()
             t.Format(_T("Whitebalance : cloudy\n")); s+=t;
         }
     }
-    if (m_exif->m_exifinfo.MeteringMode){ // 05-jan-2001 vcs
-        switch(m_exif->m_exifinfo.MeteringMode) {
+    if (m_exif->GetExifInfo()->MeteringMode){ // 05-jan-2001 vcs
+        switch(m_exif->GetExifInfo()->MeteringMode) {
         case 2:
             t.Format(_T("Metering Mode: center weight\n")); s+=t;
             break;
@@ -311,8 +335,8 @@ void DlgOptions::OnExif()
             break;
         }
     }
-    if (m_exif->m_exifinfo.ExposureProgram){ // 05-jan-2001 vcs
-        switch(m_exif->m_exifinfo.ExposureProgram) {
+    if (m_exif->GetExifInfo()->ExposureProgram){ // 05-jan-2001 vcs
+        switch(m_exif->GetExifInfo()->ExposureProgram) {
         case 2:
             t.Format(_T("Exposure     : program (auto)\n")); s+=t;
             break;
@@ -324,8 +348,8 @@ void DlgOptions::OnExif()
             break;
         }
     }
-    if (m_exif->m_exifinfo.CompressionLevel){ // 05-jan-2001 vcs
-        switch(m_exif->m_exifinfo.CompressionLevel) {
+    if (m_exif->GetExifInfo()->CompressionLevel){ // 05-jan-2001 vcs
+        switch(m_exif->GetExifInfo()->CompressionLevel) {
         case 1:
             t.Format(_T("Jpeg Quality : basic\n")); s+=t;
             break;
@@ -339,7 +363,7 @@ void DlgOptions::OnExif()
     }
 
     t.Format(_T("Encoding      : ")); s+=t;
-	switch(m_exif->m_exifinfo.Process){
+	switch(m_exif->GetExifInfo()->Process){
 	case 0xC0: //M_SOF0
 		t.Format(_T("Baseline\n")); s+=t;
 		break;
@@ -385,16 +409,16 @@ void DlgOptions::OnExif()
 	}
 
     // Print the comment. Print 'Comment:' for each new line of comment.
-    if (m_exif->m_exifinfo.Comments[0]){
+    if (m_exif->GetExifInfo()->Comments[0]){
         int a;
         char c;
         t.Format(_T("Comment      : ")); s+=t;
         for (a=0;a<MAX_COMMENT;a++){
-            c = m_exif->m_exifinfo.Comments[a];
+            c = m_exif->GetExifInfo()->Comments[a];
             if (c == '\0') break;
             if (c == '\n'){
                 // Do not start a new line if the string ends with a carriage return.
-                if (m_exif->m_exifinfo.Comments[a+1] != '\0'){
+                if (m_exif->GetExifInfo()->Comments[a+1] != '\0'){
                     t.Format(_T("\nComment      : ")); s+=t;
                 }else{
                     t.Format(_T("\n")); s+=t;

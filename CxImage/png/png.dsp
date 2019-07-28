@@ -185,10 +185,6 @@ SOURCE=.\pngtrans.c
 # End Source File
 # Begin Source File
 
-SOURCE=.\pngvcrd.c
-# End Source File
-# Begin Source File
-
 SOURCE=.\pngwio.c
 # End Source File
 # Begin Source File

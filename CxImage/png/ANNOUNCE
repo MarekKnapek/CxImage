@@ -1,5 +1,5 @@
 
-Libpng 1.2.24 - December 14, 2007
+Libpng 1.4.5 - December 9, 2010
 
 This is a public release of libpng, intended for use in production codes.
 
@@ -8,55 +8,47 @@ Files available for download:
 Source files with LF line endings (for Unix/Linux) and with a
 "configure" script
 
-   libpng-1.2.24.tar.gz
-   libpng-1.2.24.tar.bz2
-
-Source files with LF line endings (for Unix/Linux) without the
-"configure" script
-
-   libpng-1.2.24-no-config.tar.gz
-   libpng-1.2.24-no-config.tar.bz2
+   libpng-1.4.5.tar.xz (LZMA-compressed, recommended)
+   libpng-1.4.5.tar.gz
+   libpng-1.4.5.tar.bz2
 
 Source files with CRLF line endings (for Windows), without the
 "configure" script
 
-   lpng1224.zip
-   lpng1224.tar.bz2
-
-Project files
-
-   libpng-1.2.24-project-netware.zip
-   libpng-1.2.24-project-wince.zip
+   lpng145.zip
+   lpng145.7z
 
 Other information:
 
-   libpng-1.2.24-README.txt
-   libpng-1.2.24-KNOWNBUGS.txt
-   libpng-1.2.24-LICENSE.txt
-   libpng-1.2.24-Y2K-compliance.txt
+   libpng-1.4.5-README.txt
+   libpng-1.4.5-LICENSE.txt
 
-Changes since the last public release (1.2.23):
+Changes since the last public release (1.4.4):
 
-version 1.2.24 [December 14, 2007]
+  Fixed possible configure.ac bug introduced in version 1.4.4.
+  Wrapped long lines in CMakeLists.txt and introduced ${libpng_public_hdrs}
+  Check for out-of-range text compression mode in png_set_text().
+  Removed some extraneous parentheses that appeared in pngrutil.c of
+    libpng-1.4.3
+  Revised png_get_uint_32, png_get_int_32, png_get_uint_16 (Cosmin)
+  Moved reading of file signature into png_read_sig (Cosmin)
+  Fixed atomicity of chunk header serialization (Cosmin)
+  Added test for io_state in pngtest.c (Cosmin)
+  Added "#!/bin/sh" at the top of contrib/pngminim/*/gather.sh scripts.
+  Changes to remove gcc warnings (John Bowler)
+    Certain optional gcc warning flags resulted in warnings in libpng code.
+    With these changes only -Wconversion and -Wcast-qual cannot be turned on.
+    Changes are trivial rearrangements of code.  -Wconversion is not possible
+    for pngrutil.c (because of the widespread use of += et al on variables
+    smaller than (int) or (unsigned int)) and -Wcast-qual is not possible
+    with pngwio.c and pngwutil.c because the 'write' callback and zlib
+    compression both fail to declare their input buffers with 'const'.
+  Added comment about the potential API incompatibility of the
+    png_get_uint_16() macro with libpng-1.4.0 through 1.4.4.
+  Removed PNG_NO_WRITE_GAMMA from pngminim/encoder/pngusr.h
 
-  Moved misplaced test for malloc failure in png_set_sPLT().  This bug was
-    introduced in libpng-1.2.20.
-  Ifdef out avg_row etc from png.h and pngwrite.c when PNG_NO_WRITE_FILTER
-  Do not use png_ptr->free_fn and png_ptr->mem_fn in png_destroy_read_struct()
-    when png_ptr is NULL (Marshall Clow).
-  Updated handling of symbol prefixes in Makefile.am and configure.ac (Mike
-    Frysinger).
-  Removed a useless test and fixed incorrect test in png_set_cHRM_fixed()
-    (David Hill).
-  Make sure not to redefine _BSD_SOURCE in pngconf.h
-  Revised gather.sh and makefile.std in contrib/pngminim to avoid compiling
-    unused files.
-
-
-
-Send comments/corrections/commendations to png-mng-implement at lists.sf.net
-(subscription required; visit 
-https://lists.sourceforge.net/lists/listinfo/png-mng-implement
-to subscribe) or to glennrp at users.sourceforge.net
+Send comments/corrections/commendations to glennrp at users.sourceforge.net
+or to png-mng-implement at lists.sf.net (subscription required; visit
+https://lists.sourceforge.net/lists/listinfo/png-mng-implement).
 
 Glenn R-P

@@ -538,15 +538,19 @@ void CDemoView::OnLButtonUp(UINT nFlags, CPoint point)
 
 				pDoc->Stopwatch(0);
 
+#if CXIMAGE_SUPPORT_SELECTION
 				ima->SelectionClear();
 				ima->SelectionAddPolygon(p,n);
+#endif //CXIMAGE_SUPPORT_SELECTION
 
 				pDoc->Stopwatch(1);
 				pDoc->UpdateStatusBar();
 
 				free(p);
 			} else {
+#if CXIMAGE_SUPPORT_SELECTION
 				ima->SelectionDelete();
+#endif //CXIMAGE_SUPPORT_SELECTION
 			}
 			Invalidate(0);
 		}
@@ -723,7 +727,7 @@ void CDemoView::OnDestroy()
 	KillTimer(2);
 }
 //////////////////////////////////////////////////////////////////////////////
-void CDemoView::OnTimer(UINT nIDEvent) 
+void CDemoView::OnTimer(UINT_PTR nIDEvent) 
 {
 #if CXIMAGE_DEMO_SELECT
 	if (nIDEvent == 1) {
@@ -854,8 +858,10 @@ bool CDemoView::SetImageRectSelection(CDemoDoc *pDoc,CRect *rect)
 	rect_img.bottom = ima->GetHeight() - 1 - y;
 	rect_img.right = x;
 
+#if CXIMAGE_SUPPORT_SELECTION
 	ima->SelectionClear();
 	ima->SelectionAddRect(rect_img);
+#endif //CXIMAGE_SUPPORT_SELECTION
 
 	return true;
 }

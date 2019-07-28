@@ -44,11 +44,11 @@ public:
 	int  m_isRectSel;
 #endif
 
-	long m_hr[256]; //histogram
-	long m_hg[256];
-	long m_hb[256];
-	long m_hgray[256];
-	long m_hmax;
+	int32_t m_hr[256]; //histogram
+	int32_t m_hg[256];
+	int32_t m_hb[256];
+	int32_t m_hgray[256];
+	int32_t m_hmax;
 
 	CxImageJPG m_exif;
 
@@ -319,6 +319,8 @@ protected:
 	afx_msg void OnViewPlayanimation();
 	afx_msg void OnUpdateFiltersAddshadow(CCmdUI* pCmdUI);
 	afx_msg void OnFiltersAddshadow();
+	afx_msg void OnCximageTrace();
+	afx_msg void OnUpdateCximageTrace(CCmdUI* pCmdUI);
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 };

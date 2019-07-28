@@ -492,6 +492,7 @@ BEGIN
             MENUITEM "Edge",                        ID_FILTERS_NONLINEAR_EDGE
 
             MENUITEM "Jitter",                      ID_CXIMAGE_JITTER
+            MENUITEM "Trace (black)",               ID_CXIMAGE_TRACE
             MENUITEM "Text Blur",                   ID_CXIMAGE_TEXTBLUR
             MENUITEM "Blur Selection Border",       ID_CXIMAGE_BLURSELBORDER
             MENUITEM "Remove Red Eye",              ID_CXIMAGE_REDEYEREMOVE
@@ -644,6 +645,7 @@ BEGIN
             MENUITEM "Contour",                     ID_CXIMAGE_CONTOUR
             MENUITEM "Edge",                        ID_FILTERS_NONLINEAR_EDGE
 
+            MENUITEM "Trace (black)",               ID_CXIMAGE_TRACE
             MENUITEM "Jitter",                      ID_CXIMAGE_JITTER
             MENUITEM "Text Blur",                   ID_CXIMAGE_TEXTBLUR
             MENUITEM "Blur Selection Border",       ID_CXIMAGE_BLURSELBORDER
@@ -756,17 +758,17 @@ END
 // Dialog
 //
 
-IDD_ABOUTBOX DIALOGEX 0, 0, 261, 269
+IDD_ABOUTBOX DIALOGEX 0, 0, 261, 279
 STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "About demo"
-FONT 8, "MS Sans Serif", 0, 0, 0x1
+FONT 8, "MS Sans Serif"
 BEGIN
     ICON            IDR_MAINFRAME,IDC_STATIC,7,7,21,20
     LTEXT           "CImage Demo Version 1.0 © Julian Smart et al, 1997",
                     IDC_STATIC,7,54,247,11,SS_NOPREFIX | NOT WS_GROUP,
                     WS_EX_STATICEDGE
     DEFPUSHBUTTON   "OK",IDOK,204,7,50,16
-    CTEXT           "CxImage Demo Version 6.00\n© Davide Pizzolato, 2001 - 2008\nwww.xdp.it",
+    CTEXT           "CxImage Demo Version 7.00\n© Davide Pizzolato, 2001 - 2010\nwww.xdp.it",
                     IDC_STATIC,38,7,143,29,SS_NOPREFIX | NOT WS_GROUP,
                     WS_EX_STATICEDGE
     LTEXT           "CImage © Alejandro Aguilar Sierra, 1995 - 1998",
@@ -779,11 +781,11 @@ BEGIN
                     11,NOT WS_GROUP,WS_EX_STATICEDGE
     LTEXT           "CxTargetButton Version 1.00 © Davide Pizzolato, 2002",
                     IDC_STATIC,7,93,247,11,NOT WS_GROUP,WS_EX_STATICEDGE
-    LTEXT           "IJG JPEG library © Thomas G. Lane, 1994 - 1998",
+    LTEXT           "IJG JPEG version 8b © Thomas G. Lane, Guido Vollbeding, 1994 - 2010",
                     IDC_STATIC,7,119,247,11,NOT WS_GROUP,WS_EX_STATICEDGE
-    LTEXT           "LibPNG version 1.2.24 © Glenn Randers-Pehrson, 1998 - 2007",
+    LTEXT           "LibPNG version 1.4.5 © Glenn Randers-Pehrson, 1998 - 2010",
                     IDC_STATIC,7,132,247,11,NOT WS_GROUP,WS_EX_STATICEDGE
-    LTEXT           "LibTIFF version 3.5.7 © Sam Leffler, 1988 - 1997",
+    LTEXT           "LibTIFF version 3.9.4 © Sam Leffler, 1988 - 1997",
                     IDC_STATIC,7,144,247,11,NOT WS_GROUP,WS_EX_STATICEDGE
     LTEXT           "GIF © CompuServe Incorporated",IDC_STATIC,7,157,247,11,
                     NOT WS_GROUP,WS_EX_STATICEDGE
@@ -797,10 +799,12 @@ BEGIN
                     WS_GROUP,WS_EX_STATICEDGE
     LTEXT           "JasPer 1.900.1©  Image Power, UBC, Michael David Adams, 2001 - 2007 ",
                     IDC_STATIC,7,220,247,11,NOT WS_GROUP,WS_EX_STATICEDGE
-    LTEXT           "zlib version 1.2.3 © Jean-loup Gailly and Mark Adler, 1995 - 2005",
+    LTEXT           "zlib version 1.2.5 © Jean-loup Gailly and Mark Adler, 1995 - 2010",
                     IDC_STATIC,7,233,247,11,NOT WS_GROUP,WS_EX_STATICEDGE
-    LTEXT           "dcraw.c version 8.81 © Dave Coffin, 1997-2007",
+    LTEXT           "dcraw.c version 8.93 © Dave Coffin, 1997 - 2009",
                     IDC_STATIC,7,246,247,11,NOT WS_GROUP,WS_EX_STATICEDGE
+    LTEXT           "Libpsd version 0.9 © Graphest Software, 2004 - 2007",
+                    IDC_STATIC,7,259,247,11,NOT WS_GROUP,WS_EX_STATICEDGE
 END
 
 IDD_ROTATE DIALOG DISCARDABLE  0, 0, 143, 114
@@ -895,7 +899,7 @@ BEGIN
     CONTROL         "24",IDC_RADIO3,"Button",BS_AUTORADIOBUTTON,15,50,25,10
 END
 
-IDD_OPTIONS DIALOG DISCARDABLE  0, 0, 296, 215
+IDD_OPTIONS DIALOG DISCARDABLE  0, 0, 296, 242
 STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Options"
 FONT 8, "MS Sans Serif"
@@ -913,8 +917,8 @@ BEGIN
                     WS_GROUP,115,70,61,10
     CONTROL         "none",IDC_RADIO2,"Button",BS_AUTORADIOBUTTON,115,82,32,
                     10
-    CONTROL         "RLE",IDC_RADIO3,"Button",BS_AUTORADIOBUTTON,115,94,30,
-                    10
+    CONTROL         "CCITT RLE",IDC_RADIO3,"Button",BS_AUTORADIOBUTTON,115,
+                    94,53,10
     CONTROL         "Fax",IDC_RADIO4,"Button",BS_AUTORADIOBUTTON,115,106,48,
                     10
     CONTROL         "Packbits",IDC_RADIO5,"Button",BS_AUTORADIOBUTTON,115,
@@ -933,9 +937,9 @@ BEGIN
                     10
     CONTROL         "Default : not interlaced",IDC_RADIO11,"Button",
                     BS_AUTORADIOBUTTON | WS_GROUP,13,176,87,10
-    CONTROL         "interlaced",IDC_RADIO12,"Button",BS_AUTORADIOBUTTON,13,
-                    187,47,10
-    GROUPBOX        "PNG",IDC_STATIC,7,165,100,37
+    CONTROL         "interlaced",IDC_RADIO12,"Button",BS_AUTORADIOBUTTON,115,
+                    176,47,10
+    GROUPBOX        "PNG",IDC_STATIC,7,165,179,67
     CONTROL         "Default : baseline",IDC_RADIO13,"Button",
                     BS_AUTORADIOBUTTON | WS_GROUP,13,70,71,10
     CONTROL         "progressive",IDC_RADIO14,"Button",BS_AUTORADIOBUTTON,13,
@@ -959,9 +963,18 @@ BEGIN
                     197,148,52,10
     CONTROL         "AHD interp.",IDC_RADIO21,"Button",BS_AUTORADIOBUTTON,
                     197,161,53,10
+    GROUPBOX        "Compression level",IDC_STATIC,13,188,167,38
+    CONTROL         "Default",IDC_RADIO22,"Button",BS_AUTORADIOBUTTON | 
+                    WS_GROUP,18,200,76,10
+    CONTROL         "No compression",IDC_RADIO23,"Button",BS_AUTORADIOBUTTON,
+                    100,200,73,10
+    CONTROL         "Best speed",IDC_RADIO24,"Button",BS_AUTORADIOBUTTON,18,
+                    212,63,10
+    CONTROL         "Best compression",IDC_RADIO25,"Button",
+                    BS_AUTORADIOBUTTON,100,212,75,10
 END
 
-IDD_DITHER DIALOG DISCARDABLE  0, 0, 149, 122
+IDD_DITHER DIALOG DISCARDABLE  0, 0, 149, 153
 STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Dither"
 FONT 8, "MS Sans Serif"
@@ -984,6 +997,10 @@ BEGIN
                     7,91,67,10
     CONTROL         "Bayer matrix (4x4 ordered dither)",IDC_RADIO8,"Button",
                     BS_AUTORADIOBUTTON,7,105,117,10
+    CONTROL         "Bayer matrix (8x8 ordered dither)",IDC_RADIO9,"Button",
+                    BS_AUTORADIOBUTTON,7,120,117,10
+    CONTROL         "Bayer matrix (16x16 ordered dither)",IDC_RADIO10,"Button",
+                    BS_AUTORADIOBUTTON,7,135,125,10
 END
 
 IDD_THRESHOLD DIALOGEX 0, 0, 151, 106
@@ -1474,8 +1491,8 @@ END
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 6,0,0,0
- PRODUCTVERSION 6,0,0,0
+ FILEVERSION 7,0,0,0
+ PRODUCTVERSION 7,0,0,0
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x29L
@@ -1493,14 +1510,14 @@ BEGIN
             VALUE "Comments", " \0"
             VALUE "CompanyName", "www.xdp.it\0"
             VALUE "FileDescription", "DEMO CxImage Application\0"
-            VALUE "FileVersion", "5, 9, 9, 3\0"
+            VALUE "FileVersion", "7, 0, 0, 0\0"
             VALUE "InternalName", "DEMO\0"
             VALUE "LegalCopyright", " © Davide Pizzolato 2001-2004\0"
             VALUE "LegalTrademarks", "Freeware\0"
             VALUE "OriginalFilename", "DEMO.EXE\0"
-            VALUE "PrivateBuild", "5\0"
+            VALUE "PrivateBuild", "7\0"
             VALUE "ProductName", "CxImage\0"
-            VALUE "ProductVersion", "5, 9, 9, 3\0"
+            VALUE "ProductVersion", "7, 0, 0, 0\0"
             VALUE "SpecialBuild", "0\0"
         END
     END
@@ -1526,7 +1543,7 @@ BEGIN
         LEFTMARGIN, 7
         RIGHTMARGIN, 254
         TOPMARGIN, 7
-        BOTTOMMARGIN, 262
+        BOTTOMMARGIN, 272
     END
 
     IDD_ROTATE, DIALOG
@@ -1574,7 +1591,7 @@ BEGIN
         LEFTMARGIN, 7
         RIGHTMARGIN, 289
         TOPMARGIN, 6
-        BOTTOMMARGIN, 208
+        BOTTOMMARGIN, 235
     END
 
     IDD_DITHER, DIALOG
@@ -1582,7 +1599,7 @@ BEGIN
         LEFTMARGIN, 7
         RIGHTMARGIN, 142
         TOPMARGIN, 7
-        BOTTOMMARGIN, 115
+        BOTTOMMARGIN, 146
     END
 
     IDD_THRESHOLD, DIALOG
@@ -2255,6 +2272,7 @@ BEGIN
     ID_VIEW_NEXTFRAME       "Next Frame\nNext Frame"
     ID_VIEW_PLAYANIMATION   "Play Animation\nPlay Animation"
     ID_FILTERS_ADDSHADOW    "Add Shadow...\nAdd Shadow..."
+    ID_CXIMAGE_TRACE        "Trace\nTrace"
 END
 
 #endif    // Neutral resources

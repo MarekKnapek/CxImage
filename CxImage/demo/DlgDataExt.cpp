@@ -314,9 +314,11 @@ void DlgDataExt::UpdatePreview()
 			if (m_btn_graylevel.GetCheck()){
 				tmp.Threshold(m_thresh);
 			} else {
+#if CXIMAGE_SUPPORT_SELECTION
 				tmp.SelectionAddColor(tmp.RGBtoRGBQUAD(m_color));
 				tmp.SelectionSplit(&tmp);
 				tmp.Negative();
+#endif //CXIMAGE_SUPPORT_SELECTION
 			}
 		}
 

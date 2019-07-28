@@ -82,10 +82,11 @@
 #if defined(HAVE_UNISTD_H)
 #include <unistd.h>
 #endif
-#if defined(WIN32) || defined(HAVE_IO_H)
+#if defined(WIN32) || defined(HAVE_IO_H) || defined(_WIN32_WCE)
 #include <io.h>
 #endif
 
+#include "jasper/jas_config.h"
 #include "jasper/jas_types.h"
 #include "jasper/jas_stream.h"
 #include "jasper/jas_malloc.h"
@@ -1102,7 +1103,7 @@ static int file_write(jas_stream_obj_t *obj, char *buf, int cnt)
 static long file_seek(jas_stream_obj_t *obj, long offset, int origin)
 {
 	jas_stream_fileobj_t *fileobj = JAS_CAST(jas_stream_fileobj_t *, obj);
-	return lseek(fileobj->fd, offset, origin);
+	return _lseek(fileobj->fd, offset, origin);
 }
 
 static int file_close(jas_stream_obj_t *obj)
