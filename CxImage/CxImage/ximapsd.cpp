@@ -2,7 +2,7 @@
  * File:	ximapsd.cpp
  * Purpose:	Platform Independent PSD Image Class Loader
  * Dec/2010 Davide Pizzolato - www.xdp.it
- * CxImage version 7.0.0 31/Dec/2010
+ * CxImage version 7.0.1 07/Jan/2011
  *
  * libpsd (c) 2004-2007 Graphest Software
  *
@@ -1242,8 +1242,11 @@ bool CxImagePSD::Decode(CxFile *hFile)
 	uint8_t* alpha = NULL;
 	if (context->alpha_channel_info)
 		alpha = (uint8_t*)context->alpha_channel_info->channel_data;
+
+#if CXIMAGE_SUPPORT_ALPHA
 	if (alpha)
 		AlphaCreate();
+#endif
 
 	int32_t x,y;
 	RGBQUAD c;

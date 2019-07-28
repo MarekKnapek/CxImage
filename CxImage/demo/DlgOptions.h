@@ -9,8 +9,9 @@
 
 #include "xTargetButton.h"
 
+#if CXIMAGE_SUPPORT_EXIF && CXIMAGE_SUPPORT_JPG
 class CxImageJPG;
-
+#endif
 /////////////////////////////////////////////////////////////////////////////
 // DlgOptions dialog
 class DlgOptions : public CDialog
@@ -22,7 +23,9 @@ public:
 	DWORD m_Opt_jpg;
 	DWORD m_Opt_png;
 	DWORD m_Opt_raw;
+#if CXIMAGE_SUPPORT_EXIF && CXIMAGE_SUPPORT_JPG
 	CxImageJPG* m_exif;
+#endif 
 	DlgOptions(CWnd* pParent = NULL);   // standard constructor
 
 // Dialog Data

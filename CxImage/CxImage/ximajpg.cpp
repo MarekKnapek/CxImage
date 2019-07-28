@@ -2,7 +2,7 @@
  * File:	ximajpg.cpp
  * Purpose:	Platform Independent JPEG Image Class Loader and Writer
  * 07/Aug/2001 Davide Pizzolato - www.xdp.it
- * CxImage version 7.0.0 31/Dec/2010
+ * CxImage version 7.0.1 07/Jan/2011
  */
  
 #include "ximajpg.h"
@@ -87,9 +87,13 @@ bool CxImageJPG::GetExifThumbnail(const TCHAR *filename, const TCHAR *outname, i
 //        float amount = 256.0f / max(image.GetWidth(), image.GetHeight());
 //        image.Resample((int32_t)(image.GetWidth() * amount), (int32_t)(image.GetHeight() * amount), 0);
       }
+#if CXIMAGE_SUPPORT_TRANSFORMATION
       if (info.ExifInfo.Orientation != 1)
         image.RotateExif(info.ExifInfo.Orientation);
+#endif
+#if CXIMAGE_SUPPORT_ENCODE
       return image.Save(outname, CXIMAGE_FORMAT_JPG);
+#endif
     }
     // nice and fast, but we can't resize :(
     /*

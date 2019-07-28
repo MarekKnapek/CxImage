@@ -768,7 +768,7 @@ BEGIN
                     IDC_STATIC,7,54,247,11,SS_NOPREFIX | NOT WS_GROUP,
                     WS_EX_STATICEDGE
     DEFPUSHBUTTON   "OK",IDOK,204,7,50,16
-    CTEXT           "CxImage Demo Version 7.00\n© Davide Pizzolato, 2001 - 2010\nwww.xdp.it",
+    CTEXT           "CxImage Demo Version 7.01\n© Davide Pizzolato, 2001 - 2011\nwww.xdp.it",
                     IDC_STATIC,38,7,143,29,SS_NOPREFIX | NOT WS_GROUP,
                     WS_EX_STATICEDGE
     LTEXT           "CImage © Alejandro Aguilar Sierra, 1995 - 1998",
@@ -1491,8 +1491,8 @@ END
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 7,0,0,0
- PRODUCTVERSION 7,0,0,0
+ FILEVERSION 7,0,1,0
+ PRODUCTVERSION 7,0,1,0
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x29L
@@ -1510,14 +1510,14 @@ BEGIN
             VALUE "Comments", " \0"
             VALUE "CompanyName", "www.xdp.it\0"
             VALUE "FileDescription", "DEMO CxImage Application\0"
-            VALUE "FileVersion", "7, 0, 0, 0\0"
+            VALUE "FileVersion", "7, 0, 1, 0\0"
             VALUE "InternalName", "DEMO\0"
-            VALUE "LegalCopyright", " © Davide Pizzolato 2001-2004\0"
+            VALUE "LegalCopyright", " © Davide Pizzolato 2001-2011\0"
             VALUE "LegalTrademarks", "Freeware\0"
             VALUE "OriginalFilename", "DEMO.EXE\0"
             VALUE "PrivateBuild", "7\0"
             VALUE "ProductName", "CxImage\0"
-            VALUE "ProductVersion", "7, 0, 0, 0\0"
+            VALUE "ProductVersion", "7, 0, 1, 0\0"
             VALUE "SpecialBuild", "0\0"
         END
     END

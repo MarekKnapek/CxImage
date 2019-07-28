@@ -7,7 +7,7 @@
 
 	COPYRIGHT NOTICE, DISCLAIMER, and LICENSE:
 
-	CxImage version 7.0.0 31/Dec/2010
+	CxImage version 7.0.1 07/Jan/2011
 
 	CxImage : Copyright (C) 2001 - 2010, Davide Pizzolato
 
@@ -796,8 +796,8 @@ protected:
 	void*				pDib; //contains the header, the palette, the pixels
     BITMAPINFOHEADER    head; //standard header
 	CXIMAGEINFO			info; //extended information
-	uint8_t*				pSelection;	//selected region
-	uint8_t*				pAlpha; //alpha channel
+	uint8_t*			pSelection;	//selected region
+	uint8_t*			pAlpha; //alpha channel
 	CxImage**			ppLayers; //generic layers
 	CxImage**			ppFrames;
 //@}

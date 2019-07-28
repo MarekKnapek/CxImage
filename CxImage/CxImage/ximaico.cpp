@@ -2,7 +2,7 @@
  * File:	ximaico.cpp
  * Purpose:	Platform Independent ICON Image Class Loader and Writer (MS version)
  * 07/Aug/2001 Davide Pizzolato - www.xdp.it
- * CxImage version 7.0.0 31/Dec/2010
+ * CxImage version 7.0.1 07/Jan/2011
  */
 
 #include "ximaico.h"
@@ -140,6 +140,7 @@ bool CxImageICO::Decode(CxFile *hFile)
 					}
 
 					if (bGoodMask){
+						int32_t x,y;
 #if CXIMAGE_SUPPORT_ALPHA
 						bool bNeedAlpha = false;
 						if (!AlphaIsValid()){
@@ -147,7 +148,6 @@ bool CxImageICO::Decode(CxFile *hFile)
 						} else { 
 							bNeedAlpha=true; //32bit icon
 						}
-						int32_t x,y;
 						for (y = 0; y < head.biHeight; y++) {
 							for (x = 0; x < head.biWidth; x++) {
 								if (((mask[y*maskwdt+(x>>3)]>>(7-x%8))&0x01)){

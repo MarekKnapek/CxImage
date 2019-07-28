@@ -2,7 +2,7 @@
  * File:	ximaraw.cpp
  * Purpose:	Platform Independent RAW Image Class Loader
  * 16/Dec/2007 Davide Pizzolato - www.xdp.it
- * CxImage version 7.0.0 31/Dec/2010
+ * CxImage version 7.0.1 07/Jan/2011
  * 
  * CxImageRAW (c) May/2006 pdw63
  *
@@ -279,18 +279,20 @@ bool CxImageRAW::GetExifThumbnail(const TCHAR *filename, const TCHAR *outname, i
 		CxImage image(outname, CXIMAGE_FORMAT_UNKNOWN);
 	    if (image.IsValid())
 	    {
+#if CXIMAGE_SUPPORT_TRANSFORMATION
 			// Resizing.
       		if (image.GetWidth() > 256 || image.GetHeight() > 256)
 		    {
 				float amount = 256.0f / max(image.GetWidth(), image.GetHeight());
 				image.Resample((int32_t)(image.GetWidth() * amount), (int32_t)(image.GetHeight() * amount), 0);
 		    }
-
 			// Rotation.
 			if (p->flip != 0)
 		    	image.RotateExif(p->flip);
-
+#endif
+#if CXIMAGE_SUPPORT_ENCODE && CXIMAGE_SUPPORT_JPG
 			return image.Save(outname, CXIMAGE_FORMAT_JPG);
+#endif
 		}
 	}
 	else

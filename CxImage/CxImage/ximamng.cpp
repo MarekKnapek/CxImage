@@ -2,7 +2,7 @@
  * File:	ximamng.cpp
  * Purpose:	Platform Independent MNG Image Class Loader and Writer
  * Author:	07/Aug/2001 Davide Pizzolato - www.xdp.it
- * CxImage version 7.0.0 31/Dec/2010
+ * CxImage version 7.0.1 07/Jan/2011
  */
 
 #include "ximamng.h"
@@ -181,6 +181,8 @@ void CxImageMNG::SetCallbacks(mng_handle mng)
 	mng_setcb_getalphaline(mng, mymnggetalphaline);
 }
 ////////////////////////////////////////////////////////////////////////////////
+#if CXIMAGE_SUPPORT_DECODE
+////////////////////////////////////////////////////////////////////////////////
 // can't use the CxImage implementation because it looses mnginfo
 bool CxImageMNG::Load(const TCHAR * imageFileName){
 	FILE* hFile;	//file handle to read the image
@@ -193,8 +195,6 @@ bool CxImageMNG::Load(const TCHAR * imageFileName){
 	fclose(hFile);
 	return bOK;
 }
-////////////////////////////////////////////////////////////////////////////////
-#if CXIMAGE_SUPPORT_DECODE
 ////////////////////////////////////////////////////////////////////////////////
 bool CxImageMNG::Decode(CxFile *hFile)
 {

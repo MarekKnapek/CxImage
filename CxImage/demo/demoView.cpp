@@ -119,10 +119,12 @@ void CDemoView::OnDraw(CDC* pDC)
 			DeleteDC(TmpDC);*/
 			CxImage tmp;
 			tmp.Copy(*ima);
+#if CXIMAGE_SUPPORT_ALPHA
 			RGBQUAD c={255,255,255,0};
 			if (tmp.GetTransIndex()>=0) tmp.SetPaletteColor((BYTE)tmp.GetTransIndex(),c);
 			tmp.SetTransColor(c);
 			tmp.AlphaStrip();
+#endif
 			tmp.Stretch(pDC->GetSafeHdc(), CRect(100,100,cx,cy));
 		} else {
 			if (pDoc->GetStretchMode()) {
@@ -227,8 +229,10 @@ void CDemoView::OnMouseMove(UINT nFlags, CPoint point)
 		long yflip = ima->GetHeight() - y - 1;
 		_stprintf(s,_T("x: %d y: %d  idx: %d"), x, y, ima->GetPixelIndex(x,yflip));
 		RGBQUAD rgb=ima->GetPixelColor(x,yflip);
+#if CXIMAGE_SUPPORT_ALPHA
 		if (ima->AlphaIsValid()) rgb.rgbReserved=ima->AlphaGet(x,yflip);
 		else rgb.rgbReserved=ima->GetPaletteColor(ima->GetPixelIndex(x,yflip)).rgbReserved;
+#endif
 		_stprintf(&s[_tcslen(s)],_T("  RGBA: (%d, %d, %d, %d)"), rgb.rgbRed, rgb.rgbGreen, rgb.rgbBlue, rgb.rgbReserved);
 
 		//Enable these lines if you want draw over the image	

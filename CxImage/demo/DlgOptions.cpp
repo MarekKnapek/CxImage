@@ -89,7 +89,9 @@ BOOL DlgOptions::OnInitDialog()
 	m_canc.SetIcon(IDI_R,BS_LEFT);
 	m_info.SetIcon(IDI_B,BS_LEFT);
 
+#if CXIMAGE_SUPPORT_EXIF && CXIMAGE_SUPPORT_JPG
 	m_info.EnableWindow(m_exif && m_exif->GetExifInfo()->IsExif);
+#endif
 
 	switch(m_Opt_tif)
 	{
@@ -152,6 +154,7 @@ BOOL DlgOptions::OnInitDialog()
 		m_rEnc22.SetCheck(1);
 	}
 
+#if CXIMAGE_SUPPORT_JPG
 	if (m_Opt_jpg & CxImageJPG::ENCODE_PROGRESSIVE){
 		m_rEnc14.SetCheck(1);
 	} else {
@@ -169,6 +172,7 @@ BOOL DlgOptions::OnInitDialog()
 	} else {
 		m_rEnc15.SetCheck(1);
 	}
+#endif //CXIMAGE_SUPPORT_JPG
 
 	switch(m_Opt_raw)
 	{
@@ -235,7 +239,7 @@ void DlgOptions::OnExif()
 {
 	CString s,t;
 	s=_T("");
-
+#if CXIMAGE_SUPPORT_EXIF && CXIMAGE_SUPPORT_JPG
     if (m_exif->GetExifInfo()->CameraMake[0]){
         t.Format(_T("Camera make  : %s\n"),m_exif->GetExifInfo()->CameraMake); s+=t;
         t.Format(_T("Camera model : %s\n"),m_exif->GetExifInfo()->CameraModel); s+=t;
@@ -428,7 +432,7 @@ void DlgOptions::OnExif()
             }
         }
     }
-
+#endif
     t.Format(_T("\n")); s+=t;
 		
 	MessageBox(s,_T("EXIF"),MB_OK|MB_ICONQUESTION);

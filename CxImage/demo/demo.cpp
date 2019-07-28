@@ -401,7 +401,7 @@ BOOL CDemoApp::PromptForFileName(CString& fileName, UINT /*nIDSTitle*/,
 
 	dlgFile.m_ofn.Flags |= dwFlags;
 
-	int nDocType = (pType != NULL) ? *pType : CXIMAGE_FORMAT_BMP;
+	int nDocType = (pType != NULL) ? *pType : CXIMAGE_FORMAT_UNKNOWN;
 	if (nDocType==0) nDocType=1;
 
 	int nIndex = GetIndexFromType(nDocType, bOpenFileDialog);
@@ -506,6 +506,7 @@ CString CDemoApp::GetFileTypes(BOOL bOpenFileDialog)
 // CDemoApp commands
 void CDemoApp::OnImageFromBitmap() 
 {
+#if CXIMAGE_SUPPORT_DECODE && CXIMAGE_SUPPORT_BMP
 /*	HBITMAP bitmap;
 	if (!(bitmap = ::LoadBitmap(AfxGetInstanceHandle(),MAKEINTRESOURCE(IDB_BITMAP1)))){
 		AfxMessageBox(_T("Could not load bitmap from resource"));
@@ -531,10 +532,12 @@ void CDemoApp::OnImageFromBitmap()
 		doc->UpdateAllViews(0,WM_USER_NEWIMAGE);
 		doc->UpdateStatusBar();
 	}
+#endif
 }
 //////////////////////////////////////////////////////////////////////////////
 void CDemoApp::OnCximageLoadjpegresource() 
 {
+#if CXIMAGE_SUPPORT_DECODE && CXIMAGE_SUPPORT_JPG
 	CxImage* newImage = new CxImage();
 	if (!newImage->LoadResource(FindResource(NULL,_T("IDR_JPG2"),_T("JPG")),CXIMAGE_FORMAT_JPG)){
 		CString s = newImage->GetLastError();
@@ -552,10 +555,12 @@ void CDemoApp::OnCximageLoadjpegresource()
 		doc->UpdateAllViews(0,WM_USER_NEWIMAGE);
 		doc->UpdateStatusBar();
 	}
+#endif
 }
 //////////////////////////////////////////////////////////////////////////////
 void CDemoApp::OnCximageLoadiconresource() 
 {
+#if CXIMAGE_SUPPORT_DECODE && CXIMAGE_SUPPORT_ICO
 	CxImage* newImage = new CxImage();
 #if CXIMAGE_SUPPORT_ICO
 	if (!newImage->LoadResource(FindResource(NULL,MAKEINTRESOURCE(IDR_ICO1),_T("ICO")),CXIMAGE_FORMAT_ICO)){
@@ -581,10 +586,12 @@ void CDemoApp::OnCximageLoadiconresource()
 		doc->UpdateAllViews(0);
 		doc->UpdateStatusBar();
 	}
+#endif
 }
 //////////////////////////////////////////////////////////////////////////////
 void CDemoApp::OnCximageLoadgifresource() 
 {
+#if CXIMAGE_SUPPORT_DECODE && CXIMAGE_SUPPORT_GIF
 	CxImage* newImage = new CxImage();
 	if (!newImage->LoadResource(FindResource(NULL,MAKEINTRESOURCE(IDR_GIF1),_T("GIF")),CXIMAGE_FORMAT_GIF)){
 		CString s = newImage->GetLastError();
@@ -603,10 +610,12 @@ void CDemoApp::OnCximageLoadgifresource()
 		doc->UpdateAllViews(0,WM_USER_NEWIMAGE);
 		doc->UpdateStatusBar();
 	}
+#endif
 }
 //////////////////////////////////////////////////////////////////////////////
 void CDemoApp::OnCximageLoadpngresource() 
 {
+#if CXIMAGE_SUPPORT_DECODE && CXIMAGE_SUPPORT_PNG
 	CxImage* newImage = new CxImage();
 	if (!newImage->LoadResource(FindResource(NULL,MAKEINTRESOURCE(IDR_PNG1),_T("PNG")),CXIMAGE_FORMAT_PNG)){
 		CString s = newImage->GetLastError();
@@ -626,10 +635,12 @@ void CDemoApp::OnCximageLoadpngresource()
 		doc->UpdateAllViews(0,WM_USER_NEWIMAGE);
 		doc->UpdateStatusBar();
 	}
+#endif
 }
 //////////////////////////////////////////////////////////////////////////////
 void CDemoApp::OnCximageLoadtifresource() 
 {
+#if CXIMAGE_SUPPORT_DECODE && CXIMAGE_SUPPORT_TIF
 	CxImage* newImage = new CxImage();
 #if CXIMAGE_SUPPORT_TIF
 	if (!newImage->LoadResource(FindResource(NULL,MAKEINTRESOURCE(IDR_TIF1),_T("TIF")),CXIMAGE_FORMAT_TIF)){
@@ -650,6 +661,7 @@ void CDemoApp::OnCximageLoadtifresource()
 		doc->UpdateAllViews(0,WM_USER_NEWIMAGE);
 		doc->UpdateStatusBar();
 	}
+#endif
 }
 //////////////////////////////////////////////////////////////////////////////
 void CDemoApp::OnWindowCloseall() 
@@ -668,7 +680,7 @@ void CDemoApp::OnWindowCloseall()
 //////////////////////////////////////////////////////////////////////////////
 void CDemoApp::OnCximageDemosavemultipagetiff() 
 {
-#if CXIMAGE_SUPPORT_TIF && CXIMAGE_SUPPORT_GIF && CXIMAGE_SUPPORT_JPG
+#if CXIMAGE_SUPPORT_DECODE && CXIMAGE_SUPPORT_ENCODE && CXIMAGE_SUPPORT_TIF && CXIMAGE_SUPPORT_GIF && CXIMAGE_SUPPORT_JPG
 
 	CxImage* newImage1 = new CxImage();
 	if (!newImage1->LoadResource(FindResource(NULL,MAKEINTRESOURCE(IDR_TIF1),_T("TIF")),CXIMAGE_FORMAT_TIF)){
@@ -734,6 +746,7 @@ void CDemoApp::OnCximageDemosavemultipagetiff()
 //////////////////////////////////////////////////////////////////////////////
 void CDemoApp::OnCximageDemosaveanimatedgif() 
 {
+#if CXIMAGE_SUPPORT_DECODE && CXIMAGE_SUPPORT_ENCODE && CXIMAGE_SUPPORT_GIF
 	CxImage* newImage = new CxImage();
 	if (!newImage->LoadResource(FindResource(NULL,MAKEINTRESOURCE(IDR_GIF1),_T("GIF")),CXIMAGE_FORMAT_GIF)){
 		CString s = newImage->GetLastError();
@@ -795,12 +808,12 @@ void CDemoApp::OnCximageDemosaveanimatedgif()
 	delete newImage;
 
 	AfxMessageBox(_T("file 'ani.gif' saved to disk"),MB_OK);
-
+#endif
 }
 //////////////////////////////////////////////////////////////////////////////
 void CDemoApp::OnCximageDemosavemultipageicon() 
 {
-#if CXIMAGE_SUPPORT_BMP && CXIMAGE_SUPPORT_ICO
+#if CXIMAGE_SUPPORT_DECODE && CXIMAGE_SUPPORT_ENCODE && CXIMAGE_SUPPORT_BMP && CXIMAGE_SUPPORT_ICO
 
 	CxImage* icon = new CxImage();
 	if (!icon->LoadResource(FindResource(NULL,MAKEINTRESOURCE(IDB_BITMAP1),RT_BITMAP),CXIMAGE_FORMAT_BMP)){
@@ -819,20 +832,24 @@ void CDemoApp::OnCximageDemosavemultipageicon()
 	ico2.Copy(*icon);
 	ico2.IncreaseBpp(24);
 	ico2.Resample(128,128);
+#if CXIMAGE_SUPPORT_ALPHA
 	gray.Copy(ico2);
 	gray.IncreaseBpp(8);
 	gray.Negative();
 	gray.GrayScale();
 	ico2.AlphaSet(gray);
+#endif
 
 	ico3.Copy(*icon);
 	ico3.IncreaseBpp(8);
 	ico3.Resample(256,256);
+#if CXIMAGE_SUPPORT_ALPHA
 	gray.Copy(ico3);
 	gray.IncreaseBpp(8);
 	gray.Negative();
 	gray.GrayScale();
 	ico3.AlphaSet(gray);
+#endif
 
 	icon->Resample(32,32);
 
@@ -858,6 +875,7 @@ void CDemoApp::OnCximageDemosavemultipageicon()
 //////////////////////////////////////////////////////////////////////////////
 void CDemoApp::OnCximageDownloadfromurl() 
 {
+#if CXIMAGE_SUPPORT_DECODE
 	DlgURL dlg;
 	if (dlg.DoModal()==IDOK){
 		long size = dlg.m_size;
@@ -912,6 +930,7 @@ void CDemoApp::OnCximageDownloadfromurl()
 			}
 		}
 	}
+#endif
 }
 //////////////////////////////////////////////////////////////////////////////
 void CDemoApp::OnCximageDemocreatefromarray() 
@@ -984,7 +1003,9 @@ void CDemoApp::OnCximageOptions()
 
 	dlg.m_Opt_jpg = theApp.m_optJpegOptions;
 	dlg.m_Opt_raw = theApp.m_optRawOptions;
+#if CXIMAGE_SUPPORT_EXIF && CXIMAGE_SUPPORT_JPG
 	dlg.m_exif = 0;
+#endif
 	if (dlg.DoModal()==IDOK){
 #ifdef VATI_EXTENSIONS
 		theApp.m_optJpegQuality = dlg.m_jpeg_quality;

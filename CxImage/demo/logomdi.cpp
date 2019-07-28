@@ -33,11 +33,15 @@ CLogoMdi::CLogoMdi()  : m_sizeClient(0,0)
 	}*/
 
 	//JPEG background
+#if CXIMAGE_SUPPORT_DECODE && CXIMAGE_SUPPORT_JPG
 	bgImage = new CxImage();
 	if (!bgImage->LoadResource(FindResource(NULL,_T("IDR_JPG1"),_T("JPG")),CXIMAGE_FORMAT_JPG)){
 		delete bgImage;
 		bgImage =NULL;
 	}
+#else
+	bgImage = 0;
+#endif
 	if (bgImage) {
 		COLORREF rgb=GetSysColor(COLOR_APPWORKSPACE);
 		RGBQUAD hsl=bgImage->RGBtoHSL(bgImage->RGBtoRGBQUAD(rgb));

@@ -1,6 +1,6 @@
-.TH LIBPNG 3 "December 9, 2010"
+.TH LIBPNG 3 "January 6, 2011"
 .SH NAME
-libpng \- Portable Network Graphics (PNG) Reference Library 1.4.5
+libpng \- Portable Network Graphics (PNG) Reference Library 1.5.0
 .SH SYNOPSIS
 \fI\fB
 
@@ -200,6 +200,18 @@ libpng \- Portable Network Graphics (PNG) Reference Library 1.4.5
 
 \fI\fB
 
+\fBint png_get_num_cols (png_structp \fIpng_ptr\fP\fB);\fP
+
+\fI\fB
+
+\fBint png_get_num_passes (png_structp \fIpng_ptr\fP\fB);\fP
+
+\fI\fB
+
+\fBint png_get_num_rows (png_structp \fIpng_ptr\fP\fB);\fP
+
+\fI\fB
+
 \fBpng_uint_32 png_get_oFFs (png_structp \fP\fIpng_ptr\fP\fB, png_infop \fP\fIinfo_ptr\fP\fB, png_uint_32 \fP\fI*offset_x\fP\fB, png_uint_32 \fP\fI*offset_y\fP\fB, int \fI*unit_type\fP\fB);\fP
 
 \fI\fB
@@ -213,6 +225,10 @@ libpng \- Portable Network Graphics (PNG) Reference Library 1.4.5
 \fI\fB
 
 \fBfloat png_get_pixel_aspect_ratio (png_structp \fP\fIpng_ptr\fP\fB, png_infop \fIinfo_ptr\fP\fB);\fP
+
+\fI\fB
+
+\fBpng_fixed_point png_get_pixel_aspect_ratio_fixed (png_structp \fP\fIpng_ptr\fP\fB, png_infop \fIinfo_ptr\fP\fB);\fP
 
 \fI\fB
 
@@ -239,6 +255,18 @@ libpng \- Portable Network Graphics (PNG) Reference Library 1.4.5
 \fI\fB
 
 \fBpng_uint_32 png_get_sBIT (png_structp \fP\fIpng_ptr\fP\fB, png_infop \fP\fIinfo_ptr\fP\fB, png_color_8p \fI*sig_bit\fP\fB);\fP
+
+\fI\fB
+
+\fBvoid png_get_sCAL (png_structp \fP\fIpng_ptr\fP\fB, png_infop \fP\fIinfo_ptr\fP\fB, int* \fP\fIunit\fP\fB, double* \fP\fIwidth\fP\fB, double* \fIheight\fP\fB);\fP
+
+\fI\fB
+
+\fBvoid png_get_sCAL_fixed (png_structp \fP\fIpng_ptr\fP\fB, png_infop \fP\fIinfo_ptr\fP\fB, int* \fP\fIunit\fP\fB, png_fixed_pointp \fP\fIwidth\fP\fB, png_fixed_pointp \fIheight\fP\fB);\fP
+
+\fI\fB
+
+\fBvoid png_get_sCAL_s (png_structp \fP\fIpng_ptr\fP\fB, png_infop \fP\fIinfo_ptr\fP\fB, int* \fP\fIunit\fP\fB, png_charpp \fP\fIwidth\fP\fB, \fIpng_charppheight\fP\fB);\fP
 
 \fI\fB
 
@@ -306,6 +334,14 @@ libpng \- Portable Network Graphics (PNG) Reference Library 1.4.5
 
 \fI\fB
 
+\fBfloat png_get_x_offset_inches (png_structp \fP\fIpng_ptr\fP\fB, png_infop \fIinfo_ptr\fP\fB);\fP
+
+\fI\fB
+
+\fBpng_fixed_point png_get_x_offset_inches_fixed (png_structp \fP\fIpng_ptr\fP\fB, png_infop \fIinfo_ptr\fP\fB);\fP
+
+\fI\fB
+
 \fBpng_int_32 png_get_x_offset_microns (png_structp \fP\fIpng_ptr\fP\fB, png_infop \fIinfo_ptr\fP\fB);\fP
 
 \fI\fB
@@ -315,6 +351,14 @@ libpng \- Portable Network Graphics (PNG) Reference Library 1.4.5
 \fI\fB
 
 \fBpng_uint_32 png_get_x_pixels_per_meter (png_structp \fP\fIpng_ptr\fP\fB, png_infop \fIinfo_ptr\fP\fB);\fP
+
+\fI\fB
+
+\fBfloat png_get_y_offset_inches (png_structp \fP\fIpng_ptr\fP\fB, png_infop \fIinfo_ptr\fP\fB);\fP
+
+\fI\fB
+
+\fBpng_fixed_point png_get_y_offset_inches_fixed (png_structp \fP\fIpng_ptr\fP\fB, png_infop \fIinfo_ptr\fP\fB);\fP
 
 \fI\fB
 
@@ -338,19 +382,15 @@ libpng \- Portable Network Graphics (PNG) Reference Library 1.4.5
 
 \fI\fB
 
+\fBvoid png_longjmp (png_structp \fP\fIpng_ptr\fP\fB, int \fIval\fP\fB);\fP
+
+\fI\fB
+
 \fBpng_voidp png_malloc (png_structp \fP\fIpng_ptr\fP\fB, png_alloc_size_t \fIsize\fP\fB);\fP
 
 \fI\fB
 
 \fBpng_voidp png_malloc_default(png_structp \fP\fIpng_ptr\fP\fB, png_alloc_size_t \fIsize\fP\fB);\fP
-
-\fI\fB
-
-\fBvoidp png_memcpy (png_voidp \fP\fIs1\fP\fB, png_voidp \fP\fIs2\fP\fB, png_size_t \fIsize\fP\fB);\fP
-
-\fI\fB
-
-\fBvoidp png_memset (png_voidp \fP\fIs1\fP\fB, int \fP\fIvalue\fP\fB, png_size_t \fIsize\fP\fB);\fP
 
 \fI\fB
 
@@ -407,6 +447,10 @@ libpng \- Portable Network Graphics (PNG) Reference Library 1.4.5
 \fI\fB
 
 \fBvoid png_set_background (png_structp \fP\fIpng_ptr\fP\fB, png_color_16p \fP\fIbackground_color\fP\fB, int \fP\fIbackground_gamma_code\fP\fB, int \fP\fIneed_expand\fP\fB, double \fIbackground_gamma\fP\fB);\fP
+
+\fI\fB
+
+\fBvoid png_set_background_fixed (png_structp \fP\fIpng_ptr\fP\fB, png_color_16p \fP\fIbackground_color\fP\fB, int \fP\fIbackground_gamma_code\fP\fB, int \fP\fIneed_expand\fP\fB, png_uint_32 \fIbackground_gamma\fP\fB);\fP
 
 \fI\fB
 
@@ -478,11 +522,19 @@ libpng \- Portable Network Graphics (PNG) Reference Library 1.4.5
 
 \fI\fB
 
+\fBvoid png_set_filter_heuristics_fixed (png_structp \fP\fIpng_ptr\fP\fB, int \fP\fIheuristic_method\fP\fB, int \fP\fInum_weights\fP\fB, png_fixed_point_p \fP\fIfilter_weights\fP\fB, png_fixed_point_p \fIfilter_costs\fP\fB);\fP
+
+\fI\fB
+
 \fBvoid png_set_flush (png_structp \fP\fIpng_ptr\fP\fB, int \fInrows\fP\fB);\fP
 
 \fI\fB
 
 \fBvoid png_set_gamma (png_structp \fP\fIpng_ptr\fP\fB, double \fP\fIscreen_gamma\fP\fB, double \fIdefault_file_gamma\fP\fB);\fP
+
+\fI\fB
+
+\fBvoid png_set_gamma_fixed (png_structp \fP\fIpng_ptr\fP\fB, png_uint_32 \fP\fIscreen_gamma\fP\fB, png_uint_32 \fIdefault_file_gamma\fP\fB);\fP
 
 \fI\fB
 
@@ -598,7 +650,7 @@ libpng \- Portable Network Graphics (PNG) Reference Library 1.4.5
 
 \fI\fB
 
-\fBvoid png_set_rgb_to_gray_fixed (png_structp \fP\fIpng_ptr\fP\fB, int error_action png_fixed_point \fP\fIred\fP\fB, png_fixed_point \fIgreen\fP\fB);\fP
+\fBvoid png_set_rgb_to_gray_fixed (png_structp \fP\fIpng_ptr\fP\fB, int error_action png_uint_32 \fP\fIred\fP\fB, png_uint_32 \fIgreen\fP\fB);\fP
 
 \fI\fB
 
@@ -610,7 +662,21 @@ libpng \- Portable Network Graphics (PNG) Reference Library 1.4.5
 
 \fI\fB
 
-\fBvoid png_set_sCAL (png_structp \fP\fIpng_ptr\fP\fB, png_infop \fP\fIinfo_ptr\fP\fB, png_charp \fP\fIunit\fP\fB, double \fP\fIwidth\fP\fB, double \fIheight\fP\fB);\fP
+\fBvoid png_set_sCAL (png_structp \fP\fIpng_ptr\fP\fB, png_infop \fP\fIinfo_ptr\fP\fB, int \fP\fIunit\fP\fB, double \fP\fIwidth\fP\fB, double \fIheight\fP\fB);\fP
+
+\fI\fB
+
+\fBvoid png_set_sCAL_fixed (png_structp \fP\fIpng_ptr\fP\fB, png_infop \fP\fIinfo_ptr\fP\fB, int \fP\fIunit\fP\fB, png_fixed_point \fP\fIwidth\fP\fB, png_fixed_point \fIheight\fP\fB);\fP
+
+\fI\fB
+
+\fBvoid png_set_sCAL_s (png_structp \fP\fIpng_ptr\fP\fB, png_infop \fP\fIinfo_ptr\fP\fB, int \fP\fIunit\fP\fB, png_charp \fP\fIwidth\fP\fB, png_charp \fIheight\fP\fB);\fP
+
+\fI\fB
+
+\fI\fB
+
+\fI\fB
 
 \fI\fB
 
@@ -781,11 +847,11 @@ library supports encoding, decoding, and various manipulations of
 the Portable Network Graphics (PNG) format image files.  It uses the
 .IR zlib(3)
 compression library.
-Following is a copy of the libpng.txt file that accompanies libpng.
+Following is a copy of the libpng-manual.txt file that accompanies libpng.
 .SH LIBPNG.TXT
-libpng.txt - A description on how to use and modify libpng
+libpng-manual.txt - A description on how to use and modify libpng
 
- libpng version 1.4.5 - December 9, 2010
+ libpng version 1.5.0 - January 6, 2011
  Updated and distributed by Glenn Randers-Pehrson
  <glennrp at users.sourceforge.net>
  Copyright (c) 1998-2010 Glenn Randers-Pehrson
@@ -796,7 +862,7 @@ libpng.txt - A description on how to use and modify libpng
 
  Based on:
 
- libpng versions 0.97, January 1998, through 1.4.5 - December 9, 2010
+ libpng versions 0.97, January 1998, through 1.5.0 - January 6, 2011
  Updated and distributed by Glenn Randers-Pehrson
  Copyright (c) 1998-2010 Glenn Randers-Pehrson
 
@@ -884,33 +950,180 @@ same instance of a structure.
 .SH II. Structures
 
 There are two main structures that are important to libpng, png_struct
-and png_info.  The first, png_struct, is an internal structure that
-will not, for the most part, be used by a user except as the first
-variable passed to every libpng function call.
+and png_info.  Both are internal structures that are no longer exposed
+in the libpng interface (as of libpng 1.5.0).
 
 The png_info structure is designed to provide information about the
 PNG file.  At one time, the fields of png_info were intended to be
 directly accessible to the user.  However, this tended to cause problems
 with applications using dynamically loaded libraries, and as a result
 a set of interface functions for png_info (the png_get_*() and png_set_*()
-functions) was developed.  The fields of png_info are still available for
-older applications, but it is suggested that applications use the new
-interfaces if at all possible.
+functions) was developed.
 
-Applications that do make direct access to the members of png_struct (except
-for png_ptr->jmpbuf) must be recompiled whenever the library is updated,
-and applications that make direct access to the members of png_info must
-be recompiled if they were compiled or loaded with libpng version 1.0.6,
-in which the members were in a different order.  In version 1.0.7, the
-members of the png_info structure reverted to the old order, as they were
-in versions 0.97c through 1.0.5.  Starting with version 2.0.0, both
-structures are going to be hidden, and the contents of the structures will
-only be accessible through the png_get/png_set functions.
+The png_struct structure is the object used by the library to decode a
+single image.  As of 1.5.0 this structure is also not exposed.
+
+Almost all libpng APIs require a pointer to a png_struct as the first argument.
+Many (in particular the png_set and png_get APIs) also require a pointer
+to png_info as the second argument.  Some application visible macros
+defined in png.h designed for basic data access (reading and writing
+integers in the PNG format) break this rule, but it's almost always safe
+to assume that a (png_struct*) has to be passed to call an API function.
 
 The png.h header file is an invaluable reference for programming with libpng.
 And while I'm on the topic, make sure you include the libpng header file:
 
 #include <png.h>
+
+.SS Types
+
+The png.h header file defines a number of integral types used by the
+APIs.  Most of these are fairly obvious; for example types corresponding
+to integers of particular sizes and types for passing color values.
+
+One exception is how non-integral numbers are handled.  For application
+convenience most APIs that take such numbers have C (double) arguments,
+however internally PNG, and libpng, use 32 bit signed integers and encode
+the value by multiplying by 100,000.  As of libpng 1.5.0 a convenience
+macro PNG_FP_1 is defined in png.h along with a type (png_fixed_point)
+which is simply (png_int_32).
+
+All APIs that take (double) arguments also have an matching API that
+takes the corresponding fixed point integer arguments.  The fixed point
+API has the same name as the floating point one with _fixed appended.
+The actual range of values permitted in the APIs is frequently less than
+the full range of (png_fixed_point) (-21474 to +21474).  When APIs require
+a non-negative argument the type is recorded as png_uint_32 above.  Consult
+the header file and the text below for more information.
+
+Special care must be take with sCAL chunk handling because the chunk itself
+uses non-integral values encoded as strings containing decimal floating point
+numbers.  See the comments in the header file.
+
+.SS Configuration
+
+The main header file function declarations are frequently protected by C
+preprocessing directives of the form:
+
+    #ifdef PNG_feature_SUPPORTED
+    declare-function
+    #endif
+
+The library can be built without support for these APIs, although a
+standard build will have all implemented APIs.  Application programs
+should check the feature macros before using an API for maximum
+portability.  From libpng 1.5.0 the feature macros set during the build
+of libpng are recorded in the header file "pnglibconf.h" and this file
+is always included by png.h.
+
+If you don't need to change the library configuration from the default skip to
+the next section ("Reading").
+
+Notice that some of the makefiles in the 'scripts' directory and (in 1.5.0) all
+of the build project files in the 'projects' directory simply copy
+scripts/pnglibconf.h.prebuilt to pnglibconf.h.  This means that these build
+systems do not permit easy auto-configuration of the library - they only
+support the default configuration.
+
+The easiest way to make minor changes to the libpng configuration when
+auto-configuration is supported is to add definitions to the command line
+using (typically) CPPFLAGS.  For example:
+
+CPPFLAGS=-DPNG_NO_FLOATING_ARITHMETIC
+
+will change the internal libpng math implementation for gamma correction and
+other arithmetic calculations to fixed point, avoiding the need for fast
+floating point support.  The result can be seen in the generated pnglibconf.h -
+make sure it contains the changed feature macro setting.
+
+If you need to make more extensive configuration changes - more than one or two
+feature macro settings - you can either add -DPNG_USER_CONFIG to the build
+command line and put a list of feature macro settings in pngusr.h or you can set
+DFA_XTRA (a makefile variable) to a file containing the same information in the
+form of 'option' settings.
+
+A. Changing pnglibconf.h
+
+A variety of methods exist to build libpng.  Not all of these support
+reconfiguration of pnglibconf.h.  To reconfigure pnglibconf.h it must either be
+rebuilt from scripts/pnglibconf.dfa using awk or it must be edited by hand.
+
+Hand editing is achieved by copying scripts/pnglibconf.h.prebuilt and changing
+the lines defining the supported features, paying very close attention to the
+'option' information in scripts/pnglibconf.dfa that describes those features and
+their requirements.  This is easy to get wrong.
+
+B. Configuration using DFA_XTRA
+
+Rebuilding from pnglibconf.dfa is easy if a functioning 'awk', or a later
+variant such as 'nawk' or 'gawk', is available.  The configure build will
+automatically find an appropriate awk and build pnglibconf.h.
+scripts/pnglibconf.mak contains a set of make rules for doing the same thing if
+configure is not used, and many of the makefiles in the scripts directory use
+this approach.
+
+When rebuilding simply write new file containing changed options and set
+DFA_XTRA to the name of this file.  This causes the build to append the new file
+to the end of scripts/pnglibconf.dfa.  pngusr.dfa should contain lines of the
+following forms:
+
+everything = off
+
+This turns all optional features off.  Include it at the start of pngusr.dfa to
+make it easier to build a minimal configuration.  You will need to turn at least
+some features on afterward to enable either reading or writing code, or both.
+
+option feature on
+option feature off
+
+Enable or disable a single feature.  This will automatically enable other
+features required by a feature that is turned on or disable other features that
+require a feature which is turned off.  Conflicting settings will cause an error
+message to be emitted by awk.
+
+setting feature default value
+
+Changes the default value of setting 'feature' to 'value'.  There are a small
+number of settings listed at the top of pnglibconf.h, they are documented in the
+source code.  Most of these values have performance implications for the library
+but most of them have no visible effect on the API.  Some can also be overridden
+from the API.
+
+C. Configuration using PNG_USR_CONFIG
+
+If -DPNG_USR_CONFIG is added to the CFLAGS when pnglibconf.h is built the file
+pngusr.h will automatically be included before the options in
+scripts/pnglibconf.dfa are processed.  pngusr.h should contain only macro
+definitions turning features on or off or setting settings.
+
+Apart from the global setting "everything = off" all the options listed above
+can be set using macros in pngusr.h:
+
+#define PNG_feature_SUPPORTED
+
+is equivalent to:
+
+option feature on
+
+#define PNG_NO_feature
+
+is equivalent to:
+
+option feature off
+
+#define PNG_feature value
+
+is equivalent to:
+
+setting feature default value
+
+Notice that in both cases, pngusr.dfa and pngusr.h, the contents of the
+pngusr file you supply override the contents of scripts/pnglibconf.dfa
+
+If confusing or incomprehensible behavior results it is possible to
+examine the intermediate file pnglibconf.dfn to find the full set of
+dependency information for each setting and option.  Simply locate the
+feature in the file and read the C comments that precede it.
 
 .SH III. Reading
 
@@ -1688,7 +1901,7 @@ things.
 As of libpng version 1.2.9, png_set_expand_gray_1_2_4_to_8() was
 added.  It expands the sample depth without changing tRNS to alpha.
 
-As of libpng version 1.4.5, not all possible expansions are supported.
+As of libpng version 1.5.0, not all possible expansions are supported.
 
 In the following table, the 01 means grayscale with depth<8, 31 means
 indexed with depth<8, other numerals represent the color type, "T" means
@@ -1934,7 +2147,8 @@ a slightly smaller exponent is better.
            guess for Mac systems */
    }
 
-The png_set_gamma() function handles gamma transformations of the data.
+The functions png_set_gamma() and its fixed point equivalent
+png_set_gamma_fixed() handle gamma transformations of the data.
 Pass both the file gamma and the current screen_gamma.  If the file does
 not have a gamma value, you can pass one anyway if you have an idea what
 it is (usually 0.45455 is a good guess for GIF images on PCs).  Note
@@ -1950,7 +2164,7 @@ recommended that PNG viewers support gamma correction.
 
 If you need to reduce an RGB file to a paletted file, or if a paletted
 file has more entries then will fit on your screen, png_set_quantize()
-will do that.  Note that this is a simple match dither that merely
+will do that.  Note that this is a simple match quantization that merely
 finds the closest color available.  This should work fairly well with
 optimized palettes, and fairly badly with linear color cubes.  If you
 pass a palette that is larger then maximum_colors, the file will
@@ -2064,6 +2278,15 @@ are allocating one large chunk, you will need to build an
 array of pointers to each row, as it will be needed for some
 of the functions below.
 
+Remember: Before you call png_read_update_info the png_get_
+functions return the values corresponding to the original PNG image.
+After you call png_read_update_info the values refer to the image
+that libpng will output.  Consequently you must call all the png_set_
+functions before you call png_read_update_info.  This is particularly
+important for png_set_interlace_handling - if you are going to call
+png_read_update_info you must call png_set_interlace_handling before
+it unless you want to receive interlaced output.
+
 .SS Reading image data
 
 After you've allocated memory, you can read the image data.
@@ -2073,9 +2296,10 @@ call png_read_image() and libpng will read in all the image data
 and put it in the memory area supplied.  You will need to pass in
 an array of pointers to each row.
 
-This function automatically handles interlacing, so you don't need
-to call png_set_interlace_handling() or call this function multiple
-times, or any of that other stuff necessary with png_read_rows().
+This function automatically handles interlacing, so you don't
+need to call png_set_interlace_handling() (unless you call
+png_read_update_info()) or call this function multiple times, or any
+of that other stuff necessary with png_read_rows().
 
    png_read_image(png_ptr, row_pointers);
 
@@ -2102,13 +2326,15 @@ a single row_pointer instead of an array of row_pointers:
 
 If the file is interlaced (interlace_type != 0 in the IHDR chunk), things
 get somewhat harder.  The only current (PNG Specification version 1.2)
-interlacing type for PNG is (interlace_type == PNG_INTERLACE_ADAM7)
-is a somewhat complicated 2D interlace scheme, known as Adam7, that
+interlacing type for PNG is (interlace_type == PNG_INTERLACE_ADAM7);
+a somewhat complicated 2D interlace scheme, known as Adam7, that
 breaks down an image into seven smaller images of varying size, based
-on an 8x8 grid.
+on an 8x8 grid.  This number is defined (from libpng 1.5) as
+PNG_INTERLACE_ADAM7_PASSES in png.h
 
 libpng can fill out those images or it can give them to you "as is".
-If you want them filled out, there are two ways to do that.  The one
+It is almost always better to have libpng handle the interlacing for you.
+If you want the images filled out, there are two ways to do that.  The one
 mentioned in the PNG specification is to expand each pixel to cover
 those pixels that have not been read yet (the "rectangle" method).
 This results in a blocky image for the first pass, which gradually
@@ -2118,37 +2344,20 @@ rest of the image remaining whatever colors they were initialized to
 before the start of the read.  The first method usually looks better,
 but tends to be slower, as there are more pixels to put in the rows.
 
-If you don't want libpng to handle the interlacing details, just call
-png_read_rows() seven times to read in all seven images.  Each of the
-images is a valid image by itself, or they can all be combined on an
-8x8 grid to form a single image (although if you intend to combine them
-you would be far better off using the libpng interlace handling).
-
-The first pass will return an image 1/8 as wide as the entire image
-(every 8th column starting in column 0) and 1/8 as high as the original
-(every 8th row starting in row 0), the second will be 1/8 as wide
-(starting in column 4) and 1/8 as high (also starting in row 0).  The
-third pass will be 1/4 as wide (every 4th pixel starting in column 0) and
-1/8 as high (every 8th row starting in row 4), and the fourth pass will
-be 1/4 as wide and 1/4 as high (every 4th column starting in column 2,
-and every 4th row starting in row 0).  The fifth pass will return an
-image 1/2 as wide, and 1/4 as high (starting at column 0 and row 2),
-while the sixth pass will be 1/2 as wide and 1/2 as high as the original
-(starting in column 1 and row 0).  The seventh and final pass will be as
-wide as the original, and 1/2 as high, containing all of the odd
-numbered scanlines.  Phew!
-
-If you want libpng to expand the images, call this before calling
-png_start_read_image() or png_read_update_info():
+If, as is likely, you want libpng to expand the images, call this before
+calling png_start_read_image() or png_read_update_info():
 
     if (interlace_type == PNG_INTERLACE_ADAM7)
         number_of_passes
            = png_set_interlace_handling(png_ptr);
 
-This will return the number of passes needed.  Currently, this
-is seven, but may change if another interlace type is added.
-This function can be called even if the file is not interlaced,
-where it will return one pass.
+This will return the number of passes needed.  Currently, this is seven,
+but may change if another interlace type is added.  This function can be
+called even if the file is not interlaced, where it will return one pass.
+You then need to read the whole image 'number_of_passes' times.  Each time
+will distribute the pixels from the current pass to the correct place in
+the output image, so you need to supply the same rows to png_read_rows in
+each pass.
 
 If you are not going to display the image after each pass, but are
 going to wait until the entire image is read in, use the sparkle
@@ -2173,6 +2382,94 @@ the second parameter NULL.
 
     png_read_rows(png_ptr, NULL, row_pointers,
        number_of_rows);
+
+If you don't want libpng to handle the interlacing details, just call
+png_read_rows() PNG_INTERLACE_ADAM7_PASSES times to read in all the images.
+Each of the images is a valid image by itself, however you will almost
+certainly need to distribute the pixels from each sub-image to the
+correct place.  This is where everything gets very tricky.
+
+If you want to retrieve the separate images you must pass the correct
+number of rows to each successive call of png_read_rows().  The calculation
+gets pretty complicated for small images, where some sub-images may
+not even exist because either their width or height ends up zero.
+libpng provides two macros to help you in 1.5 and later versions:
+
+   png_uint_32 width = PNG_PASS_COLS(image_width, pass_number);
+   png_uint_32 height = PNG_PASS_ROWS(image_height, pass_number);
+
+Respectively these tell you the width and height of the sub-image
+corresponding to the numbered pass.  'pass' is in in the range 0 to 6 -
+this can be confusing because the specification refers to the same passes
+as 1 to 7!  Be careful, you must check both the width and height before
+calling png_read_rows() and not call it for that pass if either is zero.
+
+You can, of course, read each sub-image row by row.  If you want to
+produce optimal code to make a pixel-by-pixel transformation of an
+interlaced image this is the best approach; read each row of each pass,
+transform it, and write it out to a new interlaced image.
+
+If you want to de-interlace the image yourself libpng provides further
+macros to help that tell you where to place the pixels in the output image.
+Because the interlacing scheme is rectangular - sub-image pixels are always
+arranged on a rectangular grid - all you need to know for each pass is the
+starting column and row in the output image of the first pixel plus the
+spacing between each pixel.  As of libpng 1.5 there are four macros to
+retrieve this information:
+
+   png_uint_32 x = PNG_PASS_START_COL(pass);
+   png_uint_32 y = PNG_PASS_START_ROW(pass);
+   png_uint_32 xStep = 1U << PNG_PASS_COL_SHIFT(pass);
+   png_uint_32 yStep = 1U << PNG_PASS_ROW_SHIFT(pass);
+
+These allow you to write the obvious loop:
+
+   png_uint_32 input_y = 0;
+   png_uint_32 output_y = PNG_PASS_START_ROW(pass);
+
+   while (output_y < output_image_height)
+   {
+      png_uint_32 input_x = 0;
+      png_uint_32 output_x = PNG_PASS_START_COL(pass);
+
+      while (output_x < output_image_width)
+      {
+         image[output_y][output_x] = subimage[pass][input_y][input_x++];
+         output_x += xStep;
+      }
+
+      ++input_y;
+      ouput_y += yStep;
+   }
+
+Notice that the steps between successive output rows and columns are
+returned as shifts.  This is possible because the pixels in the subimages
+are always a power of 2 apart - 1, 2, 4 or 8 pixels - in the original
+image.  In practice you may need to directly calculate the output coordinate
+given an input coordinate.  libpng provides two further macros for this
+purpose:
+
+   png_uint_32 output_x = PNG_COL_FROM_PASS_COL(input_x, pass);
+   png_uint_32 output_y = PNG_ROW_FROM_PASS_ROW(input_y, pass);
+
+Finally a pair of macros are provided to tell you if a particular image
+row or column appears in a given pass:
+
+   int col_in_pass = PNG_COL_IN_INTERLACE_PASS(output_x, pass);
+   int row_in_pass = PNG_ROW_IN_INTERLACE_PASS(output_y, pass);
+
+Bear in mind that you will probably also need to check the width and height
+of the pass in addition to the above to be sure the pass even exists!
+
+With any luck you are convinced by now that you don't want to do your own
+interlace handling.  In reality normally the only good reason for doing this
+is if you are processing PNG files on a pixel-by-pixel basis and don't want
+to load the whole file into memory when it is interlaced.
+
+libpng includes a test program, pngvalid, that illustrates reading and
+writing of interlaced images.  If you can't get interlacing to work in your
+code and don't want to leave it to libpng (the recommended approach) see
+how pngvalid.c does it.
 
 .SS Finishing a sequential read
 
@@ -2379,6 +2676,9 @@ png_infop info_ptr;
        any).  You may start getting rows before
        png_process_data() returns, so this is your
        last chance to prepare for that.
+
+       This is where you turn on interlace handling,
+       assuming you don't want to do it yourself.
      */
  }
 
@@ -2399,14 +2699,22 @@ png_infop info_ptr;
        supplying them because it may make your life
        easier.
 
-       For the non-NULL rows of interlaced images,
+       If you did not turn on interlace handling then
+       the callback is called for each row of each
+       sub-image when the image is interlaced.  In this
+       case 'row_num' is the row in the sub-image, not
+       the row in the output image as it is in all other
+       cases.
+
+       For the non-NULL rows of interlaced images when
+       you have switched on libpng interlace handling,
        you must call png_progressive_combine_row()
        passing in the row and the old row.  You can
        call this function for NULL rows (it will just
        return) and for non-interlaced images (it just
        does the memcpy for you) if it will make the
        code easier.  Thus, you can just do this for
-       all cases:
+       all cases if you switch on interlace handling;
      */
 
         png_progressive_combine_row(png_ptr, old_row,
@@ -2582,11 +2890,10 @@ filter types.
        PNG_FILTER_PAETH | PNG_FILTER_VALUE_PAETH|
        PNG_ALL_FILTERS);
 
-If an application
-wants to start and stop using particular filters during compression,
-it should start out with all of the filters (to ensure that the previous
-row of pixels will be stored in case it's needed later), and then add
-and remove them after the start of compression.
+If an application wants to start and stop using particular filters during
+compression, it should start out with all of the filters (to ensure that
+the previous row of pixels will be stored in case it's needed later),
+and then add and remove them after the start of compression.
 
 If you are writing a PNG datastream that is to be embedded in a MNG
 datastream, the second parameter can be either 0 or 64.
@@ -3185,25 +3492,39 @@ for details of which pixels to write when.
 
 If you don't want libpng to handle the interlacing details, just
 use png_set_interlace_handling() and call png_write_rows() the
-correct number of times to write all seven sub-images.
+correct number of times to write all the sub-images
+(png_set_interlace_handling() returns the number of sub-images.)
 
 If you want libpng to build the sub-images, call this before you start
 writing any rows:
 
-    number_of_passes =
-       png_set_interlace_handling(png_ptr);
+    number_of_passes = png_set_interlace_handling(png_ptr);
 
 This will return the number of passes needed.  Currently, this is seven,
 but may change if another interlace type is added.
 
 Then write the complete image number_of_passes times.
 
-    png_write_rows(png_ptr, row_pointers,
-       number_of_rows);
+    png_write_rows(png_ptr, row_pointers, number_of_rows);
 
-As some of these rows are not used, and thus return immediately, you may
-want to read about interlacing in the PNG specification, and only update
-the rows that are actually used.
+Think carefully before you write an interlaced image.  Typically code that
+reads such images reads all the image data into memory, uncompressed, before
+doing any processing.  Only code that can display an image on the fly can
+take advantage of the interlacing and even then the image has to be exactly
+the correct size for the output device, because scaling an image requires
+adjacent pixels and these are not available until all the passes have been
+read.
+
+If you do write an interlaced image you will hardly ever need to handle
+the interlacing yourself.  Call png_set_interlace_handling() and use the
+approach described above.
+
+The only time it is conceivable that you will really need to write an
+interlaced image pass-by-pass is when you have read one pass by pass and
+made some pixel-by-pixel transformation to it, as described in the read
+code above.  In this case use the PNG_PASS_ROWS and PNG_PASS_COLS macros
+to determine the size of each sub-image in turn and simply write the rows
+you obtained from the read code.
 
 .SS Finishing a sequential write
 
@@ -3311,9 +3632,11 @@ these functions, call the appropriate png_set_*_fn() function.
 
 Memory allocation is done through the functions png_malloc(), png_calloc(),
 and png_free().  These currently just call the standard C functions.
-png_calloc() calls png_malloc() and then png_memset() to clear the newly
-allocated memory to zero.  If your pointers can't access more then 64K
-at a time, you will want to set MAXSEG_64K in zlib.h.  Since it is
+png_calloc() calls png_malloc() and then clears the newly
+allocated memory to zero.  There is limited support for certain systems
+with segmented memory architectures and the types of pointers declared by
+png.h match this; you will have to use appropriate pointers in your
+application.  Since it is
 unlikely that the method of handling memory allocation on a platform
 will change between applications, these functions must be modified in
 the library at compile time.  If you prefer to use a different method
@@ -3899,8 +4222,8 @@ png_get_mmx_bitdepth_threshold(), png_get_mmx_rowbytes_threshold(),
 png_set_asm_flags(), and png_mmx_supported()
 
 We removed the obsolete png_check_sig(), png_memcpy_check(), and
-png_memset_check() functions.  Instead use !png_sig_cmp(), png_memcpy(),
-and png_memset(), respectively.
+png_memset_check() functions.  Instead use !png_sig_cmp(), memcpy(),
+and memset(), respectively.
 
 The function png_set_gray_1_2_4_to_8() was removed. It has been
 deprecated since libpng-1.0.18 and 1.2.9, when it was replaced with
@@ -3921,7 +4244,7 @@ to
 This also applies to the prototype for the user replacement malloc_fn().
 
 The png_calloc() function was added and is used in place of
-of "png_malloc(); png_memset();" except in the case in png_read_png()
+of "png_malloc(); memset();" except in the case in png_read_png()
 where the array consists of pointers; in this case a "for" loop is used
 after the png_malloc() to set the pointers to NULL, to give robust.
 behavior in case the application runs out of memory part-way through
@@ -3950,7 +4273,257 @@ PNG_QUANTIZE_[RED,GREEN,BLUE]_BITS.
 
 We removed the trailing '.' from the warning and error messages.
 
-.SH X. Detecting libpng
+.SH X.  Changes to Libpng from version 1.4.x to 1.5.x
+
+From libpng-1.4.0 until 1.4.4, the png_get_uint_16 macro (but not the  
+function) incorrectly returned a value of type png_uint_32.
+
+A. Changes that affect users of libpng
+
+There are no substantial API changes between the non-deprecated parts of
+the 1.4.5 API and the 1.5.0 API, however the ability to directly access
+the main libpng control structures, png_struct and png_info, deprecated
+in earlier versions of libpng, has been completely removed from
+libpng 1.5.
+
+There are changes of form in png.h, including new and changed macros to
+declare
+parts of the API.  Some API functions with arguments that are pointers to
+data not modified within the function have been corrected to declare
+these arguments with PNG_CONST.
+
+Much of the internal use of C macros to control the library build has also
+changed and some of this is visible in the exported header files, in
+particular the use of macros to control data and API elements visible
+during application compilation may require significant revision to
+application code.  (It is extremely rare for an application to do this.)
+
+Any program that compiled against libpng 1.4 and did not use deprecated
+features or access internal library structures should compile and work
+against libpng 1.5.
+
+libpng 1.5.0 adds PNG_ PASS macros to help in the reading and writing of
+interlaced images.  The macros return the number of rows and columns in
+each pass and information that can be used to de-interlace and (if
+absolutely necessary) interlace an image.
+
+libpng 1.5.0 adds an API png_longjmp(png_ptr, value).  This API calls
+the application provided png_longjmp_ptr on the internal, but application
+initialized, jmpbuf.  It is provided as a convenience to avoid the need
+to use the png_jmpbuf macro, which had the unnecessary side effect of
+resetting the internal png_longjmp_ptr value.
+
+libpng 1.5.0 includes a complete fixed point API.  By default this is
+present along with the corresponding floating point API.  In general the
+fixed point API is faster and smaller than the floating point one because
+the PNG file format used fixed point, not floating point.  This applies
+even if the library uses floating point in internal calculations.  A new
+macro, PNG_FLOATING_ARITHMETIC_SUPPORTED, reveals whether the library
+uses floating point arithmetic (the default) or fixed point arithmetic
+internally for performance critical calculations such as gamma correction.
+
+Fixed point support for the sCAL chunk comes with an important caveat;
+the sCAL specification uses a decimal encoding of floating point values
+and the accuracy of PNG fixed point values is insufficient for
+representation of these values. Consequently a "string" API
+(png_get_sCAL_s and png_set_sCAL_s) is the only reliable way of reading
+arbitrary sCAL chunks in the absence of either the floating point API or
+internal floating point calculations.
+
+Applications no longer need to include the optional distribution header
+file pngusr.h or define the corresponding macros during application
+build in order to see the correct variant of the libpng API.  From 1.5.0
+application code can check for the corresponding _SUPPORTED macro:
+
+#ifdef PNG_INCH_CONVERSIONS_SUPPORTED
+   /* code that uses the inch conversion APIs. */
+#endif
+
+This macro will only be defined if the inch conversion functions have been
+compiled into libpng.  The full set of macros, and whether or not support
+has been compiled in, are available in the header file pnglibconf.h.
+This header file is specific to the libpng build.  Notice that prior to
+1.5.0 the _SUPPORTED macros would always have the default definition unless
+reset by pngusr.h or by explicit settings on the compiler command line.
+These settings may produce compiler warnings or errors in 1.5.0 because
+of macro redefinition.
+
+From libpng-1.4.0 until 1.4.4, the png_get_uint_16 macro (but not the  
+function) incorrectly returned a value of type png_uint_32.  libpng 1.5.0
+is consistent with the implementation in 1.4.5 and 1.2.x (where the macro
+did not exist.)
+
+Applications can now choose whether to use these macros or to call the
+corresponding function by defining PNG_USE_READ_MACROS or
+PNG_NO_USE_READ_MACROS before including png.h.  Notice that this is
+only supported from 1.5.0 -defining PNG_NO_USE_READ_MACROS prior to 1.5.0
+ will lead to a link failure.
+
+B. Changes to the build and configuration of libpng
+
+Details of internal changes to the library code can be found in the CHANGES
+file.  These will be of no concern to the vast majority of library users or
+builders, however the few who configure libpng to a non-default feature
+set may need to change how this is done.
+
+There should be no need for library builders to alter build scripts if
+these use the distributed build support - configure or the makefiles -
+however users of the makefiles may care to update their build scripts
+to build pnglibconf.h where the corresponding makefile does not do so.
+
+Building libpng with a non-default configuration has changed completely.
+The old method using pngusr.h should still work correctly even though the
+way pngusr.h is used in the build has been changed, however library
+builders will probably want to examine the changes to take advantage of
+new capabilities and to simplify their build system.
+
+B.1 Specific changes to library configuration capabilities
+
+The library now supports a complete fixed point implementation and can
+thus be used on systems which have no floating point support or very
+limited or slow support.  Previously gamma correction, an essential part
+of complete PNG support, required reasonably fast floating point.
+
+As part of this the choice of internal implementation has been made
+independent of the choice of fixed versus floating point APIs and all the
+missing fixed point APIs have been implemented.
+
+The exact mechanism used to control attributes of API functions has
+changed.  A single set of operating system independent macro definitions
+is used and operating system specific directives are defined in
+pnglibconf.h
+
+As part of this the mechanism used to chose procedure call standards on those
+systems that allow a choice has been changed.  At present this only
+affects certain Microsoft (DOS, Windows) and IBM (OS/2) operating systems
+running on Intel processors.  As before PNGAPI is defined where required
+to control the exported API functions; however, two new macros, PNGCBAPI
+and PNGCAPI, are used instead for callback functions (PNGCBAPI) and
+(PNGCAPI) for functions that must match a C library prototype (currently
+only png_longjmp_ptr, which must match the C longjmp function.)  The new
+approach is documented in pngconf.h
+
+Despite these changes libpng 1.5.0 only supports the native C function
+calling standard on those platforms tested so far (__cdecl on Microsoft
+Windows).  This is because the support requirements for alternative
+calling conventions seem to no longer exist.  Developers who find it
+necessary to set PNG_API_RULE to 1 should advise the mailing list
+(png-mng-implement) of this and library builders who use Openwatcom and
+therefore set PNG_API_RULE to 2 should also contact the mailing list.
+
+A new test program, pngvalid, is provided in addition to pngtest.
+ pngvalid validates the arithmetic accuracy of the gamma correction
+calculations and includes a number of validations of the file format.
+A subset of the full range of tests is run when "make check" is done
+(in the 'configure' build.)  pngvalid also allows total allocated memory
+usage to be evaluated and performs additional memory overwrite validation.
+
+Many changes to individual feature macros have been made. The following
+are the changes most likely to be noticed by library builders who
+configure libpng:
+
+1) All feature macros now have consistent naming:
+
+#define PNG_NO_feature turns the feature off
+#define PNG_feature_SUPPORTED turns the feature on
+
+pnglibconf.h contains one line for each feature macro which is either:
+
+#define PNG_feature_SUPPORTED
+
+if the feature is supported or:
+
+/*#undef PNG_feature_SUPPORTED*/
+
+if it is not.  Library code consistently checks for the 'SUPPORTED' macro.
+It does not, and should not, check for the 'NO' macro which will not
+normally be defined even if the feature is not supported.
+
+Compatibility with the old names is provided as follows:
+
+PNG_INCH_CONVERSIONS turns on PNG_INCH_CONVERSIONS_SUPPORTED
+
+And the following definitions disable the corresponding feature:
+
+PNG_SETJMP_NOT_SUPPORTED disables SETJMP
+PNG_READ_TRANSFORMS_NOT_SUPPORTED disables READ_TRANSFORMS
+PNG_NO_READ_COMPOSITED_NODIV disables READ_COMPOSITE_NODIV
+PNG_WRITE_TRANSFORMS_NOT_SUPPORTED disables WRITE_TRANSFORMS
+PNG_READ_ANCILLARY_CHUNKS_NOT_SUPPORTED disables READ_ANCILLARY_CHUNKS
+PNG_WRITE_ANCILLARY_CHUNKS_NOT_SUPPORTED disables WRITE_ANCILLARY_CHUNKS
+
+Library builders should remove use of the above, inconsistent, names.
+
+2) Warning and error message formatting was previously conditional on
+the STDIO feature. The library has been changed to use the
+CONSOLE_IO feature instead. This means that if CONSOLE_IO is disabled
+the library no longer uses the printf(3) functions, even though the
+default read/write implementations use (FILE) style stdio.h functions.
+
+3) Three feature macros now control the fixed/floating point decisions:
+
+PNG_FLOATING_POINT_SUPPORTED enables the floating point APIs
+
+PNG_FIXED_POINT_SUPPORTED enables the fixed point APIs; however, in
+practice these are normally required internally anyway (because the PNG
+file format is fixed point), therefore in most cases PNG_NO_FIXED_POINT
+merely stops the function from being exported.
+
+PNG_FLOATING_ARITHMETIC_SUPPORTED chooses between the internal floating
+point implementation or the fixed point one.  Typically the fixed point
+implementation is larger and slower than the floating point implementation
+on a system that supports floating point, however it may be faster on a
+system which lacks floating point hardware and therefore uses a software
+emulation.
+
+4) Added PNG_{READ,WRITE}_INT_FUNCTIONS_SUPPORTED.  This allows the
+functions to read and write ints to be disabled independently of
+PNG_USE_READ_MACROS, which allows libpng to be built with the functions
+even though the default is to use the macros - this allows applications
+to choose at app buildtime whether or not to use macros (previously
+impossible because the functions weren't in the default build.)
+
+B.2 Changes to the configuration mechanism
+
+Prior to libpng-1.5.0 library builders who needed to configure libpng
+had either to modify the exported pngconf.h header file to add system
+specific configuration or had to write feature selection macros into
+pngusr.h and cause this to be included into pngconf.h by defining
+PNG_USER_CONFIG. The latter mechanism had the disadvantage that an
+application built without PNG_USER_CONFIG defined would see the
+unmodified, default, libpng API and thus would probably fail to link.
+
+These mechanisms still work in the configure build and in any makefile
+build that builds pnglibconf.h although the feature selection macros
+have changed somewhat as described above.  In 1.5.0, however, pngusr.h
+is processed once when the exported header file pnglibconf.h is built.
+pngconf.h no longer includes pngusr.h, therefore it is ignored after the
+build of pnglibconf.h and it is never included in an application build.
+
+The rarely used alternative of adding a list of feature macros to the
+CFLAGS setting in the build also still works, however the macros will be
+copied to pnglibconf.h and this may produce macro redefinition warnings
+when the individual C files are compiled.
+
+All configuration now only works if pnglibconf.h is built from
+scripts/pnglibconf.dfa.  This requires the program awk.  Brian Kernighan
+(the original author of awk) maintains C source code of that awk and this
+and all known later implementations (often called by subtly different
+names - nawk and gawk for example) are adequate to build pnglibconf.h.
+The Sun Microsystems (now Oracle) program 'awk' is an earlier version
+and does not work, this may also apply to other systems that have a
+functioning awk called 'nawk'.
+
+Configuration options are now documented in scripts/pnglibconf.dfa.  This
+file also includes dependency information that ensures a configuration is
+consistent; that is, if a feature is switched off dependent features are
+also removed.  As a recommended alternative to using feature macros in
+pngusr.h a system builder may also define equivalent options in pngusr.dfa
+(or, indeed, any file) and add that to the configuration by setting
+DFA_XTRA to the file name.  The makefiles in contrib/pngminim illustrate
+how to do this, and a case where pngusr.h is still required.
+
+.SH XI. Detecting libpng
 
 The png_get_io_ptr() function has been present since libpng-0.88, has never
 changed, and is unaffected by conditional compilation macros.  It is the
@@ -3959,7 +4532,7 @@ libpng version since 0.88.  In an autoconf "configure.in" you could use
 
     AC_CHECK_LIB(png, png_get_io_ptr, ...
 
-.SH XI. Source code repository
+.SH XII. Source code repository
 
 Since about February 2009, version 1.2.34, libpng has been under "git" source
 control.  The git repository was built from old libpng-x.y.z.tar.gz files
@@ -3978,7 +4551,7 @@ the libpng bug tracker at
 
     http://libpng.sourceforge.net
 
-.SH XII. Coding style
+.SH XIII. Coding style
 
 Our coding style is similar to the "Allman" style, with curly
 braces on separate lines:
@@ -4035,7 +4608,7 @@ Functions and their curly braces are not indented, and
 exported functions are marked with PNGAPI:
 
  /* This is a public function that is visible to
-  * application programers. It does thus-and-so.
+  * application programmers. It does thus-and-so.
   */
  void PNGAPI
  png_exported_function(png_ptr, png_info, foo)
@@ -4068,7 +4641,7 @@ with  "png_", and all publicly visible C preprocessor
 macros begin with "PNG_".
 
 We put a space after each comma and after each semicolon
-in "for" statments, and we put spaces before and after each
+in "for" statements, and we put spaces before and after each
 C binary operator and after "for" or "while", and before
 "?".  We don't put a space between a typecast and the expression
 being cast, nor do we put one between a function name and the
@@ -4086,15 +4659,15 @@ Lines do not exceed 80 characters.
 
 Other rules can be inferred by inspecting the libpng source.
 
-.SH XIII. Y2K Compliance in libpng
+.SH XIV. Y2K Compliance in libpng
 
-December 9, 2010
+January 6, 2011
 
 Since the PNG Development group is an ad-hoc body, we can't make
 an official declaration.
 
 This is your unofficial assurance that libpng from version 0.71 and
-upward through 1.4.5 are Y2K compliant.  It is my belief that earlier
+upward through 1.5.0 are Y2K compliant.  It is my belief that earlier
 versions were also Y2K compliant.
 
 Libpng only has three year fields.  One is a 2-byte unsigned integer that
@@ -4270,22 +4843,13 @@ the first widely used release:
  1.4.1beta01-03      14    10401  14.so.14.1[.0]
  1.4.1rc01           14    10401  14.so.14.1[.0]
  1.4.1beta04-12      14    10401  14.so.14.1[.0]
- 1.4.1rc02-04        14    10401  14.so.14.1[.0]
  1.4.1               14    10401  14.so.14.1[.0]
- 1.4.2beta01         14    10402  14.so.14.2[.0]
- 1.4.2rc02-06        14    10402  14.so.14.2[.0]
  1.4.2               14    10402  14.so.14.2[.0]
- 1.4.3beta01-05      14    10403  14.so.14.3[.0]
- 1.4.3rc01-03        14    10403  14.so.14.3[.0]
  1.4.3               14    10403  14.so.14.3[.0]
- 1.4.4beta01-08      14    10404  14.so.14.4[.0]
- 1.4.4rc01-05        14    10404  14.so.14.4[.0]
  1.4.4               14    10404  14.so.14.4[.0]
- 1.4.5beta01-04      14    10405  14.so.14.5[.0]
- 1.4.5rc01           14    10405  14.so.14.5[.0]
- 1.4.5beta05-07      14    10405  14.so.14.5[.0]
- 1.4.5rc02-03        14    10405  14.so.14.5[.0]
- 1.4.5               14    10405  14.so.14.5[.0]
+ 1.5.0beta01-58      15    10500  15.so.15.0[.0]
+ 1.5.0rc01-07        15    10500  15.so.15.0[.0]
+ 1.5.0               15    10500  15.so.15.0[.0]
 
 Henceforth the source version will match the shared-library minor
 and patch numbers; the shared-library major version number will be
@@ -4299,6 +4863,7 @@ release number plus "betaNN" or "rcN".
 
 .SH "SEE ALSO"
 .BR "png"(5), " libpngpf"(3), " zlib"(3), " deflate"(5), " " and " zlib"(5)
+
 .LP
 .IR libpng :
 .IP
@@ -4341,7 +4906,7 @@ possible without all of you.
 
 Thanks to Frank J. T. Wojcik for helping with the documentation.
 
-Libpng version 1.4.5 - December 9, 2010:
+Libpng version 1.5.0 - January 6, 2011:
 Initially created in 1995 by Guy Eric Schalnat, then of Group 42, Inc.
 Currently maintained by Glenn Randers-Pehrson (glennrp at users.sourceforge.net).
 
@@ -4364,7 +4929,7 @@ this sentence.
 
 This code is released under the libpng license.
 
-libpng versions 1.2.6, August 15, 2004, through 1.4.5, December 9, 2010, are
+libpng versions 1.2.6, August 15, 2004, through 1.5.0, January 6, 2011, are
 Copyright (c) 2004,2006-2007 Glenn Randers-Pehrson, and are
 distributed according to the same disclaimer and license as libpng-1.2.5
 with the following individual added to the list of Contributing Authors
@@ -4463,7 +5028,7 @@ certification mark of the Open Source Initiative.
 
 Glenn Randers-Pehrson
 glennrp at users.sourceforge.net
-December 9, 2010
+January 6, 2011
 
 .\" end of man page
 

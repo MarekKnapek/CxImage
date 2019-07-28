@@ -16,33 +16,33 @@
 <h1>Layers</h1><table border="0" cellpadding="0" cellspacing="0">
 <tr><td></td></tr>
 <tr><td colspan="2"><br><h2>Functions</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___layers.html#g65de963863bfd37a9b209a6760fc9ade">CxImage::LayerCreate</a> (long position=-1)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___layers.html#g46480f28db0cc52c0f880958af57f8da">CxImage::LayerCreate</a> (int32_t position=-1)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___layers.html#g8f46fb150dd1127043db6a05d627fccc">CxImage::LayerDelete</a> (long position=-1)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___layers.html#g170735813c9e40be31c11ee3dbcbd62d">CxImage::LayerDelete</a> (int32_t position=-1)</td></tr>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___layers.html#g939fa549df9c5b307b118203f1eb51ef">CxImage::LayerDeleteAll</a> ()</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="el" href="class_cx_image.html">CxImage</a> *&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___layers.html#gc8d2143d4d2e1d77ab0a1254eac92724">CxImage::GetLayer</a> (long position)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="el" href="class_cx_image.html">CxImage</a> *&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___layers.html#g4029c051bddbcaca8107d1f8920a84cf">CxImage::GetLayer</a> (int32_t position)</td></tr>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="el" href="class_cx_image.html">CxImage</a> *&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___layers.html#ge8ebbc7d79b1974ef5a096938bb21d26">CxImage::GetParent</a> () const </td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">long&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___layers.html#g6933d684ad8059bd4abdb35d1422976c">CxImage::GetNumLayers</a> () const </td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">int32_t&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___layers.html#gbd4eb3a1421b40f3c54f44d1add3dd05">CxImage::GetNumLayers</a> () const </td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">long&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___layers.html#g084f57091a3fb145439f92c911918615">CxImage::LayerDrawAll</a> (HDC hdc, long x=0, long y=0, long cx=-1, long cy=-1, RECT *pClipRect=0, bool bSmooth=false)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">int32_t&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___layers.html#ga992f1695f69d78a529afe5d1510ddfc">CxImage::LayerDrawAll</a> (HDC hdc, int32_t x=0, int32_t y=0, int32_t cx=-1, int32_t cy=-1, RECT *pClipRect=0, bool bSmooth=false)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">long&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___layers.html#g959144040d29d1d7ce3b93fc1c24022f">CxImage::LayerDrawAll</a> (HDC hdc, const RECT &amp;rect, RECT *pClipRect=NULL, bool bSmooth=false)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">int32_t&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___layers.html#gc30c113668d31bbd76e6f4ae2001ee8a">CxImage::LayerDrawAll</a> (HDC hdc, const RECT &amp;rect, RECT *pClipRect=NULL, bool bSmooth=false)</td></tr>
 
 </table>
 <hr><a name="_details"></a><h2>Detailed Description</h2>
 <hr><h2>Function Documentation</h2>
-<a class="anchor" name="gc8d2143d4d2e1d77ab0a1254eac92724"></a><!-- doxytag: member="CxImage::GetLayer" ref="gc8d2143d4d2e1d77ab0a1254eac92724" args="(long position)" -->
+<a class="anchor" name="g4029c051bddbcaca8107d1f8920a84cf"></a><!-- doxytag: member="CxImage::GetLayer" ref="g4029c051bddbcaca8107d1f8920a84cf" args="(int32_t position)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname"><a class="el" href="class_cx_image.html">CxImage</a> * CxImage::GetLayer           </td>
           <td>(</td>
-          <td class="paramtype">long&nbsp;</td>
+          <td class="paramtype">int32_t&nbsp;</td>
           <td class="paramname"> <em>position</em>          </td>
           <td>&nbsp;)&nbsp;</td>
           <td width="100%"><code> [inherited]</code></td>
@@ -55,12 +55,12 @@
 Returns a pointer to a layer. If position is less than 0, the last layer will be returned 
 </div>
 </div><p>
-<a class="anchor" name="g6933d684ad8059bd4abdb35d1422976c"></a><!-- doxytag: member="CxImage::GetNumLayers" ref="g6933d684ad8059bd4abdb35d1422976c" args="() const " -->
+<a class="anchor" name="gbd4eb3a1421b40f3c54f44d1add3dd05"></a><!-- doxytag: member="CxImage::GetNumLayers" ref="gbd4eb3a1421b40f3c54f44d1add3dd05" args="() const " -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">long CxImage::GetNumLayers           </td>
+          <td class="memname">int32_t CxImage::GetNumLayers           </td>
           <td>(</td>
           <td class="paramname">          </td>
           <td>&nbsp;)&nbsp;</td>
@@ -93,14 +93,14 @@ Number of layers allocated directly by the object.
 If the object is an internal layer, GetParent return its parent in the hierarchy. 
 </div>
 </div><p>
-<a class="anchor" name="g65de963863bfd37a9b209a6760fc9ade"></a><!-- doxytag: member="CxImage::LayerCreate" ref="g65de963863bfd37a9b209a6760fc9ade" args="(long position=-1)" -->
+<a class="anchor" name="g46480f28db0cc52c0f880958af57f8da"></a><!-- doxytag: member="CxImage::LayerCreate" ref="g46480f28db0cc52c0f880958af57f8da" args="(int32_t position=-1)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname">bool CxImage::LayerCreate           </td>
           <td>(</td>
-          <td class="paramtype">long&nbsp;</td>
+          <td class="paramtype">int32_t&nbsp;</td>
           <td class="paramname"> <em>position</em> = <code>-1</code>          </td>
           <td>&nbsp;)&nbsp;</td>
           <td width="100%"><code> [inherited]</code></td>
@@ -113,14 +113,14 @@ If the object is an internal layer, GetParent return its parent in the hierarchy
 Creates an empty layer. If position is less than 0, the new layer will be placed in the last position 
 </div>
 </div><p>
-<a class="anchor" name="g8f46fb150dd1127043db6a05d627fccc"></a><!-- doxytag: member="CxImage::LayerDelete" ref="g8f46fb150dd1127043db6a05d627fccc" args="(long position=-1)" -->
+<a class="anchor" name="g170735813c9e40be31c11ee3dbcbd62d"></a><!-- doxytag: member="CxImage::LayerDelete" ref="g170735813c9e40be31c11ee3dbcbd62d" args="(int32_t position=-1)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname">bool CxImage::LayerDelete           </td>
           <td>(</td>
-          <td class="paramtype">long&nbsp;</td>
+          <td class="paramtype">int32_t&nbsp;</td>
           <td class="paramname"> <em>position</em> = <code>-1</code>          </td>
           <td>&nbsp;)&nbsp;</td>
           <td width="100%"><code> [inherited]</code></td>
@@ -152,12 +152,12 @@ Deletes a layer. If position is less than 0, the last layer will be deleted
 
 </div>
 </div><p>
-<a class="anchor" name="g959144040d29d1d7ce3b93fc1c24022f"></a><!-- doxytag: member="CxImage::LayerDrawAll" ref="g959144040d29d1d7ce3b93fc1c24022f" args="(HDC hdc, const RECT &amp;rect, RECT *pClipRect=NULL, bool bSmooth=false)" -->
+<a class="anchor" name="gc30c113668d31bbd76e6f4ae2001ee8a"></a><!-- doxytag: member="CxImage::LayerDrawAll" ref="gc30c113668d31bbd76e6f4ae2001ee8a" args="(HDC hdc, const RECT &amp;rect, RECT *pClipRect=NULL, bool bSmooth=false)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">long CxImage::LayerDrawAll           </td>
+          <td class="memname">int32_t CxImage::LayerDrawAll           </td>
           <td>(</td>
           <td class="paramtype">HDC&nbsp;</td>
           <td class="paramname"> <em>hdc</em>, </td>
@@ -193,12 +193,12 @@ Deletes a layer. If position is less than 0, the last layer will be deleted
 
 </div>
 </div><p>
-<a class="anchor" name="g084f57091a3fb145439f92c911918615"></a><!-- doxytag: member="CxImage::LayerDrawAll" ref="g084f57091a3fb145439f92c911918615" args="(HDC hdc, long x=0, long y=0, long cx=-1, long cy=-1, RECT *pClipRect=0, bool bSmooth=false)" -->
+<a class="anchor" name="ga992f1695f69d78a529afe5d1510ddfc"></a><!-- doxytag: member="CxImage::LayerDrawAll" ref="ga992f1695f69d78a529afe5d1510ddfc" args="(HDC hdc, int32_t x=0, int32_t y=0, int32_t cx=-1, int32_t cy=-1, RECT *pClipRect=0, bool bSmooth=false)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">long CxImage::LayerDrawAll           </td>
+          <td class="memname">int32_t CxImage::LayerDrawAll           </td>
           <td>(</td>
           <td class="paramtype">HDC&nbsp;</td>
           <td class="paramname"> <em>hdc</em>, </td>
@@ -206,25 +206,25 @@ Deletes a layer. If position is less than 0, the last layer will be deleted
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">long&nbsp;</td>
+          <td class="paramtype">int32_t&nbsp;</td>
           <td class="paramname"> <em>x</em> = <code>0</code>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">long&nbsp;</td>
+          <td class="paramtype">int32_t&nbsp;</td>
           <td class="paramname"> <em>y</em> = <code>0</code>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">long&nbsp;</td>
+          <td class="paramtype">int32_t&nbsp;</td>
           <td class="paramname"> <em>cx</em> = <code>-1</code>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">long&nbsp;</td>
+          <td class="paramtype">int32_t&nbsp;</td>
           <td class="paramname"> <em>cy</em> = <code>-1</code>, </td>
         </tr>
         <tr>
@@ -252,7 +252,7 @@ Deletes a layer. If position is less than 0, the last layer will be deleted
 
 </div>
 </div><p>
-<hr size="1"><address style="text-align: right;"><small>Generated on Thu Jan 31 20:11:32 2008 for CxImage by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Fri Jan 7 21:44:32 2011 for CxImage by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.4 </small></address>
 </body>

@@ -2,7 +2,7 @@
  * File:	ximatga.cpp
  * Purpose:	Platform Independent TGA Image Class Loader and Writer
  * 05/Jan/2001 Davide Pizzolato - www.xdp.it
- * CxImage version 7.0.0 31/Dec/2010
+ * CxImage version 7.0.1 07/Jan/2011
  */
 
 #include "ximatga.h"

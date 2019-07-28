@@ -2,7 +2,7 @@
  * File:	ximajas.cpp
  * Purpose:	Platform Independent JasPer Image Class Loader and Writer
  * 12/Apr/2003 Davide Pizzolato - www.xdp.it
- * CxImage version 7.0.0 31/Dec/2010
+ * CxImage version 7.0.1 07/Jan/2011
  */
 
 #include "ximajas.h"

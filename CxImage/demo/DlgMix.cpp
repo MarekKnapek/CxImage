@@ -191,11 +191,13 @@ void DlgMix::SetMix()
 	tmp.Copy(m_imageDst);
 	tmp.Mix(m_imageSrc,(CxImage::ImageOpType)OpType,(long)(m_xoffset*m_ratio),(long)(m_yoffset*m_ratio),m_mixalpha!=0);
 
+#if CXIMAGE_SUPPORT_ALPHA
 	if (m_mixalpha!=0){
 		RGBQUAD c={255,255,255,0};
 		tmp.SetTransColor(c);
 		tmp.AlphaStrip();
 	}
+#endif
 
 	if (m_bitmap) DeleteObject(m_bitmap);
 	m_bitmap = tmp.MakeBitmap(m_picture.GetDC()->m_hDC);

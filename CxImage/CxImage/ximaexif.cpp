@@ -2,7 +2,7 @@
  * File:	ximaexif.cpp
  * Purpose:	EXIF reader
  * 18/Aug/2002 Davide Pizzolato - www.xdp.it
- * CxImage version 7.0.0 31/Dec/2010
+ * CxImage version 7.0.1 07/Jan/2011
  * based on jhead-1.8 by Matthias Wandel <mwandel(at)rim(dot)net>
  */
 

@@ -16,7 +16,9 @@
 <h1>Selection</h1><table border="0" cellpadding="0" cellspacing="0">
 <tr><td></td></tr>
 <tr><td colspan="2"><br><h2>Functions</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___selection.html#g55f9102d6f5a0e7815778c51caad4c85">CxImage::SelectionClear</a> (BYTE level=0)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___selection.html#ge94d38c70bd3b74a310ff0a7b4ce596c">CxImage::SelectionIsValid</a> ()</td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___selection.html#g065df4b0936691f6702f972fb6200833">CxImage::SelectionClear</a> (uint8_t level=0)</td></tr>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___selection.html#g88e60f06383a539f28bf2e682012f60f">CxImage::SelectionCreate</a> ()</td></tr>
 
@@ -28,21 +30,19 @@
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___selection.html#g3eb594d47736e282013c15c4bc16cadb">CxImage::SelectionFlip</a> ()</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___selection.html#g1a25ba08ad36c85b845a679e964c3ed4">CxImage::SelectionAddRect</a> (RECT r, BYTE level=255)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___selection.html#gc8cb1326f6b6aeac855e67e614a9330b">CxImage::SelectionAddRect</a> (RECT r, uint8_t level=255)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___selection.html#gda92f0e6a9436961684a4c80714fce47">CxImage::SelectionAddEllipse</a> (RECT r, BYTE level=255)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___selection.html#g881c3c69a14b3d1136c38ad0dd0495a3">CxImage::SelectionAddEllipse</a> (RECT r, uint8_t level=255)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___selection.html#g986532d5db878740251026640ac435ab">CxImage::SelectionAddPolygon</a> (POINT *points, long npoints, BYTE level=255)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___selection.html#gc1ebee689c90962eee888cb6436dbf0c">CxImage::SelectionAddPolygon</a> (POINT *points, int32_t npoints, uint8_t level=255)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___selection.html#g49a7fd5feb4b9e84e3965cf6a7b0b47a">CxImage::SelectionAddColor</a> (RGBQUAD c, BYTE level=255)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___selection.html#gc33823a621a5082ad3e4bd2109e6190b">CxImage::SelectionAddColor</a> (RGBQUAD c, uint8_t level=255)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___selection.html#g72abb6735c93a4371a98097a842865f0">CxImage::SelectionAddPixel</a> (long x, long y, BYTE level=255)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___selection.html#gd89bdf2439c7d09f7caf112f5481c5f3">CxImage::SelectionAddPixel</a> (int32_t x, int32_t y, uint8_t level=255)</td></tr>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___selection.html#ga54fd0463ef44e3b524ba219815e1581">CxImage::SelectionCopy</a> (<a class="el" href="class_cx_image.html">CxImage</a> &amp;from)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___selection.html#g83e3646371deebeb5c68a6c5526ff33b">CxImage::SelectionIsInside</a> (long x, long y)</td></tr>
-
-<tr><td class="memItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___selection.html#ge94d38c70bd3b74a310ff0a7b4ce596c">CxImage::SelectionIsValid</a> ()</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___selection.html#g795c1ccb0167606182f7c34d8155652f">CxImage::SelectionIsInside</a> (int32_t x, int32_t y)</td></tr>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___selection.html#gfb20999795024d84d012a2dc2f82bac2">CxImage::SelectionGetBox</a> (RECT &amp;r)</td></tr>
 
@@ -50,18 +50,18 @@
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___selection.html#g9a72c49ab49bb410af7744736babf333">CxImage::SelectionSplit</a> (<a class="el" href="class_cx_image.html">CxImage</a> *dest)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">BYTE&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___selection.html#g5d8439a8751bec6c2d609c432ef68a20">CxImage::SelectionGet</a> (const long x, const long y)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">uint8_t&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___selection.html#g142ccdb99fe1139953dcd7cb82030f69">CxImage::SelectionGet</a> (const int32_t x, const int32_t y)</td></tr>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___selection.html#ge2adb60194cb4419e1d9a9816e57c39c">CxImage::SelectionSet</a> (<a class="el" href="class_cx_image.html">CxImage</a> &amp;from)</td></tr>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___selection.html#gc71e9b974eb9b1096ba1f4c7355b8cab">CxImage::SelectionRebuildBox</a> ()</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">BYTE *&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___selection.html#gede01e59e02c868baa190e9b9734b5c9">CxImage::SelectionGetPointer</a> (const long x=0, const long y=0)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">uint8_t *&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___selection.html#g42e441be7b0c5ef116a65f04426c895f">CxImage::SelectionGetPointer</a> (const int32_t x=0, const int32_t y=0)</td></tr>
 
 </table>
 <hr><a name="_details"></a><h2>Detailed Description</h2>
 <hr><h2>Function Documentation</h2>
-<a class="anchor" name="g49a7fd5feb4b9e84e3965cf6a7b0b47a"></a><!-- doxytag: member="CxImage::SelectionAddColor" ref="g49a7fd5feb4b9e84e3965cf6a7b0b47a" args="(RGBQUAD c, BYTE level=255)" -->
+<a class="anchor" name="gc33823a621a5082ad3e4bd2109e6190b"></a><!-- doxytag: member="CxImage::SelectionAddColor" ref="gc33823a621a5082ad3e4bd2109e6190b" args="(RGBQUAD c, uint8_t level=255)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -74,7 +74,7 @@
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">BYTE&nbsp;</td>
+          <td class="paramtype">uint8_t&nbsp;</td>
           <td class="paramname"> <em>level</em> = <code>255</code></td><td>&nbsp;</td>
         </tr>
         <tr>
@@ -90,7 +90,7 @@
 Adds to the selection all the pixels matching the specified color. 
 </div>
 </div><p>
-<a class="anchor" name="gda92f0e6a9436961684a4c80714fce47"></a><!-- doxytag: member="CxImage::SelectionAddEllipse" ref="gda92f0e6a9436961684a4c80714fce47" args="(RECT r, BYTE level=255)" -->
+<a class="anchor" name="g881c3c69a14b3d1136c38ad0dd0495a3"></a><!-- doxytag: member="CxImage::SelectionAddEllipse" ref="g881c3c69a14b3d1136c38ad0dd0495a3" args="(RECT r, uint8_t level=255)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -103,7 +103,7 @@ Adds to the selection all the pixels matching the specified color.
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">BYTE&nbsp;</td>
+          <td class="paramtype">uint8_t&nbsp;</td>
           <td class="paramname"> <em>level</em> = <code>255</code></td><td>&nbsp;</td>
         </tr>
         <tr>
@@ -119,26 +119,26 @@ Adds to the selection all the pixels matching the specified color.
 Adds an ellipse to the existing selection. 
 </div>
 </div><p>
-<a class="anchor" name="g72abb6735c93a4371a98097a842865f0"></a><!-- doxytag: member="CxImage::SelectionAddPixel" ref="g72abb6735c93a4371a98097a842865f0" args="(long x, long y, BYTE level=255)" -->
+<a class="anchor" name="gd89bdf2439c7d09f7caf112f5481c5f3"></a><!-- doxytag: member="CxImage::SelectionAddPixel" ref="gd89bdf2439c7d09f7caf112f5481c5f3" args="(int32_t x, int32_t y, uint8_t level=255)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname">bool CxImage::SelectionAddPixel           </td>
           <td>(</td>
-          <td class="paramtype">long&nbsp;</td>
+          <td class="paramtype">int32_t&nbsp;</td>
           <td class="paramname"> <em>x</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">long&nbsp;</td>
+          <td class="paramtype">int32_t&nbsp;</td>
           <td class="paramname"> <em>y</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">BYTE&nbsp;</td>
+          <td class="paramtype">uint8_t&nbsp;</td>
           <td class="paramname"> <em>level</em> = <code>255</code></td><td>&nbsp;</td>
         </tr>
         <tr>
@@ -154,7 +154,7 @@ Adds an ellipse to the existing selection.
 Adds a single pixel to the existing selection. 
 </div>
 </div><p>
-<a class="anchor" name="g986532d5db878740251026640ac435ab"></a><!-- doxytag: member="CxImage::SelectionAddPolygon" ref="g986532d5db878740251026640ac435ab" args="(POINT *points, long npoints, BYTE level=255)" -->
+<a class="anchor" name="gc1ebee689c90962eee888cb6436dbf0c"></a><!-- doxytag: member="CxImage::SelectionAddPolygon" ref="gc1ebee689c90962eee888cb6436dbf0c" args="(POINT *points, int32_t npoints, uint8_t level=255)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -167,13 +167,13 @@ Adds a single pixel to the existing selection.
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">long&nbsp;</td>
+          <td class="paramtype">int32_t&nbsp;</td>
           <td class="paramname"> <em>npoints</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">BYTE&nbsp;</td>
+          <td class="paramtype">uint8_t&nbsp;</td>
           <td class="paramname"> <em>level</em> = <code>255</code></td><td>&nbsp;</td>
         </tr>
         <tr>
@@ -189,7 +189,7 @@ Adds a single pixel to the existing selection.
 Adds a polygonal region to the existing selection. points points to an array of POINT structures. Each structure specifies the x-coordinate and y-coordinate of one vertex of the polygon. npoints specifies the number of POINT structures in the array pointed to by points. 
 </div>
 </div><p>
-<a class="anchor" name="g1a25ba08ad36c85b845a679e964c3ed4"></a><!-- doxytag: member="CxImage::SelectionAddRect" ref="g1a25ba08ad36c85b845a679e964c3ed4" args="(RECT r, BYTE level=255)" -->
+<a class="anchor" name="gc8cb1326f6b6aeac855e67e614a9330b"></a><!-- doxytag: member="CxImage::SelectionAddRect" ref="gc8cb1326f6b6aeac855e67e614a9330b" args="(RECT r, uint8_t level=255)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -202,7 +202,7 @@ Adds a polygonal region to the existing selection. points points to an array of 
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">BYTE&nbsp;</td>
+          <td class="paramtype">uint8_t&nbsp;</td>
           <td class="paramname"> <em>level</em> = <code>255</code></td><td>&nbsp;</td>
         </tr>
         <tr>
@@ -218,14 +218,14 @@ Adds a polygonal region to the existing selection. points points to an array of 
 Adds a rectangle to the existing selection. 
 </div>
 </div><p>
-<a class="anchor" name="g55f9102d6f5a0e7815778c51caad4c85"></a><!-- doxytag: member="CxImage::SelectionClear" ref="g55f9102d6f5a0e7815778c51caad4c85" args="(BYTE level=0)" -->
+<a class="anchor" name="g065df4b0936691f6702f972fb6200833"></a><!-- doxytag: member="CxImage::SelectionClear" ref="g065df4b0936691f6702f972fb6200833" args="(uint8_t level=0)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname">bool CxImage::SelectionClear           </td>
           <td>(</td>
-          <td class="paramtype">BYTE&nbsp;</td>
+          <td class="paramtype">uint8_t&nbsp;</td>
           <td class="paramname"> <em>level</em> = <code>0</code>          </td>
           <td>&nbsp;)&nbsp;</td>
           <td width="100%"><code> [inherited]</code></td>
@@ -315,20 +315,20 @@ Deallocates the selction.
 
 </div>
 </div><p>
-<a class="anchor" name="g5d8439a8751bec6c2d609c432ef68a20"></a><!-- doxytag: member="CxImage::SelectionGet" ref="g5d8439a8751bec6c2d609c432ef68a20" args="(const long x, const long y)" -->
+<a class="anchor" name="g142ccdb99fe1139953dcd7cb82030f69"></a><!-- doxytag: member="CxImage::SelectionGet" ref="g142ccdb99fe1139953dcd7cb82030f69" args="(const int32_t x, const int32_t y)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">BYTE CxImage::SelectionGet           </td>
+          <td class="memname">uint8_t CxImage::SelectionGet           </td>
           <td>(</td>
-          <td class="paramtype">const long&nbsp;</td>
+          <td class="paramtype">const int32_t&nbsp;</td>
           <td class="paramname"> <em>x</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const long&nbsp;</td>
+          <td class="paramtype">const int32_t&nbsp;</td>
           <td class="paramname"> <em>y</em></td><td>&nbsp;</td>
         </tr>
         <tr>
@@ -364,20 +364,20 @@ Gets the Selection level for a single pixel
 Gets the smallest rectangle that contains the selection 
 </div>
 </div><p>
-<a class="anchor" name="gede01e59e02c868baa190e9b9734b5c9"></a><!-- doxytag: member="CxImage::SelectionGetPointer" ref="gede01e59e02c868baa190e9b9734b5c9" args="(const long x=0, const long y=0)" -->
+<a class="anchor" name="g42e441be7b0c5ef116a65f04426c895f"></a><!-- doxytag: member="CxImage::SelectionGetPointer" ref="g42e441be7b0c5ef116a65f04426c895f" args="(const int32_t x=0, const int32_t y=0)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">BYTE * CxImage::SelectionGetPointer           </td>
+          <td class="memname">uint8_t * CxImage::SelectionGetPointer           </td>
           <td>(</td>
-          <td class="paramtype">const long&nbsp;</td>
+          <td class="paramtype">const int32_t&nbsp;</td>
           <td class="paramname"> <em>x</em> = <code>0</code>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const long&nbsp;</td>
+          <td class="paramtype">const int32_t&nbsp;</td>
           <td class="paramname"> <em>y</em> = <code>0</code></td><td>&nbsp;</td>
         </tr>
         <tr>
@@ -412,20 +412,20 @@ Returns pointer to selection data for pixel (x,y).
 Inverts the selection. Note: the SelectionBox is set to "full image", call SelectionGetBox before (if necessary) 
 </div>
 </div><p>
-<a class="anchor" name="g83e3646371deebeb5c68a6c5526ff33b"></a><!-- doxytag: member="CxImage::SelectionIsInside" ref="g83e3646371deebeb5c68a6c5526ff33b" args="(long x, long y)" -->
+<a class="anchor" name="g795c1ccb0167606182f7c34d8155652f"></a><!-- doxytag: member="CxImage::SelectionIsInside" ref="g795c1ccb0167606182f7c34d8155652f" args="(int32_t x, int32_t y)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname">bool CxImage::SelectionIsInside           </td>
           <td>(</td>
-          <td class="paramtype">long&nbsp;</td>
+          <td class="paramtype">int32_t&nbsp;</td>
           <td class="paramname"> <em>x</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">long&nbsp;</td>
+          <td class="paramtype">int32_t&nbsp;</td>
           <td class="paramname"> <em>y</em></td><td>&nbsp;</td>
         </tr>
         <tr>
@@ -558,7 +558,7 @@ Exports the selection channel in a 8bpp grayscale image.
 Converts the selection in a HRGN object. 
 </div>
 </div><p>
-<hr size="1"><address style="text-align: right;"><small>Generated on Thu Jan 31 20:11:32 2008 for CxImage by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Fri Jan 7 21:44:32 2011 for CxImage by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.4 </small></address>
 </body>

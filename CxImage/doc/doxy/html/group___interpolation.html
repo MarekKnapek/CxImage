@@ -56,9 +56,9 @@
 <tr><td colspan="2"><br><h2>Functions</h2></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___interpolation.html#g21764b6624a83be7441228ced5765cd3">CxImage::OverflowCoordinates</a> (float &amp;x, float &amp;y, OverflowMethod const ofMethod)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___interpolation.html#g78a418b6c5ca27e1ececbfcabce0bca4">CxImage::OverflowCoordinates</a> (long &amp;x, long &amp;y, OverflowMethod const ofMethod)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___interpolation.html#gc201933daa5e60a3b779f5fb787be0f0">CxImage::OverflowCoordinates</a> (int32_t &amp;x, int32_t &amp;y, OverflowMethod const ofMethod)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">RGBQUAD&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___interpolation.html#gb8e70b69520d9f7d1f8f6929a3906588">CxImage::GetPixelColorWithOverflow</a> (long x, long y, OverflowMethod const ofMethod=OM_BACKGROUND, RGBQUAD *const rplColor=0)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">RGBQUAD&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___interpolation.html#g34e92a9d6219ab2221fb1117733dc8a7">CxImage::GetPixelColorWithOverflow</a> (int32_t x, int32_t y, OverflowMethod const ofMethod=OM_BACKGROUND, RGBQUAD *const rplColor=0)</td></tr>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">RGBQUAD&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___interpolation.html#gfc0c7822ecc90053d43cb5104ff4e65b">CxImage::GetPixelColorInterpolated</a> (float x, float y, InterpolationMethod const inMethod=IM_BILINEAR, OverflowMethod const ofMethod=OM_BACKGROUND, RGBQUAD *const rplColor=0)</td></tr>
 
@@ -284,20 +284,20 @@ This method reconstructs image according to chosen interpolation method and then
 
 </div>
 </div><p>
-<a class="anchor" name="gb8e70b69520d9f7d1f8f6929a3906588"></a><!-- doxytag: member="CxImage::GetPixelColorWithOverflow" ref="gb8e70b69520d9f7d1f8f6929a3906588" args="(long x, long y, OverflowMethod const ofMethod=OM_BACKGROUND, RGBQUAD *const rplColor=0)" -->
+<a class="anchor" name="g34e92a9d6219ab2221fb1117733dc8a7"></a><!-- doxytag: member="CxImage::GetPixelColorWithOverflow" ref="g34e92a9d6219ab2221fb1117733dc8a7" args="(int32_t x, int32_t y, OverflowMethod const ofMethod=OM_BACKGROUND, RGBQUAD *const rplColor=0)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname">RGBQUAD CxImage::GetPixelColorWithOverflow           </td>
           <td>(</td>
-          <td class="paramtype">long&nbsp;</td>
+          <td class="paramtype">int32_t&nbsp;</td>
           <td class="paramname"> <em>x</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">long&nbsp;</td>
+          <td class="paramtype">int32_t&nbsp;</td>
           <td class="paramname"> <em>y</em>, </td>
         </tr>
         <tr>
@@ -337,20 +337,20 @@ Method return pixel color. Different methods are implemented for out of bounds p
 
 </div>
 </div><p>
-<a class="anchor" name="g78a418b6c5ca27e1ececbfcabce0bca4"></a><!-- doxytag: member="CxImage::OverflowCoordinates" ref="g78a418b6c5ca27e1ececbfcabce0bca4" args="(long &amp;x, long &amp;y, OverflowMethod const ofMethod)" -->
+<a class="anchor" name="gc201933daa5e60a3b779f5fb787be0f0"></a><!-- doxytag: member="CxImage::OverflowCoordinates" ref="gc201933daa5e60a3b779f5fb787be0f0" args="(int32_t &amp;x, int32_t &amp;y, OverflowMethod const ofMethod)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname">void CxImage::OverflowCoordinates           </td>
           <td>(</td>
-          <td class="paramtype">long &amp;&nbsp;</td>
+          <td class="paramtype">int32_t &amp;&nbsp;</td>
           <td class="paramname"> <em>x</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">long &amp;&nbsp;</td>
+          <td class="paramtype">int32_t &amp;&nbsp;</td>
           <td class="paramname"> <em>y</em>, </td>
         </tr>
         <tr>
@@ -417,7 +417,7 @@ See OverflowCoordinates for integer version <dl class="author" compact><dt><b>Au
 
 </div>
 </div><p>
-<hr size="1"><address style="text-align: right;"><small>Generated on Thu Jan 31 20:11:32 2008 for CxImage by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Fri Jan 7 21:44:32 2011 for CxImage by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.4 </small></address>
 </body>

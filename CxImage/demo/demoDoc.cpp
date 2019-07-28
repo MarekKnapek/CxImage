@@ -376,6 +376,7 @@ int CDemoDoc::FindType(const CString& ext)
 //////////////////////////////////////////////////////////////////////////////
 BOOL CDemoDoc::OnOpenDocument(LPCTSTR lpszPathName) 
 {
+#if CXIMAGE_SUPPORT_DECODE
 	CString filename(lpszPathName);
 	CString ext(FindExtension(filename));
 	ext.MakeLower();
@@ -433,6 +434,7 @@ BOOL CDemoDoc::OnOpenDocument(LPCTSTR lpszPathName)
 				}
 			}
 		} else {
+#if CXIMAGE_SUPPORT_GIF
 			if (type == CXIMAGE_FORMAT_GIF){
 				image->SetRetreiveAllFrames(true);
 				//image->SetFrame(image->GetNumFrames()-1);
@@ -442,16 +444,19 @@ BOOL CDemoDoc::OnOpenDocument(LPCTSTR lpszPathName)
 					OnViewPlayanimation();
 				}
 			}
+#endif
 		}
 	}
 
+ #if CXIMAGE_SUPPORT_EXIF && CXIMAGE_SUPPORT_JPG
 	// EXIF jpegs
 	if (image->GetType() == CXIMAGE_FORMAT_JPG){
 		FILE* hfile = _tfopen(filename,_T("rb"));
 		m_exif.DecodeExif(hfile);
 		fclose(hfile);
 	}
-
+ #endif //CXIMAGE_SUPPORT_EXIF
+#endif
 	return TRUE;
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -465,15 +470,19 @@ BOOL CDemoDoc::OnSaveDocument(LPCTSTR lpszPathName)
 	int type = FindType(ext);
 	if (type == CXIMAGE_FORMAT_UNKNOWN) return FALSE;
 
+#if CXIMAGE_SUPPORT_GIF
 	if (type == CXIMAGE_FORMAT_GIF && image->GetBpp()>8){
 		AfxMessageBox(_T("The image will be saved as a true color GIF!\nThis is ok for CxImage, but not for many other programs.\nFor better compatibility, please use DecreaseBpp to 8 bits or less."),MB_ICONINFORMATION);
 	}
+#endif
 
-	bool retval;
+	bool retval=0;
+#if CXIMAGE_SUPPORT_ENCODE
 	Stopwatch(0);
 	retval = image->Save(filename, type);
 	Stopwatch(1);
 	UpdateStatusBar();
+#endif
 	if (retval) return TRUE;
 	CString s = image->GetLastError();
 	AfxMessageBox(s);
@@ -655,13 +664,29 @@ void CDemoDoc::OnUpdateCximageSoften(CCmdUI* pCmdUI)
 void CDemoDoc::OnUpdateCximageCrop(CCmdUI* pCmdUI) 
 {	if(image==0 || hThread || !image->SelectionIsValid()) pCmdUI->Enable(0);}
 void CDemoDoc::OnUpdateCximageRemovealphachannel(CCmdUI* pCmdUI) 
-{	if(image==0 || hThread || !image->AlphaIsValid()) pCmdUI->Enable(0);}
+{	if(image==0 || hThread
+#if CXIMAGE_SUPPORT_ALPHA
+	   || !image->AlphaIsValid()
+#endif
+	   ) pCmdUI->Enable(0);}
 void CDemoDoc::OnUpdateCximageInvetalpha(CCmdUI* pCmdUI) 
-{	if(image==0 || hThread || !image->AlphaIsValid()) pCmdUI->Enable(0);}
+{	if(image==0 || hThread
+#if CXIMAGE_SUPPORT_ALPHA
+	   || !image->AlphaIsValid()
+#endif
+	   ) pCmdUI->Enable(0);}
 void CDemoDoc::OnUpdateCximageAlphapalettetoggle(CCmdUI* pCmdUI) 
-{	if(image==0 || hThread || !image->AlphaPaletteIsValid()) pCmdUI->Enable(0);}
+{	if(image==0 || hThread
+#if CXIMAGE_SUPPORT_ALPHA
+	   || !image->AlphaPaletteIsValid()
+#endif
+	   ) pCmdUI->Enable(0);}
 void CDemoDoc::OnUpdateCximageAlphastrip(CCmdUI* pCmdUI) 
-{	if(image==0 || hThread || (!image->AlphaIsValid() && !image->AlphaPaletteIsValid())) pCmdUI->Enable(0);}
+{	if(image==0 || hThread
+#if CXIMAGE_SUPPORT_ALPHA
+		|| (!image->AlphaIsValid() && !image->AlphaPaletteIsValid())
+#endif
+	) pCmdUI->Enable(0);}
 void CDemoDoc::OnUpdateCximageRemovetransparency(CCmdUI* pCmdUI) 
 {	if(image==0 || hThread || image->GetTransIndex()<0) pCmdUI->Enable(0);}
 void CDemoDoc::OnUpdateCximageGamma(CCmdUI* pCmdUI) 
@@ -677,7 +702,11 @@ void CDemoDoc::OnUpdateCximageFft(CCmdUI* pCmdUI)
 void CDemoDoc::OnUpdateCximageRepair(CCmdUI* pCmdUI) 
 {	if(image==0 || hThread) pCmdUI->Enable(0);}
 void CDemoDoc::OnUpdateCximageAlphachannelSplit(CCmdUI* pCmdUI) 
-{	if(image==0 || hThread || !image->AlphaIsValid()) pCmdUI->Enable(0);}
+{	if(image==0 || hThread
+#if CXIMAGE_SUPPORT_ALPHA
+	   || !image->AlphaIsValid()
+#endif
+	   ) pCmdUI->Enable(0);}
 void CDemoDoc::OnUpdateCximageFiltersLog(CCmdUI* pCmdUI) 
 {	if(image==0 || hThread) pCmdUI->Enable(0);}
 void CDemoDoc::OnUpdateCximageFiltersRoot(CCmdUI* pCmdUI) 
@@ -737,7 +766,11 @@ void CDemoDoc::OnUpdateCximageBlurselborder(CCmdUI* pCmdUI)
 void CDemoDoc::OnUpdateCximageSelectiveblur(CCmdUI* pCmdUI) 
 {	if(image==0 || hThread) pCmdUI->Enable(0);}
 void CDemoDoc::OnUpdateCximageGettransparencymask(CCmdUI* pCmdUI) 
-{	if(image==0 || hThread || (image->GetTransIndex()<0 && !image->AlphaIsValid())) pCmdUI->Enable(0);}
+{	if(image==0 || hThread || (image->GetTransIndex()<0
+#if CXIMAGE_SUPPORT_ALPHA
+	   && !image->AlphaIsValid()
+#endif
+	   )) pCmdUI->Enable(0);}
 void CDemoDoc::OnUpdateColorsCountcolors(CCmdUI* pCmdUI) 
 {	if(image==0 || hThread) pCmdUI->Enable(0);}
 void CDemoDoc::OnUpdateFiltersLinearCustom(CCmdUI* pCmdUI) 
@@ -849,7 +882,11 @@ void CDemoDoc::OnEditCopy()
 #if USE_CF_CXIMAGE
 	//custom CXIMAGE object
 	HANDLE hMem=NULL;
-	if (iSrc->IsValid() && (iSrc->AlphaIsValid() || iSrc->SelectionIsValid() || iSrc->IsTransparent())){
+	if (iSrc->IsValid() && (iSrc->SelectionIsValid() || iSrc->IsTransparent()
+#if CXIMAGE_SUPPORT_ALPHA
+		|| iSrc->AlphaIsValid()
+#endif
+		)){
 		hMem= GlobalAlloc(GHND, iSrc->DumpSize());
 		if (hMem){
 			BYTE* pDst=(BYTE*)GlobalLock(hMem);
@@ -1434,8 +1471,9 @@ void /*unsigned long _stdcall*/ RunCxImageThread(void *lpParam)
 				status = pDoc->image->DecreaseBpp(bit,errordiffusion,ppal,colors);
 			} else status = pDoc->image->DecreaseBpp(bit,errordiffusion,0);
 
+#if CXIMAGE_SUPPORT_ALPHA
 			if (!pDoc->image->AlphaPaletteIsValid()) pDoc->image->AlphaPaletteEnable(0);
-
+#endif
 			if (pDoc->image->IsTransparent()){
 				pDoc->image->SetTransIndex(pDoc->image->GetNearestIndex(c));
 			}
@@ -1716,7 +1754,9 @@ void CDemoDoc::OnCximageOptions()
 	dlg.m_Opt_raw = image->GetCodecOption(CXIMAGE_FORMAT_RAW);
 #endif
 	
+#if CXIMAGE_SUPPORT_EXIF && CXIMAGE_SUPPORT_JPG
 	dlg.m_exif = &m_exif;
+#endif
 	if (dlg.DoModal()==IDOK){
 		image->SetJpegQualityF(dlg.m_jpeg_quality);
 		image->SetXDPI(dlg.m_xres);
@@ -2104,7 +2144,6 @@ void CDemoDoc::OnCximageSoften()
 void CDemoDoc::OnCximageCrop() 
 {
 	SubmitUndo();
-	RECT r;
 	
 #ifdef VATI_EXTENSIONS
 	// if there is a valid rectangle selection, then call the CropRotatedRectangle instead original Crop
@@ -2146,6 +2185,7 @@ void CDemoDoc::OnCximageCrop()
 	else // freehand selection
 	{
 #if CXIMAGE_SUPPORT_SELECTION
+		RECT r;
 		image->SelectionGetBox(r);
 		r.bottom = image->GetHeight() - 1 -r.bottom; 
 		r.top = image->GetHeight() - 1 -r.top; 
@@ -2153,6 +2193,7 @@ void CDemoDoc::OnCximageCrop()
 #endif //CXIMAGE_SUPPORT_SELECTION
 	}
 #else
+	RECT r;
 	image->SelectionGetBox(r);
 	r.bottom = image->GetHeight() - 1 -r.bottom; 
 	r.top = image->GetHeight() - 1 -r.top; 
@@ -2165,14 +2206,17 @@ void CDemoDoc::OnCximageCrop()
 //////////////////////////////////////////////////////////////////////////////
 void CDemoDoc::OnCximageRemovealphachannel() 
 {
+#if CXIMAGE_SUPPORT_ALPHA
 	SubmitUndo();
 	image->AlphaDelete();
 	image->AlphaSetMax(255);
 	UpdateAllViews(NULL);
+#endif
 }
 //////////////////////////////////////////////////////////////////////////////
 void CDemoDoc::OnCximageOpacity() 
 {
+#if CXIMAGE_SUPPORT_ALPHA
 	if (image==NULL) return;
 	DlgOpacity dlg;
 	dlg.m_level=image->AlphaGetMax();
@@ -2184,24 +2228,30 @@ void CDemoDoc::OnCximageOpacity()
 		image->AlphaSetMax(dlg.m_level);
 	}
 	UpdateAllViews(NULL);
+#endif
 }
 //////////////////////////////////////////////////////////////////////////////
 void CDemoDoc::OnCximageInvetalpha() 
 {
+#if CXIMAGE_SUPPORT_ALPHA
 	SubmitUndo();
 	image->AlphaInvert();
 	UpdateAllViews(NULL);
+#endif
 }
 //////////////////////////////////////////////////////////////////////////////
 void CDemoDoc::OnCximageAlphapalettetoggle() 
 {
+#if CXIMAGE_SUPPORT_ALPHA
 	SubmitUndo();
 	image->AlphaPaletteEnable(!image->AlphaPaletteIsEnabled());
-	UpdateAllViews(NULL);	
+	UpdateAllViews(NULL);
+#endif
 }
 //////////////////////////////////////////////////////////////////////////////
 void CDemoDoc::OnCximageAlphastrip() 
 {
+#if CXIMAGE_SUPPORT_ALPHA
 	SubmitUndo();
 	SetCursor(LoadCursor(0,IDC_WAIT));
 	Stopwatch(0);
@@ -2214,6 +2264,7 @@ void CDemoDoc::OnCximageAlphastrip()
 	SetCursor(LoadCursor(0,IDC_ARROW));
 	UpdateStatusBar();
 	UpdateAllViews(NULL,WM_USER_NEWIMAGE);	
+#endif
 }
 //////////////////////////////////////////////////////////////////////////////
 void CDemoDoc::OnCximageGamma() 
@@ -2625,6 +2676,7 @@ void CDemoDoc::OnCximageRepair()
 //////////////////////////////////////////////////////////////////////////////
 void CDemoDoc::OnCximageAlphachannelSplit() 
 {
+#if CXIMAGE_SUPPORT_ALPHA
 	if (image==NULL) return;
 
 	CxImage *newa = new CxImage();
@@ -2645,10 +2697,12 @@ void CDemoDoc::OnCximageAlphachannelSplit()
 		NewDocr->SetTitle(s);
 		NewDocr->UpdateAllViews(0,WM_USER_NEWIMAGE);
 	}
+#endif
 }
 //////////////////////////////////////////////////////////////////////////////
 void CDemoDoc::OnCximageAlphaCreate() 
 {
+#if CXIMAGE_SUPPORT_ALPHA
 	if (image==NULL) return;
 	CxImage gray(*image,true,false,false);
 	gray.IncreaseBpp(8);
@@ -2656,6 +2710,7 @@ void CDemoDoc::OnCximageAlphaCreate()
 	gray.GrayScale();
 	image->AlphaSet(gray);
 	UpdateAllViews(NULL);
+#endif
 }
 //////////////////////////////////////////////////////////////////////////////
 void CDemoDoc::OnCximageFiltersLog() 
@@ -2847,6 +2902,7 @@ void CDemoDoc::OnViewToolsTracker()
 //////////////////////////////////////////////////////////////////////////////
 void CDemoDoc::OnJpegcompression() 
 {
+#if CXIMAGE_SUPPORT_DECODE && CXIMAGE_SUPPORT_ENCODE
 	if (image==NULL) return;
 	DlgJpeg dlg;
 	dlg.m_quality=50.0f;
@@ -2902,6 +2958,7 @@ void CDemoDoc::OnJpegcompression()
 		UpdateStatusBar();
 		SetCursor(LoadCursor(0,IDC_ARROW));
 	}
+#endif
 }
 //////////////////////////////////////////////////////////////////////////////
 void CDemoDoc::OnViewSmooth() 

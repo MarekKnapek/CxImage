@@ -50,7 +50,9 @@ public:
 	int32_t m_hgray[256];
 	int32_t m_hmax;
 
+#if CXIMAGE_SUPPORT_EXIF && CXIMAGE_SUPPORT_JPG
 	CxImageJPG m_exif;
+#endif
 
 // Operations
 public:

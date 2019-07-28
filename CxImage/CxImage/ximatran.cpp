@@ -1,6 +1,6 @@
 // xImaTran.cpp : Transformation functions
 /* 07/08/2001 v1.00 - Davide Pizzolato - www.xdp.it
- * CxImage version 7.0.0 31/Dec/2010
+ * CxImage version 7.0.1 07/Jan/2011
  */
 
 #include "ximage.h"

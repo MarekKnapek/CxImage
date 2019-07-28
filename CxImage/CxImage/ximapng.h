@@ -25,8 +25,12 @@ extern "C" {
 #ifdef _LINUX
  #undef _DLL
  #include <png.h>
+ #include <pngstruct.h>
+ #include <pnginfo.h>
 #else
  #include "../png/png.h"
+ #include "../png/pngstruct.h"
+ #include "../png/pnginfo.h"
 #endif
 }
 
@@ -81,7 +85,7 @@ protected:
     static void PNGAPI user_error_fn(png_structp png_ptr,png_const_charp error_msg)
 	{
 		strncpy((char*)png_ptr->error_ptr,error_msg,255);
-		longjmp(png_ptr->jmpbuf, 1);
+		longjmp(png_ptr->png_jmpbuf, 1);
 	}
 };
 

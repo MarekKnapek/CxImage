@@ -20,9 +20,11 @@
 <table border="0" cellpadding="0" cellspacing="0">
 <tr><td></td></tr>
 <tr><td colspan="2"><br><h2>Classes</h2></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">struct &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtag___exif_info.html">tag_ExifInfo</a></td></tr>
+
 <tr><td class="memItemLeft" nowrap align="right" valign="top">class &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_cx_image.html">CxImage</a></td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">struct &nbsp;</td><td class="memItemRight" valign="bottom"><b>CxImage::tagCxImageInfo</b></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">struct &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_cx_image_1_1tag_cx_image_info.html">CxImage::tagCxImageInfo</a></td></tr>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">struct &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_cx_image_1_1rgb__color.html">CxImage::rgb_color</a></td></tr>
 
@@ -30,6 +32,13 @@
 
 <tr><td colspan="2"><br><h2>Defines</h2></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">#define&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="ximage_8h.html#5e3b6ad87c662fa196d2b25f63520298">__CXIMAGE_H</a></td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top">#define&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="ximage_8h.html#77614f8c4908436f9792099f716d7ba2">MAX_COMMENT</a>&nbsp;&nbsp;&nbsp;255</td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top">#define&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="ximage_8h.html#aff00949216b5ffd1ce66cbeb00bc753">MAX_SECTIONS</a>&nbsp;&nbsp;&nbsp;20</td></tr>
+
+<tr><td colspan="2"><br><h2>Typedefs</h2></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">typedef struct <a class="el" href="structtag___exif_info.html">tag_ExifInfo</a>&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="ximage_8h.html#9612715566c4321950e18cc53de1a37d">EXIFINFO</a></td></tr>
 
 <tr><td colspan="2"><br><h2>Enumerations</h2></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">enum &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="ximage_8h.html#b1562bce5b65a54f0baf878db91bafad">ENUM_CXIMAGE_FORMATS</a> { <br>
@@ -56,7 +65,9 @@
 &nbsp;&nbsp;<a class="el" href="ximage_8h.html#b1562bce5b65a54f0baf878db91bafadb21d43bc129d0e2f553d483a3012b2b3">CXIMAGE_FORMAT_MNG</a> =  17, 
 <a class="el" href="ximage_8h.html#b1562bce5b65a54f0baf878db91bafad8521a5afa1aa30440dde0df1ba99fe24">CXIMAGE_FORMAT_SKA</a> =  18, 
 <a class="el" href="ximage_8h.html#b1562bce5b65a54f0baf878db91bafadcfd906f224dd21be98c0b1223176c57d">CXIMAGE_FORMAT_RAW</a> =  19, 
-<a class="el" href="ximage_8h.html#b1562bce5b65a54f0baf878db91bafada35cefccc95844353d3f33cdb2718357">CMAX_IMAGE_FORMATS</a>
+<a class="el" href="ximage_8h.html#b1562bce5b65a54f0baf878db91bafad901af4e8be0593e1b971dba86e13819c">CXIMAGE_FORMAT_PSD</a> =  20, 
+<br>
+&nbsp;&nbsp;<a class="el" href="ximage_8h.html#b1562bce5b65a54f0baf878db91bafada35cefccc95844353d3f33cdb2718357">CMAX_IMAGE_FORMATS</a>
 <br>
  }</td></tr>
 
@@ -68,6 +79,52 @@
       <table class="memname">
         <tr>
           <td class="memname">#define __CXIMAGE_H          </td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+
+</div>
+</div><p>
+<a class="anchor" name="77614f8c4908436f9792099f716d7ba2"></a><!-- doxytag: member="ximage.h::MAX_COMMENT" ref="77614f8c4908436f9792099f716d7ba2" args="" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define MAX_COMMENT&nbsp;&nbsp;&nbsp;255          </td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+
+</div>
+</div><p>
+<a class="anchor" name="aff00949216b5ffd1ce66cbeb00bc753"></a><!-- doxytag: member="ximage.h::MAX_SECTIONS" ref="aff00949216b5ffd1ce66cbeb00bc753" args="" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define MAX_SECTIONS&nbsp;&nbsp;&nbsp;20          </td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+
+</div>
+</div><p>
+<hr><h2>Typedef Documentation</h2>
+<a class="anchor" name="9612715566c4321950e18cc53de1a37d"></a><!-- doxytag: member="ximage.h::EXIFINFO" ref="9612715566c4321950e18cc53de1a37d" args="" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">typedef struct <a class="el" href="structtag___exif_info.html">tag_ExifInfo</a>  <a class="el" href="structtag___exif_info.html">EXIFINFO</a>          </td>
         </tr>
       </table>
 </div>
@@ -130,6 +187,8 @@
 </td></tr>
 <tr><td valign="top"><em><a class="anchor" name="b1562bce5b65a54f0baf878db91bafadcfd906f224dd21be98c0b1223176c57d"></a><!-- doxytag: member="CXIMAGE_FORMAT_RAW" ref="b1562bce5b65a54f0baf878db91bafadcfd906f224dd21be98c0b1223176c57d" args="" -->CXIMAGE_FORMAT_RAW</em>&nbsp;</td><td>
 </td></tr>
+<tr><td valign="top"><em><a class="anchor" name="b1562bce5b65a54f0baf878db91bafad901af4e8be0593e1b971dba86e13819c"></a><!-- doxytag: member="CXIMAGE_FORMAT_PSD" ref="b1562bce5b65a54f0baf878db91bafad901af4e8be0593e1b971dba86e13819c" args="" -->CXIMAGE_FORMAT_PSD</em>&nbsp;</td><td>
+</td></tr>
 <tr><td valign="top"><em><a class="anchor" name="b1562bce5b65a54f0baf878db91bafada35cefccc95844353d3f33cdb2718357"></a><!-- doxytag: member="CMAX_IMAGE_FORMATS" ref="b1562bce5b65a54f0baf878db91bafada35cefccc95844353d3f33cdb2718357" args="" -->CMAX_IMAGE_FORMATS</em>&nbsp;</td><td>
 </td></tr>
 </table>
@@ -137,7 +196,7 @@
 
 </div>
 </div><p>
-<hr size="1"><address style="text-align: right;"><small>Generated on Thu Jan 31 20:11:32 2008 for CxImage by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Fri Jan 7 21:44:32 2011 for CxImage by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.4 </small></address>
 </body>

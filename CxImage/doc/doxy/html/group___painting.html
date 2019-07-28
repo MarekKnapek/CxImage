@@ -16,47 +16,53 @@
 <h1>Painting</h1><table border="0" cellpadding="0" cellspacing="0">
 <tr><td></td></tr>
 <tr><td colspan="2"><br><h2>Functions</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top">long&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___painting.html#g9a5138e87019f4450001872cc9307f39">CxImage::Blt</a> (HDC pDC, long x=0, long y=0)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">int32_t&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___painting.html#gff13c8ad638fb0c3870a2bd9c1e843d9">CxImage::Blt</a> (HDC pDC, int32_t x=0, int32_t y=0)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">HBITMAP&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___painting.html#g87f08382bc368123313c7a64ec89a575">CxImage::MakeBitmap</a> (HDC hdc=NULL)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">HBITMAP&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___painting.html#g921b733f0c788a7520ff72b2339df6f8">CxImage::Draw2HBITMAP</a> (HDC hdc, int32_t x, int32_t y, int32_t cx, int32_t cy, RECT *pClipRect, bool bSmooth)</td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top">HBITMAP&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___painting.html#g4ba278e4b430b624ef59ac83a1fa938b">CxImage::MakeBitmap</a> (HDC hdc=NULL, bool bTransparency=false)</td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top">HICON&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___painting.html#g87a3636e2f2baae003a9c52cad3bdadb">CxImage::MakeIcon</a> (HDC hdc=NULL, bool bTransparency=false)</td></tr>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">HANDLE&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___painting.html#gaa526ce06df40eb91ea215d6cb90446c">CxImage::CopyToHandle</a> ()</td></tr>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___painting.html#gdc076b51c3601f3de8d67dc2f754981b">CxImage::CreateFromHANDLE</a> (HANDLE hMem)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___painting.html#g28b95c1b51a2f7073962fa1a529c7fc0">CxImage::CreateFromHBITMAP</a> (HBITMAP hbmp, HPALETTE hpal=0)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___painting.html#g1fad96f1391687bc0d6ab65acb1abf92">CxImage::CreateFromHBITMAP</a> (HBITMAP hbmp, HPALETTE hpal=0, bool bTransparency=false)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___painting.html#g91aefad37dbecadfe5a7069d61ca1525">CxImage::CreateFromHICON</a> (HICON hico)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___painting.html#gd61c7a9b900536370f4c7725b09ddb6a">CxImage::CreateFromHICON</a> (HICON hico, bool bTransparency=false)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">long&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___painting.html#gfc16db3bf577f95baa2c669e38dae803">CxImage::Draw</a> (HDC hdc, long x=0, long y=0, long cx=-1, long cy=-1, RECT *pClipRect=0, bool bSmooth=false)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">int32_t&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___painting.html#g2daf04f8d6206649241b6f310f0f7f9f">CxImage::Draw</a> (HDC hdc, int32_t x=0, int32_t y=0, int32_t cx=-1, int32_t cy=-1, RECT *pClipRect=0, bool bSmooth=false, bool bFlipY=false)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">long&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___painting.html#g407154cca5b4c8da83ed89d05c14a149">CxImage::Draw</a> (HDC hdc, const RECT &amp;rect, RECT *pClipRect=NULL, bool bSmooth=false)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">int32_t&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___painting.html#ga9681db960fa26f85f8cd0378f0beb11">CxImage::Draw</a> (HDC hdc, const RECT &amp;rect, RECT *pClipRect=NULL, bool bSmooth=false, bool bFlipY=false)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">long&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___painting.html#g23234c82f8fae60972237b7130983e38">CxImage::Stretch</a> (HDC hdc, long xoffset, long yoffset, long xsize, long ysize, DWORD dwRop=SRCCOPY)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">int32_t&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___painting.html#g963bc719286fc27921701c01f2dbe389">CxImage::Stretch</a> (HDC hdc, int32_t xoffset, int32_t yoffset, int32_t xsize, int32_t ysize, uint32_t dwRop=SRCCOPY)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">long&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___painting.html#g8f55a41922e6d174bd127fe2dceacd1b">CxImage::Stretch</a> (HDC hdc, const RECT &amp;rect, DWORD dwRop=SRCCOPY)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">int32_t&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___painting.html#g4ac0e65f8dfc29fa2ae7b5c957fa07bc">CxImage::Stretch</a> (HDC hdc, const RECT &amp;rect, uint32_t dwRop=SRCCOPY)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">long&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___painting.html#gef8b40591f433226d83282fa11e63e7c">CxImage::Tile</a> (HDC hdc, RECT *rc)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">int32_t&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___painting.html#g060091d5f56ee2f7ac99d950cdd71c52">CxImage::Tile</a> (HDC hdc, RECT *rc)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">long&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___painting.html#gaa241fca109ead0792008fa2ec254f10">CxImage::Draw2</a> (HDC hdc, long x=0, long y=0, long cx=-1, long cy=-1)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">int32_t&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___painting.html#gdcb96760976b1e7fcbdd0653d25174b5">CxImage::Draw2</a> (HDC hdc, int32_t x=0, int32_t y=0, int32_t cx=-1, int32_t cy=-1)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">long&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___painting.html#g09bd49786016f64c88d84da7f1f00037">CxImage::Draw2</a> (HDC hdc, const RECT &amp;rect)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">int32_t&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___painting.html#gd854ac0fee4f911825d37c5b2a1235c4">CxImage::Draw2</a> (HDC hdc, const RECT &amp;rect)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">long&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___painting.html#g7076da7316145c586b1be80415fa4902">CxImage::DrawString</a> (HDC hdc, long x, long y, const TCHAR *text, RGBQUAD color, const TCHAR *font, long lSize=0, long lWeight=400, BYTE bItalic=0, BYTE bUnderline=0, bool bSetAlpha=false)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">int32_t&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___painting.html#ge570b4da43648a99dd197af1896e3b54">CxImage::DrawString</a> (HDC hdc, int32_t x, int32_t y, const TCHAR *text, RGBQUAD color, const TCHAR *font, int32_t lSize=0, int32_t lWeight=400, uint8_t bItalic=0, uint8_t bUnderline=0, bool bSetAlpha=false)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">long&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___painting.html#g49d8978b42d704e5649a1cf6313db8e0">CxImage::DrawStringEx</a> (HDC hdc, long x, long y, CXTEXTINFO *pTextType, bool bSetAlpha=false)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">int32_t&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___painting.html#g9ba9dcf8877076096c147bec25a6b1b9">CxImage::DrawStringEx</a> (HDC hdc, int32_t x, int32_t y, CXTEXTINFO *pTextType, bool bSetAlpha=false)</td></tr>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___painting.html#g75487ebbda7d7d511484ecb636077d2f">CxImage::InitTextInfo</a> (CXTEXTINFO *txt)</td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___painting.html#g5cdaaf349489946c3406f835d6bfc92e">CxImage::IsHBITMAPAlphaValid</a> (HBITMAP hbmp)</td></tr>
 
 </table>
 <hr><a name="_details"></a><h2>Detailed Description</h2>
 <hr><h2>Function Documentation</h2>
-<a class="anchor" name="g9a5138e87019f4450001872cc9307f39"></a><!-- doxytag: member="CxImage::Blt" ref="g9a5138e87019f4450001872cc9307f39" args="(HDC pDC, long x=0, long y=0)" -->
+<a class="anchor" name="gff13c8ad638fb0c3870a2bd9c1e843d9"></a><!-- doxytag: member="CxImage::Blt" ref="gff13c8ad638fb0c3870a2bd9c1e843d9" args="(HDC pDC, int32_t x=0, int32_t y=0)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">long CxImage::Blt           </td>
+          <td class="memname">int32_t CxImage::Blt           </td>
           <td>(</td>
           <td class="paramtype">HDC&nbsp;</td>
           <td class="paramname"> <em>pDC</em>, </td>
@@ -64,13 +70,13 @@
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">long&nbsp;</td>
+          <td class="paramtype">int32_t&nbsp;</td>
           <td class="paramname"> <em>x</em> = <code>0</code>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">long&nbsp;</td>
+          <td class="paramtype">int32_t&nbsp;</td>
           <td class="paramname"> <em>y</em> = <code>0</code></td><td>&nbsp;</td>
         </tr>
         <tr>
@@ -131,7 +137,7 @@ Global object (clipboard paste) constructor <dl compact><dt><b>Parameters:</b></
 
 </div>
 </div><p>
-<a class="anchor" name="g28b95c1b51a2f7073962fa1a529c7fc0"></a><!-- doxytag: member="CxImage::CreateFromHBITMAP" ref="g28b95c1b51a2f7073962fa1a529c7fc0" args="(HBITMAP hbmp, HPALETTE hpal=0)" -->
+<a class="anchor" name="g1fad96f1391687bc0d6ab65acb1abf92"></a><!-- doxytag: member="CxImage::CreateFromHBITMAP" ref="g1fad96f1391687bc0d6ab65acb1abf92" args="(HBITMAP hbmp, HPALETTE hpal=0, bool bTransparency=false)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -145,7 +151,13 @@ Global object (clipboard paste) constructor <dl compact><dt><b>Parameters:</b></
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">HPALETTE&nbsp;</td>
-          <td class="paramname"> <em>hpal</em> = <code>0</code></td><td>&nbsp;</td>
+          <td class="paramname"> <em>hpal</em> = <code>0</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool&nbsp;</td>
+          <td class="paramname"> <em>bTransparency</em> = <code>false</code></td><td>&nbsp;</td>
         </tr>
         <tr>
           <td></td>
@@ -161,13 +173,15 @@ Bitmap resource constructor <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
     <tr><td valign="top"></td><td valign="top"><em>hbmp</em>&nbsp;</td><td>: bitmap resource handle </td></tr>
     <tr><td valign="top"></td><td valign="top"><em>hpal</em>&nbsp;</td><td>: (optional) palette, useful for 8bpp DC </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>bTransparency</em>&nbsp;</td><td>: (optional) for 32bpp images only, imports trancparency </td></tr>
   </table>
 </dl>
 <dl class="return" compact><dt><b>Returns:</b></dt><dd>true if everything is ok </dd></dl>
+<dl class="author" compact><dt><b>Author:</b></dt><dd>[]; changes [brunom] </dd></dl>
 
 </div>
 </div><p>
-<a class="anchor" name="g91aefad37dbecadfe5a7069d61ca1525"></a><!-- doxytag: member="CxImage::CreateFromHICON" ref="g91aefad37dbecadfe5a7069d61ca1525" args="(HICON hico)" -->
+<a class="anchor" name="gd61c7a9b900536370f4c7725b09ddb6a"></a><!-- doxytag: member="CxImage::CreateFromHICON" ref="gd61c7a9b900536370f4c7725b09ddb6a" args="(HICON hico, bool bTransparency=false)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -175,9 +189,18 @@ Bitmap resource constructor <dl compact><dt><b>Parameters:</b></dt><dd>
           <td class="memname">bool CxImage::CreateFromHICON           </td>
           <td>(</td>
           <td class="paramtype">HICON&nbsp;</td>
-          <td class="paramname"> <em>hico</em>          </td>
-          <td>&nbsp;)&nbsp;</td>
-          <td width="100%"><code> [inherited]</code></td>
+          <td class="paramname"> <em>hico</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool&nbsp;</td>
+          <td class="paramname"> <em>bTransparency</em> = <code>false</code></td><td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td><td width="100%"><code> [inherited]</code></td>
         </tr>
       </table>
 </div>
@@ -187,19 +210,20 @@ Bitmap resource constructor <dl compact><dt><b>Parameters:</b></dt><dd>
 icon resource constructor <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
     <tr><td valign="top"></td><td valign="top"><em>hico</em>&nbsp;</td><td>: icon resource handle </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>bTransparency</em>&nbsp;</td><td>: (optional) for 32bpp images only, imports trancparency </td></tr>
   </table>
 </dl>
 <dl class="return" compact><dt><b>Returns:</b></dt><dd>true if everything is ok </dd></dl>
-<dl class="author" compact><dt><b>Author:</b></dt><dd>[]; changes [Arlen Albert Keshabian] </dd></dl>
+<dl class="author" compact><dt><b>Author:</b></dt><dd>[]; changes [Arlen Albert Keshabian], [brunom] </dd></dl>
 
 </div>
 </div><p>
-<a class="anchor" name="g407154cca5b4c8da83ed89d05c14a149"></a><!-- doxytag: member="CxImage::Draw" ref="g407154cca5b4c8da83ed89d05c14a149" args="(HDC hdc, const RECT &amp;rect, RECT *pClipRect=NULL, bool bSmooth=false)" -->
+<a class="anchor" name="ga9681db960fa26f85f8cd0378f0beb11"></a><!-- doxytag: member="CxImage::Draw" ref="ga9681db960fa26f85f8cd0378f0beb11" args="(HDC hdc, const RECT &amp;rect, RECT *pClipRect=NULL, bool bSmooth=false, bool bFlipY=false)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">long CxImage::Draw           </td>
+          <td class="memname">int32_t CxImage::Draw           </td>
           <td>(</td>
           <td class="paramtype">HDC&nbsp;</td>
           <td class="paramname"> <em>hdc</em>, </td>
@@ -220,7 +244,13 @@ icon resource constructor <dl compact><dt><b>Parameters:</b></dt><dd>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">bool&nbsp;</td>
-          <td class="paramname"> <em>bSmooth</em> = <code>false</code></td><td>&nbsp;</td>
+          <td class="paramname"> <em>bSmooth</em> = <code>false</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool&nbsp;</td>
+          <td class="paramname"> <em>bFlipY</em> = <code>false</code></td><td>&nbsp;</td>
         </tr>
         <tr>
           <td></td>
@@ -235,12 +265,12 @@ icon resource constructor <dl compact><dt><b>Parameters:</b></dt><dd>
 
 </div>
 </div><p>
-<a class="anchor" name="gfc16db3bf577f95baa2c669e38dae803"></a><!-- doxytag: member="CxImage::Draw" ref="gfc16db3bf577f95baa2c669e38dae803" args="(HDC hdc, long x=0, long y=0, long cx=-1, long cy=-1, RECT *pClipRect=0, bool bSmooth=false)" -->
+<a class="anchor" name="g2daf04f8d6206649241b6f310f0f7f9f"></a><!-- doxytag: member="CxImage::Draw" ref="g2daf04f8d6206649241b6f310f0f7f9f" args="(HDC hdc, int32_t x=0, int32_t y=0, int32_t cx=-1, int32_t cy=-1, RECT *pClipRect=0, bool bSmooth=false, bool bFlipY=false)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">long CxImage::Draw           </td>
+          <td class="memname">int32_t CxImage::Draw           </td>
           <td>(</td>
           <td class="paramtype">HDC&nbsp;</td>
           <td class="paramname"> <em>hdc</em>, </td>
@@ -248,25 +278,25 @@ icon resource constructor <dl compact><dt><b>Parameters:</b></dt><dd>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">long&nbsp;</td>
+          <td class="paramtype">int32_t&nbsp;</td>
           <td class="paramname"> <em>x</em> = <code>0</code>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">long&nbsp;</td>
+          <td class="paramtype">int32_t&nbsp;</td>
           <td class="paramname"> <em>y</em> = <code>0</code>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">long&nbsp;</td>
+          <td class="paramtype">int32_t&nbsp;</td>
           <td class="paramname"> <em>cx</em> = <code>-1</code>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">long&nbsp;</td>
+          <td class="paramtype">int32_t&nbsp;</td>
           <td class="paramname"> <em>cy</em> = <code>-1</code>, </td>
         </tr>
         <tr>
@@ -279,7 +309,13 @@ icon resource constructor <dl compact><dt><b>Parameters:</b></dt><dd>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">bool&nbsp;</td>
-          <td class="paramname"> <em>bSmooth</em> = <code>false</code></td><td>&nbsp;</td>
+          <td class="paramname"> <em>bSmooth</em> = <code>false</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool&nbsp;</td>
+          <td class="paramname"> <em>bFlipY</em> = <code>false</code></td><td>&nbsp;</td>
         </tr>
         <tr>
           <td></td>
@@ -300,18 +336,19 @@ Draws the image in the specified device context, with support for alpha channel,
 </td></tr>
     <tr><td valign="top"></td><td valign="top"><em>pClipRect</em>&nbsp;</td><td>: limit the drawing operations inside a given rectangle in the output device context. </td></tr>
     <tr><td valign="top"></td><td valign="top"><em>bSmooth</em>&nbsp;</td><td>: activates a bilinear filter that will enhance the appearence for zommed pictures. Quite slow. Needs CXIMAGE_SUPPORT_INTERPOLATION. </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>bFlipY</em>&nbsp;</td><td>: draws a mirror image along the y-axis </td></tr>
   </table>
 </dl>
 <dl class="return" compact><dt><b>Returns:</b></dt><dd>true if everything is ok </dd></dl>
 
 </div>
 </div><p>
-<a class="anchor" name="g09bd49786016f64c88d84da7f1f00037"></a><!-- doxytag: member="CxImage::Draw2" ref="g09bd49786016f64c88d84da7f1f00037" args="(HDC hdc, const RECT &amp;rect)" -->
+<a class="anchor" name="gd854ac0fee4f911825d37c5b2a1235c4"></a><!-- doxytag: member="CxImage::Draw2" ref="gd854ac0fee4f911825d37c5b2a1235c4" args="(HDC hdc, const RECT &amp;rect)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">long CxImage::Draw2           </td>
+          <td class="memname">int32_t CxImage::Draw2           </td>
           <td>(</td>
           <td class="paramtype">HDC&nbsp;</td>
           <td class="paramname"> <em>hdc</em>, </td>
@@ -335,12 +372,12 @@ Draws the image in the specified device context, with support for alpha channel,
 
 </div>
 </div><p>
-<a class="anchor" name="gaa241fca109ead0792008fa2ec254f10"></a><!-- doxytag: member="CxImage::Draw2" ref="gaa241fca109ead0792008fa2ec254f10" args="(HDC hdc, long x=0, long y=0, long cx=-1, long cy=-1)" -->
+<a class="anchor" name="gdcb96760976b1e7fcbdd0653d25174b5"></a><!-- doxytag: member="CxImage::Draw2" ref="gdcb96760976b1e7fcbdd0653d25174b5" args="(HDC hdc, int32_t x=0, int32_t y=0, int32_t cx=-1, int32_t cy=-1)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">long CxImage::Draw2           </td>
+          <td class="memname">int32_t CxImage::Draw2           </td>
           <td>(</td>
           <td class="paramtype">HDC&nbsp;</td>
           <td class="paramname"> <em>hdc</em>, </td>
@@ -348,25 +385,25 @@ Draws the image in the specified device context, with support for alpha channel,
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">long&nbsp;</td>
+          <td class="paramtype">int32_t&nbsp;</td>
           <td class="paramname"> <em>x</em> = <code>0</code>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">long&nbsp;</td>
+          <td class="paramtype">int32_t&nbsp;</td>
           <td class="paramname"> <em>y</em> = <code>0</code>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">long&nbsp;</td>
+          <td class="paramtype">int32_t&nbsp;</td>
           <td class="paramname"> <em>cx</em> = <code>-1</code>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">long&nbsp;</td>
+          <td class="paramtype">int32_t&nbsp;</td>
           <td class="paramname"> <em>cy</em> = <code>-1</code></td><td>&nbsp;</td>
         </tr>
         <tr>
@@ -392,12 +429,12 @@ Draws (stretch) the image with single transparency support <dl compact><dt><b>Pa
 
 </div>
 </div><p>
-<a class="anchor" name="g7076da7316145c586b1be80415fa4902"></a><!-- doxytag: member="CxImage::DrawString" ref="g7076da7316145c586b1be80415fa4902" args="(HDC hdc, long x, long y, const TCHAR *text, RGBQUAD color, const TCHAR *font, long lSize=0, long lWeight=400, BYTE bItalic=0, BYTE bUnderline=0, bool bSetAlpha=false)" -->
+<a class="anchor" name="g921b733f0c788a7520ff72b2339df6f8"></a><!-- doxytag: member="CxImage::Draw2HBITMAP" ref="g921b733f0c788a7520ff72b2339df6f8" args="(HDC hdc, int32_t x, int32_t y, int32_t cx, int32_t cy, RECT *pClipRect, bool bSmooth)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">long CxImage::DrawString           </td>
+          <td class="memname">HBITMAP CxImage::Draw2HBITMAP           </td>
           <td>(</td>
           <td class="paramtype">HDC&nbsp;</td>
           <td class="paramname"> <em>hdc</em>, </td>
@@ -405,13 +442,85 @@ Draws (stretch) the image with single transparency support <dl compact><dt><b>Pa
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">long&nbsp;</td>
+          <td class="paramtype">int32_t&nbsp;</td>
           <td class="paramname"> <em>x</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">long&nbsp;</td>
+          <td class="paramtype">int32_t&nbsp;</td>
+          <td class="paramname"> <em>y</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int32_t&nbsp;</td>
+          <td class="paramname"> <em>cx</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int32_t&nbsp;</td>
+          <td class="paramname"> <em>cy</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">RECT *&nbsp;</td>
+          <td class="paramname"> <em>pClipRect</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool&nbsp;</td>
+          <td class="paramname"> <em>bSmooth</em></td><td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td><td width="100%"><code> [inherited]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+renders the image into a HBITMAP handle <dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"></td><td valign="top"><em>hdc</em>&nbsp;</td><td>: destination device context </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>x,y</em>&nbsp;</td><td>: (optional) offset </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>cx,cy</em>&nbsp;</td><td>: (optional) size.<ul>
+<li>If cx or cy are not specified (or less than 0), the normal width or height will be used</li><li>If cx or cy are different than width or height, the image will be stretched </li></ul>
+</td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>pClipRect</em>&nbsp;</td><td>: limit the drawing operations inside a given rectangle in the output device context. </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>bSmooth</em>&nbsp;</td><td>: activates a bilinear filter that will enhance the appearence for zommed pictures. Quite slow. Needs CXIMAGE_SUPPORT_INTERPOLATION. </td></tr>
+  </table>
+</dl>
+<dl class="return" compact><dt><b>Returns:</b></dt><dd>HBITMAP handle, NULL in case of error </dd></dl>
+<dl class="see" compact><dt><b>See also:</b></dt><dd><a class="el" href="group___painting.html#g4ba278e4b430b624ef59ac83a1fa938b">MakeBitmap</a> </dd></dl>
+
+</div>
+</div><p>
+<a class="anchor" name="ge570b4da43648a99dd197af1896e3b54"></a><!-- doxytag: member="CxImage::DrawString" ref="ge570b4da43648a99dd197af1896e3b54" args="(HDC hdc, int32_t x, int32_t y, const TCHAR *text, RGBQUAD color, const TCHAR *font, int32_t lSize=0, int32_t lWeight=400, uint8_t bItalic=0, uint8_t bUnderline=0, bool bSetAlpha=false)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int32_t CxImage::DrawString           </td>
+          <td>(</td>
+          <td class="paramtype">HDC&nbsp;</td>
+          <td class="paramname"> <em>hdc</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int32_t&nbsp;</td>
+          <td class="paramname"> <em>x</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int32_t&nbsp;</td>
           <td class="paramname"> <em>y</em>, </td>
         </tr>
         <tr>
@@ -435,25 +544,25 @@ Draws (stretch) the image with single transparency support <dl compact><dt><b>Pa
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">long&nbsp;</td>
+          <td class="paramtype">int32_t&nbsp;</td>
           <td class="paramname"> <em>lSize</em> = <code>0</code>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">long&nbsp;</td>
+          <td class="paramtype">int32_t&nbsp;</td>
           <td class="paramname"> <em>lWeight</em> = <code>400</code>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">BYTE&nbsp;</td>
+          <td class="paramtype">uint8_t&nbsp;</td>
           <td class="paramname"> <em>bItalic</em> = <code>0</code>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">BYTE&nbsp;</td>
+          <td class="paramtype">uint8_t&nbsp;</td>
           <td class="paramname"> <em>bUnderline</em> = <code>0</code>, </td>
         </tr>
         <tr>
@@ -475,12 +584,12 @@ Draws (stretch) the image with single transparency support <dl compact><dt><b>Pa
 
 </div>
 </div><p>
-<a class="anchor" name="g49d8978b42d704e5649a1cf6313db8e0"></a><!-- doxytag: member="CxImage::DrawStringEx" ref="g49d8978b42d704e5649a1cf6313db8e0" args="(HDC hdc, long x, long y, CXTEXTINFO *pTextType, bool bSetAlpha=false)" -->
+<a class="anchor" name="g9ba9dcf8877076096c147bec25a6b1b9"></a><!-- doxytag: member="CxImage::DrawStringEx" ref="g9ba9dcf8877076096c147bec25a6b1b9" args="(HDC hdc, int32_t x, int32_t y, CXTEXTINFO *pTextType, bool bSetAlpha=false)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">long CxImage::DrawStringEx           </td>
+          <td class="memname">int32_t CxImage::DrawStringEx           </td>
           <td>(</td>
           <td class="paramtype">HDC&nbsp;</td>
           <td class="paramname"> <em>hdc</em>, </td>
@@ -488,13 +597,13 @@ Draws (stretch) the image with single transparency support <dl compact><dt><b>Pa
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">long&nbsp;</td>
+          <td class="paramtype">int32_t&nbsp;</td>
           <td class="paramname"> <em>x</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">long&nbsp;</td>
+          <td class="paramtype">int32_t&nbsp;</td>
           <td class="paramname"> <em>y</em>, </td>
         </tr>
         <tr>
@@ -542,7 +651,34 @@ Draws (stretch) the image with single transparency support <dl compact><dt><b>Pa
 
 </div>
 </div><p>
-<a class="anchor" name="g87f08382bc368123313c7a64ec89a575"></a><!-- doxytag: member="CxImage::MakeBitmap" ref="g87f08382bc368123313c7a64ec89a575" args="(HDC hdc=NULL)" -->
+<a class="anchor" name="g5cdaaf349489946c3406f835d6bfc92e"></a><!-- doxytag: member="CxImage::IsHBITMAPAlphaValid" ref="g5cdaaf349489946c3406f835d6bfc92e" args="(HBITMAP hbmp)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool CxImage::IsHBITMAPAlphaValid           </td>
+          <td>(</td>
+          <td class="paramtype">HBITMAP&nbsp;</td>
+          <td class="paramname"> <em>hbmp</em>          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td width="100%"><code> [protected, inherited]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+check if the bitmap contains transparency data <dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"></td><td valign="top"><em>hbmp</em>&nbsp;</td><td>: bitmap resource handle </td></tr>
+  </table>
+</dl>
+<dl class="return" compact><dt><b>Returns:</b></dt><dd>true the bitmap has transparency </dd></dl>
+<dl class="author" compact><dt><b>Author:</b></dt><dd>[brunom] </dd></dl>
+
+</div>
+</div><p>
+<a class="anchor" name="g4ba278e4b430b624ef59ac83a1fa938b"></a><!-- doxytag: member="CxImage::MakeBitmap" ref="g4ba278e4b430b624ef59ac83a1fa938b" args="(HDC hdc=NULL, bool bTransparency=false)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -550,9 +686,18 @@ Draws (stretch) the image with single transparency support <dl compact><dt><b>Pa
           <td class="memname">HBITMAP CxImage::MakeBitmap           </td>
           <td>(</td>
           <td class="paramtype">HDC&nbsp;</td>
-          <td class="paramname"> <em>hdc</em> = <code>NULL</code>          </td>
-          <td>&nbsp;)&nbsp;</td>
-          <td width="100%"><code> [inherited]</code></td>
+          <td class="paramname"> <em>hdc</em> = <code>NULL</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool&nbsp;</td>
+          <td class="paramname"> <em>bTransparency</em> = <code>false</code></td><td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td><td width="100%"><code> [inherited]</code></td>
         </tr>
       </table>
 </div>
@@ -562,18 +707,59 @@ Draws (stretch) the image with single transparency support <dl compact><dt><b>Pa
 Transfer the image in a bitmap handle <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
     <tr><td valign="top"></td><td valign="top"><em>hdc,:</em>&nbsp;</td><td>target device context (the screen, usually) </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>bTransparency</em>&nbsp;</td><td>: (optional) exports trancparency </td></tr>
   </table>
 </dl>
 <dl class="return" compact><dt><b>Returns:</b></dt><dd>bitmap handle, or NULL if an error occurs. </dd></dl>
+<dl class="see" compact><dt><b>See also:</b></dt><dd><a class="el" href="group___painting.html#g921b733f0c788a7520ff72b2339df6f8">Draw2HBITMAP</a>, <a class="el" href="group___painting.html#g87a3636e2f2baae003a9c52cad3bdadb">MakeIcon</a> </dd></dl>
+<dl class="author" compact><dt><b>Author:</b></dt><dd>[]; changes [brunom] </dd></dl>
 
 </div>
 </div><p>
-<a class="anchor" name="g8f55a41922e6d174bd127fe2dceacd1b"></a><!-- doxytag: member="CxImage::Stretch" ref="g8f55a41922e6d174bd127fe2dceacd1b" args="(HDC hdc, const RECT &amp;rect, DWORD dwRop=SRCCOPY)" -->
+<a class="anchor" name="g87a3636e2f2baae003a9c52cad3bdadb"></a><!-- doxytag: member="CxImage::MakeIcon" ref="g87a3636e2f2baae003a9c52cad3bdadb" args="(HDC hdc=NULL, bool bTransparency=false)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">long CxImage::Stretch           </td>
+          <td class="memname">HICON CxImage::MakeIcon           </td>
+          <td>(</td>
+          <td class="paramtype">HDC&nbsp;</td>
+          <td class="paramname"> <em>hdc</em> = <code>NULL</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool&nbsp;</td>
+          <td class="paramname"> <em>bTransparency</em> = <code>false</code></td><td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td><td width="100%"><code> [inherited]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Transfer the image in a icon handle, with transparency. <dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"></td><td valign="top"><em>hdc,:</em>&nbsp;</td><td>target device context (the screen, usually) </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>bTransparency</em>&nbsp;</td><td>: (optional) exports trancparency </td></tr>
+  </table>
+</dl>
+<dl class="return" compact><dt><b>Returns:</b></dt><dd>icon handle, or NULL if an error occurs. </dd></dl>
+<dl class="see" compact><dt><b>See also:</b></dt><dd><a class="el" href="group___painting.html#g4ba278e4b430b624ef59ac83a1fa938b">MakeBitmap</a> </dd></dl>
+<dl class="author" compact><dt><b>Author:</b></dt><dd>[brunom] </dd></dl>
+
+</div>
+</div><p>
+<a class="anchor" name="g4ac0e65f8dfc29fa2ae7b5c957fa07bc"></a><!-- doxytag: member="CxImage::Stretch" ref="g4ac0e65f8dfc29fa2ae7b5c957fa07bc" args="(HDC hdc, const RECT &amp;rect, uint32_t dwRop=SRCCOPY)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int32_t CxImage::Stretch           </td>
           <td>(</td>
           <td class="paramtype">HDC&nbsp;</td>
           <td class="paramname"> <em>hdc</em>, </td>
@@ -587,7 +773,7 @@ Transfer the image in a bitmap handle <dl compact><dt><b>Parameters:</b></dt><dd
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">DWORD&nbsp;</td>
+          <td class="paramtype">uint32_t&nbsp;</td>
           <td class="paramname"> <em>dwRop</em> = <code>SRCCOPY</code></td><td>&nbsp;</td>
         </tr>
         <tr>
@@ -603,12 +789,12 @@ Transfer the image in a bitmap handle <dl compact><dt><b>Parameters:</b></dt><dd
 
 </div>
 </div><p>
-<a class="anchor" name="g23234c82f8fae60972237b7130983e38"></a><!-- doxytag: member="CxImage::Stretch" ref="g23234c82f8fae60972237b7130983e38" args="(HDC hdc, long xoffset, long yoffset, long xsize, long ysize, DWORD dwRop=SRCCOPY)" -->
+<a class="anchor" name="g963bc719286fc27921701c01f2dbe389"></a><!-- doxytag: member="CxImage::Stretch" ref="g963bc719286fc27921701c01f2dbe389" args="(HDC hdc, int32_t xoffset, int32_t yoffset, int32_t xsize, int32_t ysize, uint32_t dwRop=SRCCOPY)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">long CxImage::Stretch           </td>
+          <td class="memname">int32_t CxImage::Stretch           </td>
           <td>(</td>
           <td class="paramtype">HDC&nbsp;</td>
           <td class="paramname"> <em>hdc</em>, </td>
@@ -616,31 +802,31 @@ Transfer the image in a bitmap handle <dl compact><dt><b>Parameters:</b></dt><dd
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">long&nbsp;</td>
+          <td class="paramtype">int32_t&nbsp;</td>
           <td class="paramname"> <em>xoffset</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">long&nbsp;</td>
+          <td class="paramtype">int32_t&nbsp;</td>
           <td class="paramname"> <em>yoffset</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">long&nbsp;</td>
+          <td class="paramtype">int32_t&nbsp;</td>
           <td class="paramname"> <em>xsize</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">long&nbsp;</td>
+          <td class="paramtype">int32_t&nbsp;</td>
           <td class="paramname"> <em>ysize</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">DWORD&nbsp;</td>
+          <td class="paramtype">uint32_t&nbsp;</td>
           <td class="paramname"> <em>dwRop</em> = <code>SRCCOPY</code></td><td>&nbsp;</td>
         </tr>
         <tr>
@@ -653,7 +839,7 @@ Transfer the image in a bitmap handle <dl compact><dt><b>Parameters:</b></dt><dd
 <div class="memdoc">
 
 <p>
-Stretch the image. Obsolete: use <a class="el" href="group___painting.html#gfc16db3bf577f95baa2c669e38dae803">Draw()</a> or <a class="el" href="group___painting.html#gaa241fca109ead0792008fa2ec254f10">Draw2()</a> <dl compact><dt><b>Parameters:</b></dt><dd>
+Stretch the image. Obsolete: use <a class="el" href="group___painting.html#g2daf04f8d6206649241b6f310f0f7f9f">Draw()</a> or <a class="el" href="group___painting.html#gdcb96760976b1e7fcbdd0653d25174b5">Draw2()</a> <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
     <tr><td valign="top"></td><td valign="top"><em>hdc</em>&nbsp;</td><td>: destination device context </td></tr>
     <tr><td valign="top"></td><td valign="top"><em>xoffset,yoffset</em>&nbsp;</td><td>: (optional) offset </td></tr>
@@ -665,12 +851,12 @@ Stretch the image. Obsolete: use <a class="el" href="group___painting.html#gfc16
 
 </div>
 </div><p>
-<a class="anchor" name="gef8b40591f433226d83282fa11e63e7c"></a><!-- doxytag: member="CxImage::Tile" ref="gef8b40591f433226d83282fa11e63e7c" args="(HDC hdc, RECT *rc)" -->
+<a class="anchor" name="g060091d5f56ee2f7ac99d950cdd71c52"></a><!-- doxytag: member="CxImage::Tile" ref="g060091d5f56ee2f7ac99d950cdd71c52" args="(HDC hdc, RECT *rc)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">long CxImage::Tile           </td>
+          <td class="memname">int32_t CxImage::Tile           </td>
           <td>(</td>
           <td class="paramtype">HDC&nbsp;</td>
           <td class="paramname"> <em>hdc</em>, </td>
@@ -701,7 +887,7 @@ Tiles the device context in the specified rectangle with the image. <dl compact>
 
 </div>
 </div><p>
-<hr size="1"><address style="text-align: right;"><small>Generated on Thu Jan 31 20:11:32 2008 for CxImage by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Fri Jan 7 21:44:32 2011 for CxImage by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.4 </small></address>
 </body>

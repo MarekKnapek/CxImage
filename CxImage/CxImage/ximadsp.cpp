@@ -1,6 +1,6 @@
 // xImaDsp.cpp : DSP functions
 /* 07/08/2001 v1.00 - Davide Pizzolato - www.xdp.it
- * CxImage version 7.0.0 31/Dec/2010
+ * CxImage version 7.0.1 07/Jan/2011
  */
 
 #include "ximage.h"
@@ -3505,10 +3505,9 @@ bool CxImage::Trace(RGBQUAD color_target, RGBQUAD color_trace)
 
 	RGBQUAD color;
 	bool bFindStartPoint; 
-	int32_t nFindPoint;
 	POINT StartPoint,CurrentPoint; 
 	int32_t Direction[8][2]={{1,0},{1,-1},{0,-1},{-1,-1},{-1,0},{-1,1}, {0,1},{1,1}};
-	int32_t BeginDirect = 0;
+	int8_t nFindPoint,nDirection;
 	int32_t x,y;
 
 	CxImage tmp;
@@ -3538,44 +3537,41 @@ bool CxImage::Trace(RGBQUAD color_target, RGBQUAD color_trace)
 		}
 	}
 
-	while(bFindStartPoint)
+	nDirection = nFindPoint = 0;
+	while(bFindStartPoint && (nFindPoint<9))
 	{
-		nFindPoint = 8;
-		while(nFindPoint)
+		x = CurrentPoint.x + Direction[nDirection][0];
+		y = CurrentPoint.y + Direction[nDirection][1];
+		color = GetPixelColor(x,y);
+		if (IsInside(x,y) &&
+			color.rgbRed   == color_target.rgbRed   &&
+			color.rgbGreen == color_target.rgbGreen && 
+			color.rgbBlue  == color_target.rgbBlue  ) 
 		{
-			x = CurrentPoint.x + Direction[BeginDirect][0];
-			y = CurrentPoint.y + Direction[BeginDirect][1];
-			color = GetPixelColor(x,y);  
+			CurrentPoint.x = x;
+			CurrentPoint.y = y;
 
-			if (IsInside(x,y) &&
-				color.rgbRed   == color_target.rgbRed   &&
-				color.rgbGreen == color_target.rgbGreen && 
-				color.rgbBlue  == color_target.rgbBlue  )
-			{
-				nFindPoint = 0;
-				CurrentPoint.x = x;
-				CurrentPoint.y = y;
+			nFindPoint = 0;
+			if(x == StartPoint.x && y == StartPoint.y)
+				bFindStartPoint = false;
 
-				if(x == StartPoint.x  && y == StartPoint.y)
-					bFindStartPoint = false;
+			tmp.BlindSetPixelColor(x,y,color_trace);
 
-				tmp.BlindSetPixelColor(x,y,color_trace);
-
-				BeginDirect--;
-				if(BeginDirect == -1) BeginDirect = 7;
-			}
-			else
-			{
-				BeginDirect++;
-				if(BeginDirect == 8) BeginDirect = 0;
-				nFindPoint--;
-				if(nFindPoint == 0) {
-					bFindStartPoint = false;
-					tmp.SetPixelColor(CurrentPoint.x,CurrentPoint.y,color_trace);
-				}
-			}
+			nDirection -= 2;
+			if(nDirection == -2)
+				nDirection = 6;
+			if(nDirection == -1)
+				nDirection = 7;
+		}
+		else
+		{
+			nDirection++;
+			if(nDirection == 8)
+				nDirection = 0;
+			nFindPoint++;
 		}
 	}
+
 	Transfer(tmp);
 	return true;
 }

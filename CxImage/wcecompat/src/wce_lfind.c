@@ -42,7 +42,7 @@
 
 #include <assert.h>
 #include <stdlib.h>
-#include <wce_types.h>
+//#include <wce_types.h>
 
 /*******************************************************************************
 * wceex_lfind - TODO

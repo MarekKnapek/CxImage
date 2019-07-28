@@ -2,7 +2,7 @@
  * File:	ximagif.cpp
  * Purpose:	Platform Independent GIF Image Class Loader and Writer
  * 07/Aug/2001 Davide Pizzolato - www.xdp.it
- * CxImage version 7.0.0 31/Dec/2010
+ * CxImage version 7.0.1 07/Jan/2011
  */
 
 #include "ximagif.h"
@@ -1003,6 +1003,7 @@ void CxImageGIF::flush_char()
  *
  */
 
+#if CXIMAGE_SUPPORT_DECODE
 ////////////////////////////////////////////////////////////////////////////////
 
 int16_t CxImageGIF::init_exp(int16_t size)
@@ -1366,6 +1367,7 @@ int32_t CxImageGIF::seek_next_image(CxFile* fp, int32_t position)
 	}
 	return -1;
 }
+#endif //CXIMAGE_SUPPORT_DECODE
 ////////////////////////////////////////////////////////////////////////////////
 void CxImageGIF::SetLoops(int32_t loops)
 {	m_loops=loops; }
