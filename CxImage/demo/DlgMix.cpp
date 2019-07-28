@@ -95,27 +95,29 @@ BOOL DlgMix::OnInitDialog()
 		m_cbDst.SetCurSel(0);
 	}
 	
-	m_cbOpType.AddString("OpAdd");
-	m_cbOpType.SetItemData(m_cbOpType.GetCount()-1, (DWORD)CxImage::ImageOpType::OpAdd);
-	m_cbOpType.AddString("OpAnd");
-	m_cbOpType.SetItemData(m_cbOpType.GetCount()-1, (DWORD)CxImage::ImageOpType::OpAnd);
-	m_cbOpType.AddString("OpXor");
-	m_cbOpType.SetItemData(m_cbOpType.GetCount()-1, (DWORD)CxImage::ImageOpType::OpXor);
-	m_cbOpType.AddString("OpOr");
-	m_cbOpType.SetItemData(m_cbOpType.GetCount()-1, (DWORD)CxImage::ImageOpType::OpOr);
-	m_cbOpType.AddString("OpScreen");
-	m_cbOpType.SetItemData(m_cbOpType.GetCount()-1, (DWORD)CxImage::ImageOpType::OpScreen);
-	m_cbOpType.AddString("OpMask");
-	m_cbOpType.SetItemData(m_cbOpType.GetCount()-1, (DWORD)CxImage::ImageOpType::OpMask);
-	m_cbOpType.AddString("OpSrcCopy");
-	m_cbOpType.SetItemData(m_cbOpType.GetCount()-1, (DWORD)CxImage::ImageOpType::OpSrcCopy);
-	m_cbOpType.AddString("OpDstCopy");
-	m_cbOpType.SetItemData(m_cbOpType.GetCount()-1, (DWORD)CxImage::ImageOpType::OpDstCopy);
-	m_cbOpType.AddString("OpSub");
-	m_cbOpType.SetItemData(m_cbOpType.GetCount()-1, (DWORD)CxImage::ImageOpType::OpSub);
-	m_cbOpType.AddString("OpSrcBlend");
-	m_cbOpType.SetItemData(m_cbOpType.GetCount()-1, (DWORD)CxImage::ImageOpType::OpSrcBlend);
-	m_cbOpType.SetCurSel(1);
+	m_cbOpType.AddString(_T("OpAvg"));
+	m_cbOpType.SetItemData(m_cbOpType.GetCount()-1, (DWORD)CxImage::OpAvg);
+	m_cbOpType.AddString(_T("OpAdd"));
+	m_cbOpType.SetItemData(m_cbOpType.GetCount()-1, (DWORD)CxImage::OpAdd);
+	m_cbOpType.AddString(_T("OpAnd"));
+	m_cbOpType.SetItemData(m_cbOpType.GetCount()-1, (DWORD)CxImage::OpAnd);
+	m_cbOpType.AddString(_T("OpXor"));
+	m_cbOpType.SetItemData(m_cbOpType.GetCount()-1, (DWORD)CxImage::OpXor);
+	m_cbOpType.AddString(_T("OpOr"));
+	m_cbOpType.SetItemData(m_cbOpType.GetCount()-1, (DWORD)CxImage::OpOr);
+	m_cbOpType.AddString(_T("OpScreen"));
+	m_cbOpType.SetItemData(m_cbOpType.GetCount()-1, (DWORD)CxImage::OpScreen);
+	m_cbOpType.AddString(_T("OpMask"));
+	m_cbOpType.SetItemData(m_cbOpType.GetCount()-1, (DWORD)CxImage::OpMask);
+	m_cbOpType.AddString(_T("OpSrcCopy"));
+	m_cbOpType.SetItemData(m_cbOpType.GetCount()-1, (DWORD)CxImage::OpSrcCopy);
+	m_cbOpType.AddString(_T("OpDstCopy"));
+	m_cbOpType.SetItemData(m_cbOpType.GetCount()-1, (DWORD)CxImage::OpDstCopy);
+	m_cbOpType.AddString(_T("OpSub"));
+	m_cbOpType.SetItemData(m_cbOpType.GetCount()-1, (DWORD)CxImage::OpSub);
+	m_cbOpType.AddString(_T("OpSrcBlend"));
+	m_cbOpType.SetItemData(m_cbOpType.GetCount()-1, (DWORD)CxImage::OpSrcBlend);
+	m_cbOpType.SetCurSel(0);
 
 
 	SetMix();

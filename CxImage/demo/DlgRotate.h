@@ -17,7 +17,7 @@ class DlgRotate : public CDialog
 public:
 	long m_method;
 	long m_overflow;
-	long m_keepsize;
+	BYTE m_keepsize;
 	DlgRotate(CWnd* pParent = NULL);   // standard constructor
 
 // Dialog Data

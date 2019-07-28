@@ -48,36 +48,36 @@ void DlgHisto::InitDlg()
 	if (m_initok) return;
 
 	RECT r1 = {10,8,59,35};
-	m_r.Create("",WS_VISIBLE|WS_TABSTOP,r1,this,0);
+	m_r.Create(_T(""),WS_VISIBLE|WS_TABSTOP,r1,this,0);
 	m_r.SetButtonStyle(BS_PUSHLIKE|BS_FLAT|BS_AUTOCHECKBOX,0);
-	m_r.SetWindowText("R");
+	m_r.SetWindowText(_T("R"));
 	m_r.EnableTarget(0);
 	m_r.SetIcon(IDI_R,BS_LEFT);
 	m_r.SetCheck(1);
 	m_r.EnableWindow(1);
 
 	RECT r2 = {60,8,109,35};
-	m_g.Create("",WS_VISIBLE|WS_TABSTOP,r2,this,0);
+	m_g.Create(_T(""),WS_VISIBLE|WS_TABSTOP,r2,this,0);
 	m_g.SetButtonStyle(BS_PUSHLIKE|BS_FLAT|BS_AUTOCHECKBOX,0);
-	m_g.SetWindowText("G");
+	m_g.SetWindowText(_T("G"));
 	m_g.EnableTarget(0);
 	m_g.SetIcon(IDI_G,BS_LEFT);
 	m_g.SetCheck(1);
 	m_g.EnableWindow(1);
 
 	RECT r3 = {110,8,159,35};
-	m_b.Create("",WS_VISIBLE|WS_TABSTOP,r3,this,0);
+	m_b.Create(_T(""),WS_VISIBLE|WS_TABSTOP,r3,this,0);
 	m_b.SetButtonStyle(BS_PUSHLIKE|BS_FLAT|BS_AUTOCHECKBOX,0);
-	m_b.SetWindowText("B");
+	m_b.SetWindowText(_T("B"));
 	m_b.EnableTarget(0);
 	m_b.SetIcon(IDI_B,BS_LEFT);
 	m_b.SetCheck(1);
 	m_b.EnableWindow(1);
 
 	RECT r4 = {160,8,209,35};
-	m_gray.Create("",WS_VISIBLE|WS_TABSTOP,r4,this,0);
+	m_gray.Create(_T(""),WS_VISIBLE|WS_TABSTOP,r4,this,0);
 	m_gray.SetButtonStyle(BS_PUSHLIKE|BS_FLAT|BS_AUTOCHECKBOX,0);
-	m_gray.SetWindowText("gray");
+	m_gray.SetWindowText(_T("gray"));
 	m_gray.EnableTarget(0);
 	m_gray.SetIcon(IDI_GRAY,BS_LEFT);
 	m_gray.SetCheck(1);

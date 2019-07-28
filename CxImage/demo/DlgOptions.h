@@ -21,6 +21,7 @@ public:
 	DWORD m_Opt_gif;
 	DWORD m_Opt_jpg;
 	DWORD m_Opt_png;
+	DWORD m_Opt_raw;
 	CxImageJPG* m_exif;
 	DlgOptions(CWnd* pParent = NULL);   // standard constructor
 
@@ -29,6 +30,13 @@ public:
 	enum { IDD = IDD_OPTIONS };
 	CButton	m_chkJpgOpt;
 	CxTargetButton	m_info;
+	CButton	m_rEnc21;
+	CButton	m_rEnc20;
+	CButton	m_rEnc19;
+	CButton	m_rEnc18;
+	CButton	m_rEnc17;
+	CButton	m_rEnc16;
+	CButton	m_rEnc15;
 	CButton	m_rEnc14;
 	CButton	m_rEnc13;
 	CButton	m_rEnc12;
@@ -45,7 +53,7 @@ public:
 	CButton	m_rEnc0;
 	CxTargetButton	m_ok;
 	CxTargetButton	m_canc;
-	BYTE	m_quality;
+	float	m_jpeg_quality;
 	long	m_xres;
 	DWORD	m_yres;
 	//}}AFX_DATA

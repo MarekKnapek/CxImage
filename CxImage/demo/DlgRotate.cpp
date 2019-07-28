@@ -14,7 +14,6 @@ static char THIS_FILE[] = __FILE__;
 //////////////////////////////////////////////////////////////////////////////
 // DlgRotate dialog
 
-
 DlgRotate::DlgRotate(CWnd* pParent /*=NULL*/)
 	: CDialog(DlgRotate::IDD, pParent)
 {
@@ -22,7 +21,6 @@ DlgRotate::DlgRotate(CWnd* pParent /*=NULL*/)
 	m_angle = 0.0f;
 	//}}AFX_DATA_INIT
 }
-
 
 void DlgRotate::DoDataExchange(CDataExchange* pDX)
 {
@@ -37,7 +35,6 @@ void DlgRotate::DoDataExchange(CDataExchange* pDX)
 	//}}AFX_DATA_MAP
 }
 
-
 BEGIN_MESSAGE_MAP(DlgRotate, CDialog)
 	//{{AFX_MSG_MAP(DlgRotate)
 	//}}AFX_MSG_MAP
@@ -49,14 +46,14 @@ END_MESSAGE_MAP()
 BOOL DlgRotate::OnInitDialog() 
 {
 	CDialog::OnInitDialog();
-	
+
 	m_ok.SetIcon(IDI_G,BS_LEFT);
 	m_canc.SetIcon(IDI_R,BS_LEFT);
-	
-	inMethod.SetCurSel(1);
-	ofMethod.SetCurSel(0);
 
-	m_ch1.SetCheck(1);
+	inMethod.SetCurSel(m_method);
+	ofMethod.SetCurSel(m_overflow);
+
+	m_ch1.SetCheck(m_keepsize);
 
 	return TRUE;  // return TRUE unless you set the focus to a control
 	              // EXCEPTION: OCX Property Pages should return FALSE

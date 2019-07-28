@@ -19,7 +19,7 @@ DlgJpeg::DlgJpeg(CWnd* pParent /*=NULL*/)
 	: CDialog(DlgJpeg::IDD, pParent)
 {
 	//{{AFX_DATA_INIT(DlgJpeg)
-	m_quality = 0;
+	m_quality = 0.0f;
 	//}}AFX_DATA_INIT
 }
 
@@ -32,7 +32,7 @@ void DlgJpeg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDOK, m_ok);
 	DDX_Control(pDX, IDCANCEL, m_canc);
 	DDX_Text(pDX, IDC_EDIT1, m_quality);
-	DDV_MinMaxLong(pDX, m_quality, 0, 255);
+	DDV_MinMaxFloat(pDX, m_quality, 0.0f, 100.0f);
 	//}}AFX_DATA_MAP
 }
 

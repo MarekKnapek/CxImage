@@ -4,8 +4,8 @@ typedef struct _TASK_LIST {
     DWORD       dwInheritedFromProcessId;
     BOOL        flags;
     HWND      hwnd;
-    CHAR        ProcessName[MAX_PATH];
-    CHAR        WindowTitle[MAX_PATH];
+    TCHAR        ProcessName[MAX_PATH];
+    TCHAR        WindowTitle[MAX_PATH];
 } TASK_LIST, *PTASK_LIST;
 
 typedef struct _TASK_LIST_ENUM {

@@ -209,7 +209,7 @@ TIFFRGBAImageBegin(TIFFRGBAImage* img, TIFF* tif, int stop, char emsg[1024])
     img->tif = tif;
     img->stoponerr = stop;
     TIFFGetFieldDefaulted(tif, TIFFTAG_BITSPERSAMPLE, &img->bitspersample);
-    switch (img->bitspersample) {
+    /*switch (img->bitspersample) { // - VK -
     case 1: case 2: case 4:
     case 8: case 16:
 	break;
@@ -217,7 +217,7 @@ TIFFRGBAImageBegin(TIFFRGBAImage* img, TIFF* tif, int stop, char emsg[1024])
 	sprintf(emsg, "Sorry, can not image with %d-bit samples",
 	    img->bitspersample);
 	return (0);
-    }
+    }*/
     img->alpha = 1;
     TIFFGetFieldDefaulted(tif, TIFFTAG_SAMPLESPERPIXEL, &img->samplesperpixel);
     TIFFGetFieldDefaulted(tif, TIFFTAG_EXTRASAMPLES,
@@ -1000,6 +1000,243 @@ DECLAREContigPutFunc(put4bitbwtile)
     }
 }
 
+/* + VK
+ * 2-bit packed samples, no Map => RGB
+ */
+DECLAREContigPutFunc(putRGBcontig2bittile)
+{
+	uint32 d;
+	byte r, g, b;
+    int samplesperpixel = img->samplesperpixel;
+	int _x;
+	BYTE *from;
+
+/*#define put_rgb(r,g,b) *cp++ = PACK( (r<<6), (g<<6), (b<<6) );	\
+	if(--_x <= 0) { cp += toskew; _x = w; }*/
+#define put_rgb(r,g,b) *cp++ = PACK( (r<<6), (g<<6), (b<<6) );
+
+    (void) x; (void) y;
+	if (samplesperpixel == 3) {
+		while (h-- > 0) {
+			from = pp;
+			for (_x=w; _x > 0; _x -= 4) {
+				d = *(uint32*)from;
+				from += 3;
+					r = (BYTE)( d & 3 ); g = (BYTE)( (d >> 2) & 3 ); b = (BYTE)( (d >> 4) & 3 );
+					put_rgb( r, g, b );
+				if (_x > 1) {
+					r = (BYTE)( (d>>6) & 3 ); g = (BYTE)( (d >> 8) & 3 ); b = (BYTE)( (d >> 10) & 3 );
+					put_rgb( r, g, b );
+				}
+				if (_x > 2) {
+					r = (BYTE)( (d>>12) & 3 ); g = (BYTE)( (d >> 14) & 3 ); b = (BYTE)( (d >> 16) & 3 );
+					put_rgb( r, g, b );
+				}
+				if (_x > 3) {
+					r = (BYTE)( (d>>18) & 3 ); g = (BYTE)( (d >> 20) & 3 ); b = (BYTE)( (d >> 22) & 3 );
+					put_rgb( r, g, b );
+				}
+			}
+			cp += toskew;
+			pp += (w * samplesperpixel * 2 + 7)/8 + fromskew;
+		}
+	} else if (samplesperpixel == 4) { // VK: not tested!
+		while (h-- > 0) {
+			for (_x = w; _x >= 0; _x --) {
+				r = *pp & 3; g = (*pp >> 2) & 3; b = (*pp >> 4) & 3;
+				*cp++ = PACK( r<<6, g<<6, b<<6 );
+				pp ++;
+			}
+			cp += toskew;
+			pp += fromskew;
+		}
+	}
+}
+
+/* + VK
+ * 2-bit packed samples, w/ Map => RGB
+ */
+DECLAREContigPutFunc(putRGBcontig2bitMaptile)
+{
+	uint32 d;
+	byte r, g, b;
+    int samplesperpixel = img->samplesperpixel;
+	int _x;
+	BYTE *from;
+	TIFFRGBValue* Map = img->Map;
+
+/*#define put_rgb(r,g,b) *cp++ = PACK( (r<<6), (g<<6), (b<<6) );	\
+	if(--_x <= 0) { cp += toskew; _x = w; }*/
+#define put_rgb2map(r,g,b) *cp++ = PACK( Map[g], Map[r], Map[b] );
+
+    (void) x; (void) y;
+	if (samplesperpixel == 3) {
+		while (h-- > 0) {
+			from = pp;
+			for (_x=w; _x > 0; _x -= 4) {
+				d = *(uint32*)from;
+				from += 3;
+					r = (BYTE)( (d>>6) & 3 ); g = (BYTE)( (d >> 4) & 3 ); b = (BYTE)( (d >> 2) & 3 );
+					put_rgb2map( r, g, b );
+				if (_x > 1) {
+					r = (BYTE)( (d>>0) & 3 ); g = (BYTE)( (d >> 14) & 3 ); b = (BYTE)( (d >> 12) & 3 );
+					put_rgb2map( r, g, b );
+				}
+				if (_x > 2) {
+					r = (BYTE)( (d>>10) & 3 ); g = (BYTE)( (d >> 8) & 3 ); b = (BYTE)( (d >> 22) & 3 );
+					put_rgb2map( r, g, b );
+				}
+				if (_x > 3) {
+					r = (BYTE)( (d>>20) & 3 ); g = (BYTE)( (d >> 18) & 3 ); b = (BYTE)( (d >> 16) & 3 );
+					put_rgb2map( r, g, b );
+				}
+			}
+			cp += toskew;
+			pp += (w * samplesperpixel * 2 + 7)/8 + fromskew;
+		}
+	} else if (samplesperpixel == 4) { // VK: not tested!
+		while (h-- > 0) {
+			for (_x = w; _x >= 0; _x --) {
+				r = *pp & 3; g = (*pp >> 2) & 3; b = (*pp >> 4) & 3;
+				*cp++ = PACK( r<<6, g<<6, b<<6 );
+				pp ++;
+			}
+			cp += toskew;
+			pp += fromskew;
+		}
+	}
+}
+
+/* + VK
+ * 4-bit packed samples, no Map => RGB
+ */
+DECLAREContigPutFunc(putRGBcontig4bittile)
+{
+	uint32 d;
+	byte r, g, b;
+    int samplesperpixel = img->samplesperpixel;
+	int _x;
+	BYTE *from;
+
+/*#define put_rgb(r,g,b) *cp++ = PACK( (r<<6), (g<<6), (b<<6) );	\
+	if(--_x <= 0) { cp += toskew; _x = w; }*/
+#define put_rgb4(r,g,b) *cp++ = PACK( ((r<<4)|r), ((g<<4)|g), ((b<<4)|b) );
+
+    (void) x; (void) y;
+	if (samplesperpixel == 3) {
+		while (h-- > 0) {
+			from = pp;
+			for (_x=w; _x > 0; _x -= 2) {
+				d = *(uint32*)from;
+				from += 3;
+					g = (BYTE)( d & 15 ); b = (BYTE)( (d >> 4) & 15 ); r = (BYTE)( (d >> 12) & 15 );
+					put_rgb4( r, g, b );
+				if (_x > 1) {
+					b = (BYTE)( (d>>8) & 15 ); r = (BYTE)( (d >> 16) & 15 ); g = (BYTE)( (d >> 20) & 15 );
+					put_rgb4( r, g, b );
+				}
+			}
+			cp += toskew;
+			pp += (w * samplesperpixel * 4 + 7)/8 + fromskew;
+		}
+	} else if (samplesperpixel == 4) { // VK: not tested!
+		while (h-- > 0) {
+			for (_x = w; _x >= 0; _x --) {
+				g = *pp & 15; r = (*pp++ >> 4) & 15; b = (*pp++ >> 4) & 15;
+				*cp++ = PACK( r<<4, g<<4, b<<4 );
+			}
+			cp += toskew;
+			pp += fromskew;
+		}
+	}
+}
+
+/* + VK
+ * 4-bit packed samples, w/ Map => RGB
+ */
+DECLAREContigPutFunc(putRGBcontig4bitMaptile)
+{
+	uint32 d;
+	byte r, g, b;
+    int samplesperpixel = img->samplesperpixel;
+	int _x;
+	BYTE *from;
+	TIFFRGBValue* Map = img->Map;
+
+/*#define put_rgb(r,g,b) *cp++ = PACK( (r<<6), (g<<6), (b<<6) );	\
+	if(--_x <= 0) { cp += toskew; _x = w; }*/
+#define put_rgb4map(r,g,b) *cp++ = PACK( Map[r], Map[g], Map[b] );
+
+    (void) x; (void) y;
+	if (samplesperpixel == 3) {
+		while (h-- > 0) {
+			from = pp;
+			for (_x=w; _x > 0; _x -= 2) {
+				d = *(uint32*)from;
+				from += 3;
+					g = (BYTE)( d & 15 ); r = (BYTE)( (d >> 4) & 15 ); b = (BYTE)( (d >> 12) & 15 );
+					put_rgb4map( r, g, b );
+				if (_x > 1) {
+					r = (BYTE)( (d>>8) & 15 ); b = (BYTE)( (d >> 16) & 15 ); g = (BYTE)( (d >> 20) & 15 );
+					put_rgb4map( r, g, b );
+				}
+			}
+			cp += toskew;
+			pp += (w * samplesperpixel * 4 + 7)/8 + fromskew;
+		}
+	} else if (samplesperpixel == 4) { // VK: not tested!
+		while (h-- > 0) {
+			for (_x = w; _x >= 0; _x --) {
+				g = *pp & 15; r = (*pp++ >> 4) & 15; b = (*pp++ >> 4) & 15;
+				*cp++ = PACK(Map[r<<4], Map[g<<4], Map[b<<4] );
+			}
+			cp += toskew;
+			pp += fromskew;
+		}
+	}
+}
+
+/* + VK
+ * 10-bit packed samples, no Map => RGB
+ */
+DECLAREContigPutFunc(putRGBcontig10bittile)
+{
+	uint32 d;
+	uint16 r, g, b;
+    int samplesperpixel = img->samplesperpixel;
+	int _x;
+	BYTE *from;
+
+#define put_rgb10(r,g,b) *cp++ = PACK( (BYTE)(r>>2), (BYTE)(g>>2), (BYTE)(b>>2) );
+
+    (void) x; (void) y;
+	if (samplesperpixel == 3) {
+		while (h-- > 0) {
+			from = pp;
+			for (_x=w; _x > 0; _x -= 2) {
+				d = *(uint32*)from;
+				from += 3;
+					g = (BYTE)( d & 15 ); b = (BYTE)( (d >> 4) & 15 ); r = (BYTE)( (d >> 12) & 15 );
+					put_rgb4( r, g, b );
+				if (_x > 1) {
+					b = (BYTE)( (d>>8) & 15 ); r = (BYTE)( (d >> 16) & 15 ); g = (BYTE)( (d >> 20) & 15 );
+					put_rgb4( r, g, b );
+				}
+			}
+			cp += toskew;
+			pp += (w * samplesperpixel * 4 + 7)/8 + fromskew;
+		}
+	} else if (samplesperpixel == 4) { // VK: not tested!
+		while (h-- > 0) {
+			for (_x = w; _x >= 0; _x --) {
+				g = *pp & 15; r = (*pp++ >> 4) & 15; b = (*pp++ >> 4) & 15;
+				*cp++ = PACK( r<<4, g<<4, b<<4 );
+			}
+			cp += toskew;
+			pp += fromskew;
+		}
+	}
+}
 /*
  * 8-bit packed samples, no Map => RGB
  */
@@ -1095,6 +1332,164 @@ DECLAREContigPutFunc(putRGBcontig16bittile)
     while (h-- > 0) {
 	for (x = w; x-- > 0;) {
 	    *cp++ = PACKW(wp[0], wp[1], wp[2]);
+	    wp += samplesperpixel;
+	}
+	cp += toskew;
+	wp += fromskew;
+    }
+}
+
+/* + VK
+ * n-bit packed samples => RGB
+ */
+DECLAREContigPutFunc(putRGBcontigAllbittile)
+{
+    int samplesperpixel = img->samplesperpixel;
+	int bpp = img->bitspersample;
+	BYTE r, g, b;
+	BYTE * pp1;
+    uint16 *wp = (uint16 *)pp;
+	uint32 d;
+
+    (void) y;
+    fromskew *= samplesperpixel;
+
+	if (bpp <= 8) {
+		pp1 = pp;
+		while (h-- > 0) {
+			int offbits = 0;
+			pp = pp1;
+			for (x = w; x-- > 0;) {
+				d = (*pp << 24) | (pp[1] << 16) | (pp[2] << 8) | pp[3];
+				r = (BYTE) ( d >> (24 - offbits) );
+				offbits += bpp;
+				g = (BYTE) ( d >> (24 - offbits) );
+				offbits += bpp;
+				b = (BYTE) ( d >> (24 - offbits) );
+				offbits += bpp;
+				*cp++ = PACK(r, g, b);
+				while (offbits >= 8) {
+					pp++;
+					offbits -= 8;
+				}
+			}
+			cp += toskew;
+			pp1 += (bpp * samplesperpixel * w + 7)/8 + fromskew;
+		}
+	} else if (bpp <= 24) {
+		pp1 = pp;
+		while (h-- > 0) {
+			int offbits = 0;
+			pp = pp1;
+			for (x = w; x-- > 0;) {
+				d = (*pp << 24) | (pp[1] << 16) | (pp[2] << 8) | pp[3];
+				r = (BYTE) ( d >> (24 - offbits) );
+				offbits += bpp;
+				while (offbits >= 8) {
+					pp++;
+					offbits -= 8;
+				}
+				d = (*pp << 24) | (pp[1] << 16) | (pp[2] << 8) | pp[3];
+				g = (BYTE) ( d >> (24 - offbits) );
+				offbits += bpp;
+				while (offbits >= 8) {
+					pp++;
+					offbits -= 8;
+				}
+				d = (*pp << 24) | (pp[1] << 16) | (pp[2] << 8) | pp[3];
+				b = (BYTE) ( d >> (24 - offbits) );
+				offbits += bpp;
+				while (offbits >= 8) {
+					pp++;
+					offbits -= 8;
+				}
+				*cp++ = PACK(r, g, b);
+			}
+			cp += toskew;
+			pp1 += (bpp * samplesperpixel * w + 7)/8 + fromskew;
+		}
+	} else {
+		pp1 = pp;
+		while (h-- > 0) {
+			int offbits = 0;
+			pp = pp1;
+			for (x = w; x-- > 0;) {
+				d = *(uint32*)pp;
+				r = (BYTE) ( d >> (24 - offbits) );
+				offbits += bpp;
+				while (offbits >= 8) {
+					pp++;
+					offbits -= 8;
+				}
+				d = *(uint32*)pp;
+				g = (BYTE) ( d >> (24 - offbits) );
+				offbits += bpp;
+				while (offbits >= 8) {
+					pp++;
+					offbits -= 8;
+				}
+				d = *(uint32*)pp;
+				b = (BYTE) ( d >> (24 - offbits) );
+				offbits += bpp;
+				while (offbits >= 8) {
+					pp++;
+					offbits -= 8;
+				}
+				*cp++ = PACK(r, g, b);
+			}
+			cp += toskew;
+			pp1 += (bpp * samplesperpixel * w + 7)/8 + fromskew;
+		}
+	}
+}
+
+/* + VK 
+ * 16-bit packed CMYK samples => RGB 
+ */
+DECLAREContigPutFunc(put_CMYKmap_contig16bittile)
+{
+    int samplesperpixel = img->samplesperpixel;
+	TIFFRGBValue* Map = img->Map; // for Map only
+    uint16 *wp = (uint16 *)pp;
+	uint32 r, g, b, k;
+
+    (void) y;
+    fromskew *= samplesperpixel;
+    while (h-- > 0) {
+	for (x = w; x-- > 0;) {
+	    k = 65535 - wp[3];
+	    r = (k*(65535-wp[0]))/65535;
+	    g = (k*(65535-wp[1]))/65535;
+	    b = (k*(65535-wp[2]))/65535;
+
+		*cp++ = PACK(Map[r>>8], Map[g>>8], Map[b>>8]);
+				//PACKW(r, g, b);
+	    wp += samplesperpixel;
+	}
+	cp += toskew;
+	wp += fromskew;
+    }
+}
+
+/* + VK - not tested? see above (put_CMYKmap_contig16bittile)
+ * 16-bit packed CMYK samples => RGB // + VK
+ */
+DECLAREContigPutFunc(put_CMYK_contig16bittile)
+{
+    int samplesperpixel = img->samplesperpixel;
+    uint16 *wp = (uint16 *)pp;
+	uint16 r, g, b, k;
+
+    (void) y;
+    fromskew *= samplesperpixel;
+    while (h-- > 0) {
+	for (x = w; x-- > 0;) {
+	    k = 65535 - wp[3];
+	    r = (k*(65535-wp[0]))/65535;
+	    g = (k*(65535-wp[1]))/65535;
+	    b = (k*(65535-wp[2]))/65535;
+
+		*cp++ = PACKW(r, g, b);
 	    wp += samplesperpixel;
 	}
 	cp += toskew;
@@ -1297,6 +1692,166 @@ DECLARESepPutFunc(putRGBseparate16bittile)
 	SKEW(wr, wg, wb, fromskew);
 	cp += toskew;
     }
+}
+
+/* + VK
+ * n-bit packed samples => RGB
+ */
+DECLARESepPutFunc(putRGBseparateAllbittile)
+{
+	int bpp = img->bitspersample;
+    BYTE *pr = (BYTE*) r;
+    BYTE *pg = (BYTE*) g;
+    BYTE *pb = (BYTE*) b;
+	BYTE *pr1 = pr;
+	BYTE *pg1 = pg;
+	BYTE *pb1 = pb;
+	uint32 dr, dg, db;
+	BYTE rr, gg, bb;
+
+    (void) img; (void) y; (void) a;
+	if (bpp <= 24) {
+		while (h-- > 0) {
+			int offbits = 0;
+			pr = pr1; pg = pg1; pb = pb1;
+			for (x = 0; x < w; x++) {
+				dr = (*pr << 24)|(pr[1]<<16)|(pr[2]<<8)|pr[3];
+				dg = (*pg << 24)|(pg[1]<<16)|(pg[2]<<8)|pg[3];
+				db = (*pb << 24)|(pb[1]<<16)|(pb[2]<<8)|pb[3];
+				rr = (BYTE) (dr >> (24 - offbits));
+				gg = (BYTE) (dg >> (24 - offbits));
+				bb = (BYTE) (db >> (24 - offbits));
+				*cp++ = PACK(rr, gg, bb);
+				offbits += bpp;
+				while (offbits >= 8) {
+					pr++; pg++; pb++;
+					offbits -= 8;
+				}
+			}
+			pr1 += (bpp * w + 7)/8 + fromskew;
+			pg1 += (bpp * w + 7)/8 + fromskew;
+			pb1 += (bpp * w + 7)/8 + fromskew;
+			cp += toskew;
+		}
+	} else if (bpp <= 32) {
+		while (h-- > 0) {
+			int offbits = 0;
+			pr = pr1; pg = pg1; pb = pb1;
+			for (x = 0; x < w; x++) {
+				dr = *(uint32*)pr;
+				dg = *(uint32*)pg;
+				db = *(uint32*)pb;
+				rr = (BYTE) (dr >> (24 - offbits));
+				gg = (BYTE) (dg >> (24 - offbits));
+				bb = (BYTE) (db >> (24 - offbits));
+				*cp++ = PACK(rr, gg, bb);
+				offbits += bpp;
+				while (offbits >= 8) {
+					pr++; pg++; pb++;
+					offbits -= 8;
+				}
+			}
+			pr1 += (bpp * w + 7)/8 + fromskew;
+			pg1 += (bpp * w + 7)/8 + fromskew;
+			pb1 += (bpp * w + 7)/8 + fromskew;
+			cp += toskew;
+		}
+	} else { // rare case, when bpp > 32
+		while (h-- > 0) {
+			int offbits = 0;
+			pr = pr1; pg = pg1; pb = pb1;
+			for (x = 0; x < w; x++) {
+#define SWAW( x ) x = (x>>16) | (x<<16)
+				dr = *(uint32*)(pr + bpp/8 - 4); SWAW( dr ); 
+				dg = *(uint32*)(pg + bpp/8 - 4); SWAW( dg ); 
+				db = *(uint32*)(pb + bpp/8 - 4); SWAW( db ); 
+				rr = (BYTE) (dr >> offbits);
+				gg = (BYTE) (dg >> offbits);
+				bb = (BYTE) (db >> offbits);
+				*cp++ = PACK(rr, gg, bb);
+				offbits += bpp;
+				while (offbits >= 8) {
+					pr++; pg++; pb++;
+					offbits -= 8;
+				}
+			}
+			pr1 += (bpp * w + 7)/8 + fromskew;
+			pg1 += (bpp * w + 7)/8 + fromskew;
+			pb1 += (bpp * w + 7)/8 + fromskew;
+			cp += toskew;
+		}
+	}
+}
+
+/* + VK
+ * n-bit packed samples (planar) => RGB
+ */
+DECLARESepPutFunc(putRGBplanarseparateAllbittile)
+{
+	int bpp = img->bitspersample;
+    BYTE *pr = (BYTE*) r;
+    BYTE *pg = (BYTE*) g;
+    BYTE *pb = (BYTE*) b;
+	BYTE *pr1 = pr;
+	BYTE *pg1 = pg;
+	BYTE *pb1 = pb;
+	uint32 dr, dg, db;
+	BYTE rr, gg, bb;
+
+    (void) img; (void) y; (void) a;
+	if (bpp <= 8) {
+		while (h-- > 0) {
+			int offbits = 0;
+			pr = pr1; pg = pg1; pb = pb1;
+			for (x = 0; x < w; x++) {
+				dr = *(uint32*)pr;
+				dg = *(uint32*)pg;
+				db = *(uint32*)pb;
+				/*dr = (*pr << 24)|(pr[1]<<16)|(pr[2]<<8)|pr[3];
+				dg = (*pg << 24)|(pg[1]<<16)|(pg[2]<<8)|pg[3];
+				db = (*pb << 24)|(pb[1]<<16)|(pb[2]<<8)|pb[3];*/
+				rr = (BYTE) ((dr >> (32 - offbits - offbits)) << (8 - bpp)) ^ 0xFF;
+				gg = (BYTE) ((dg >> (32 - offbits - offbits)) << (8 - bpp)) ^ 0xFF;
+				bb = (BYTE) ((db >> (32 - offbits - offbits)) << (8 - bpp)) ^ 0xFF;
+				*cp++ = PACK(rr, gg, bb);
+				offbits += bpp;
+				while (offbits >= 8) {
+					pr++; pg++; pb++;
+					offbits -= 8;
+				}
+			}
+			pr1 += (bpp * w + 7)/8 + fromskew;
+			pg1 += (bpp * w + 7)/8 + fromskew;
+			pb1 += (bpp * w + 7)/8 + fromskew;
+			cp += toskew;
+		}
+	} else { 
+		while (h-- > 0) {
+			int offbits = 0;
+			pr = pr1; pg = pg1; pb = pb1;
+			for (x = 0; x < w; x++) {
+				dr = *(uint32*)pr;
+				dg = *(uint32*)pg;
+				db = *(uint32*)pb;
+				/*dr = (*pr << 24)|(pr[1]<<16)|(pr[2]<<8)|pr[3];
+				dg = (*pg << 24)|(pg[1]<<16)|(pg[2]<<8)|pg[3];
+				db = (*pb << 24)|(pb[1]<<16)|(pb[2]<<8)|pb[3];*/
+				rr = (BYTE) (dr >> (offbits + bpp - 8)) ^ 0xFF;
+				gg = (BYTE) (dg >> (offbits + bpp - 8)) ^ 0xFF;
+				bb = (BYTE) (db >> (offbits + bpp - 8)) ^ 0xFF;
+				*cp++ = PACK(rr, gg, bb);
+				offbits += bpp;
+				while (offbits >= 8) {
+					pr++; pg++; pb++;
+					offbits -= 8;
+				}
+			}
+			pr1 += (bpp * w + 7)/8 + fromskew;
+			pg1 += (bpp * w + 7)/8 + fromskew;
+			pb1 += (bpp * w + 7)/8 + fromskew;
+			cp += toskew;
+		}
+	} 
 }
 
 /*
@@ -1994,7 +2549,7 @@ setupMap(TIFFRGBAImage* img)
     range = (int32)((1L<<img->bitspersample)-1);
     
     /* treat 16 bit the same as eight bit */
-    if( img->bitspersample == 16 )
+    if( img->bitspersample /*== 16*/ > 8 ) // * VK
         range = (int32) 255;
 
     img->Map = (TIFFRGBValue*) _TIFFmalloc((range+1) * sizeof (TIFFRGBValue));
@@ -2166,26 +2721,44 @@ pickTileContigCase(TIFFRGBAImage* img)
 	switch (img->photometric) {
 	case PHOTOMETRIC_RGB:
 	    switch (img->bitspersample) {
-	    case 8:
-		if (!img->Map) {
-		    if (img->alpha == EXTRASAMPLE_ASSOCALPHA)
-			put = putRGBAAcontig8bittile;
-		    else if (img->alpha == EXTRASAMPLE_UNASSALPHA)
-			put = putRGBUAcontig8bittile;
-		    else
-			put = putRGBcontig8bittile;
-		} else
-		    put = putRGBcontig8bitMaptile;
-		break;
-	    case 16:
-		put = putRGBcontig16bittile;
-		if (!img->Map) {
-		    if (img->alpha == EXTRASAMPLE_ASSOCALPHA)
-			put = putRGBAAcontig16bittile;
-		    else if (img->alpha == EXTRASAMPLE_UNASSALPHA)
-			put = putRGBUAcontig16bittile;
-		}
-		break;
+			case 2: // + VK +
+			if (!img->Map) 
+				put = putRGBcontig2bittile; 
+			else
+				put = putRGBcontig2bitMaptile; // VK: todo putRGBcontig2bitMaptile
+			break;
+			case 4: // + VK +
+			if (!img->Map) 
+				put = putRGBcontig4bittile; 
+			else
+				put = putRGBcontig4bitMaptile; 
+			break;
+			case 8:
+			if (!img->Map) {
+				if (img->alpha == EXTRASAMPLE_ASSOCALPHA)
+				put = putRGBAAcontig8bittile;
+				else if (img->alpha == EXTRASAMPLE_UNASSALPHA)
+				put = putRGBUAcontig8bittile;
+				else
+				put = putRGBcontig8bittile;
+			} else
+				put = putRGBcontig8bitMaptile;
+			break;
+			case 16:
+			put = putRGBcontig16bittile;
+			if (!img->Map) {
+				if (img->alpha == EXTRASAMPLE_ASSOCALPHA)
+				put = putRGBAAcontig16bittile;
+				else if (img->alpha == EXTRASAMPLE_UNASSALPHA)
+				put = putRGBUAcontig16bittile;
+			}
+			break;
+			default: // + VK + 
+			if (!img->Map) 
+				put = putRGBcontigAllbittile; 
+			else
+				put = putRGBcontigAllbittile;  // todo Map
+			break;
 	    }
 	    break;
 	case PHOTOMETRIC_SEPARATED:
@@ -2194,6 +2767,11 @@ pickTileContigCase(TIFFRGBAImage* img)
 		    put = putRGBcontig8bitCMYKtile;
 		else
 		    put = putRGBcontig8bitCMYKMaptile;
+		} else if( img->bitspersample == 16) { // + VK +
+			if (!img->Map)
+				put = put_CMYK_contig16bittile;
+			else
+				put = put_CMYKmap_contig16bittile;
 	    }
 	    break;
 	case PHOTOMETRIC_PALETTE:
@@ -2235,33 +2813,38 @@ pickTileSeparateCase(TIFFRGBAImage* img)
     tileSeparateRoutine put = 0;
 
     if (buildMap(img)) {
-	switch (img->photometric) {
-	case PHOTOMETRIC_RGB:
-	    switch (img->bitspersample) {
-	    case 8:
-		if (!img->Map) {
-		    if (img->alpha == EXTRASAMPLE_ASSOCALPHA)
-			put = putRGBAAseparate8bittile;
-		    else if (img->alpha == EXTRASAMPLE_UNASSALPHA)
-			put = putRGBUAseparate8bittile;
-		    else
-			put = putRGBseparate8bittile;
-		} else
-		    put = putRGBseparate8bitMaptile;
-		break;
-	    case 16:
-		put = putRGBseparate16bittile;
-		if (!img->Map) {
-		    if (img->alpha == EXTRASAMPLE_ASSOCALPHA)
-			put = putRGBAAseparate16bittile;
-		    else if (img->alpha == EXTRASAMPLE_UNASSALPHA)
-			put = putRGBUAseparate16bittile;
+		switch (img->photometric) {
+		case PHOTOMETRIC_RGB:
+			switch (img->bitspersample) {
+				case 8:
+					if (!img->Map) {
+						if (img->alpha == EXTRASAMPLE_ASSOCALPHA)
+						put = putRGBAAseparate8bittile;
+						else if (img->alpha == EXTRASAMPLE_UNASSALPHA)
+						put = putRGBUAseparate8bittile;
+						else
+						put = putRGBseparate8bittile;
+					} else
+						put = putRGBseparate8bitMaptile;
+					break;
+				case 16:
+					put = putRGBseparate16bittile;
+					if (!img->Map) {
+						if (img->alpha == EXTRASAMPLE_ASSOCALPHA)
+						put = putRGBAAseparate16bittile;
+						else if (img->alpha == EXTRASAMPLE_UNASSALPHA)
+						put = putRGBUAseparate16bittile;
+					}
+					break;
+				default:
+					put = putRGBseparateAllbittile;
+				}
+				break;
+		case PHOTOMETRIC_SEPARATED:
+			put = putRGBplanarseparateAllbittile;
+			break;
 		}
-		break;
-	    }
-	    break;
 	}
-    }
     return ((img->put.separate = put) != 0);
 }
 

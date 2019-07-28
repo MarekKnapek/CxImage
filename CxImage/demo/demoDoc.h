@@ -29,12 +29,12 @@ public:
 	CxImage *image;				//main image
 	HANDLE	hThread,hProgress;	//elaboration thread
 
-	void	*m_fp[6];	//function parameters
 	long	m_MenuCommand;
 
 	POINT m_Sel[MAX_SEL_POINTS]; //Selection
 	long m_NumSel;
 	int	 m_tool;
+	int  m_playanimation;
 
 #ifndef VATI_EXTENSIONS
 	LOGFONT m_font;
@@ -63,7 +63,11 @@ public:
 	inline float GetZoomFactor() { return m_ZoomFactor; }
 	int ComputePixel(float x, float y, float &x1, float &y1);
 	CString FindExtension(const CString& name);
+	CString RemoveExtension(const CString& name);
 	int FindType(const CString& ext);
+	void RegionRotateLeft();
+	void RegionRotateRight();
+	void PlayNextFrame();
 
 // Overrides
 	// ClassWizard generated virtual function overrides
@@ -98,7 +102,6 @@ protected:
 	BOOL m_WaitingClick;
 	LARGE_INTEGER m_swFreq, m_swStart, m_swStop; //stopwatch
 	float m_etime; //elapsed time
-	long m_progress;
 
 	//{{AFX_MSG(CDemoDoc)
 	afx_msg void OnUpdateFileSaveAs(CCmdUI* pCmdUI);
@@ -266,6 +269,56 @@ protected:
 	afx_msg void OnUpdateJpegcompression(CCmdUI* pCmdUI);
 	afx_msg void OnViewSmooth();
 	afx_msg void OnUpdateViewSmooth(CCmdUI* pCmdUI);
+	afx_msg void OnUpdateFiltersDataext(CCmdUI* pCmdUI);
+	afx_msg void OnFiltersDataext();
+	afx_msg void OnUpdateCximageUnsharpmask(CCmdUI* pCmdUI);
+	afx_msg void OnCximageUnsharpmask();
+	afx_msg void OnCximageTextblur();
+	afx_msg void OnUpdateCximageTextblur(CCmdUI* pCmdUI);
+	afx_msg void OnUpdateCximageRedeyeremove(CCmdUI* pCmdUI);
+	afx_msg void OnCximageRedeyeremove();
+	afx_msg void OnCximageBlurselborder();
+	afx_msg void OnUpdateCximageBlurselborder(CCmdUI* pCmdUI);
+	afx_msg void OnCximageSelectiveblur();
+	afx_msg void OnUpdateCximageSelectiveblur(CCmdUI* pCmdUI);
+	afx_msg void OnUpdateCximageGettransparencymask(CCmdUI* pCmdUI);
+	afx_msg void OnCximageGettransparencymask();
+	afx_msg void OnColorsCountcolors();
+	afx_msg void OnUpdateColorsCountcolors(CCmdUI* pCmdUI);
+	afx_msg void OnFiltersLinearCustom();
+	afx_msg void OnUpdateFiltersLinearCustom(CCmdUI* pCmdUI);
+	afx_msg void OnCximageCanvassize();
+	afx_msg void OnUpdateCximageCanvassize(CCmdUI* pCmdUI);
+	afx_msg void OnViewToolsFloodfill();
+	afx_msg void OnUpdateViewToolsFloodfill(CCmdUI* pCmdUI);
+	afx_msg void OnCximageRemoveselection();
+	afx_msg void OnUpdateCximageRemoveselection(CCmdUI* pCmdUI);
+	afx_msg void OnColorsMoresaturationhsl();
+	afx_msg void OnUpdateColorsMoresaturationhsl(CCmdUI* pCmdUI);
+	afx_msg void OnColorsMoresaturationyuv();
+	afx_msg void OnUpdateColorsMoresaturationyuv(CCmdUI* pCmdUI);
+	afx_msg void OnColorsLesssaturation();
+	afx_msg void OnUpdateColorsLesssaturation(CCmdUI* pCmdUI);
+	afx_msg void OnColorsHistogramFullsaturation();
+	afx_msg void OnUpdateColorsHistogramFullsaturation(CCmdUI* pCmdUI);
+	afx_msg void OnColorsHistogramHalfsaturation();
+	afx_msg void OnUpdateColorsHistogramHalfsaturation(CCmdUI* pCmdUI);
+	afx_msg void OnCximageHistogramStretcht0();
+	afx_msg void OnUpdateCximageHistogramStretcht0(CCmdUI* pCmdUI);
+	afx_msg void OnCximageHistogramStretcht1();
+	afx_msg void OnUpdateCximageHistogramStretcht1(CCmdUI* pCmdUI);
+	afx_msg void OnCximageHistogramStretcht2();
+	afx_msg void OnUpdateCximageHistogramStretcht2(CCmdUI* pCmdUI);
+	afx_msg void OnColorsAdaptivethreshold();
+	afx_msg void OnUpdateColorsAdaptivethreshold(CCmdUI* pCmdUI);
+	afx_msg void OnUpdateViewPreviousframe(CCmdUI* pCmdUI);
+	afx_msg void OnViewPreviousframe();
+	afx_msg void OnUpdateViewNextframe(CCmdUI* pCmdUI);
+	afx_msg void OnViewNextframe();
+	afx_msg void OnUpdateViewPlayanimation(CCmdUI* pCmdUI);
+	afx_msg void OnViewPlayanimation();
+	afx_msg void OnUpdateFiltersAddshadow(CCmdUI* pCmdUI);
+	afx_msg void OnFiltersAddshadow();
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 };

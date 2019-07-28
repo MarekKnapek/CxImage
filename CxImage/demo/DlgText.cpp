@@ -50,6 +50,7 @@ DlgText::DlgText(CWnd* pParent /*=NULL*/)
 {
 	//{{AFX_DATA_INIT(DlgText)
 	m_opaque = FALSE;
+	m_textsmooth = FALSE;
 	m_lbl_opac = _T("");
 	m_lbl_radius = _T("");
 	//}}AFX_DATA_INIT
@@ -86,6 +87,8 @@ void DlgText::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_RADIO1, m_radio1);
 	DDX_Control(pDX, IDC_RADIO2, m_radio2);
 	DDX_Control(pDX, IDC_RADIO3, m_radio3);
+	DDX_Control(pDX, IDC_TEXT_SMOOTH, m_check2);
+	DDX_Check(pDX, IDC_TEXT_SMOOTH, m_textsmooth);
 	//}}AFX_DATA_MAP
 }
 
@@ -101,6 +104,7 @@ BEGIN_MESSAGE_MAP(DlgText, CDialog)
 	ON_BN_CLICKED(IDC_RADIO1, OnRadio1)
 	ON_BN_CLICKED(IDC_RADIO2, OnRadio2)
 	ON_BN_CLICKED(IDC_RADIO3, OnRadio3)
+	ON_BN_CLICKED(IDC_TEXT_SMOOTH, OnCheck2)
 	ON_WM_PAINT()
 	ON_WM_HSCROLL()
 	//}}AFX_MSG_MAP
@@ -128,6 +132,7 @@ BOOL DlgText::OnInitDialog()
 
     //set checkbox
     m_check1.SetCheck ( m_textdata.opaque );
+    m_check2.SetCheck ( m_textdata.smooth );
 
     // set editbox text/font/color settings to the current
     cfont.CreateFontIndirect( &(m_textdata.lfont) );
@@ -150,7 +155,7 @@ BOOL DlgText::OnInitDialog()
 	m_sldr_opac.SetPageSize( 20 );  // Send TBM_SETPAGESIZE
     m_sldr_opac.SetPos( (int)(100.*m_textdata.b_opacity) );
 	m_sldr_opac.SetRange( 0,100, TRUE );
-    m_lbl_opac.Format( "%.0f%%", 100.*m_textdata.b_opacity );
+    m_lbl_opac.Format( _T("%.0f%%"), 100.*m_textdata.b_opacity );
     m_opacTxt.SetWindowText ( m_lbl_opac.GetBuffer(0) );
     m_opacTxt.UpdateWindow ();
 
@@ -161,7 +166,7 @@ BOOL DlgText::OnInitDialog()
     m_sldr_radius.SetPageSize(10);
     m_sldr_radius.SetPos( m_textdata.b_round );
     m_sldr_radius.SetRange (0,50,TRUE);
-    m_lbl_radius.Format( "%d%%", m_textdata.b_round );
+    m_lbl_radius.Format( _T("%d%%"), m_textdata.b_round );
     m_radiusTxt.SetWindowText ( m_lbl_radius.GetBuffer(0) );
     m_radiusTxt.UpdateWindow ();
 
@@ -275,8 +280,9 @@ void DlgText::OnOK()
 	
     // copy back control's values
     m_text.GetWindowText( tmpS );
-	strcpy ( m_textdata.text, tmpS.GetBuffer(0) );
-    m_textdata.opaque = m_check1.GetCheck();
+	_tcscpy ( m_textdata.text, tmpS.GetBuffer(0) );
+    m_textdata.opaque = (BYTE)m_check1.GetCheck();
+    m_textdata.smooth = (BYTE)m_check2.GetCheck();
 
 	CDialog::OnOK();
 }
@@ -284,12 +290,17 @@ void DlgText::OnOK()
 void DlgText::OnCheck1() 
 {
 	// TODO: Add your control notification handler code here
-    m_textdata.opaque = ( m_check1.GetCheck() );
+    m_textdata.opaque = (BYTE)( m_check1.GetCheck() );
     m_backcolor.EnableWindow( m_textdata.opaque == TRUE );
     m_sldr_opac.EnableWindow ( m_textdata.opaque == TRUE );
     m_sldr_radius.EnableWindow ( m_textdata.opaque == TRUE );
 	m_opacTxt.EnableWindow( m_textdata.opaque == TRUE );
     m_radiusTxt.EnableWindow( m_textdata.opaque == TRUE );
+}
+void DlgText::OnCheck2() 
+{
+	// TODO: Add your control notification handler code here
+    m_textdata.smooth = (BYTE)( m_check2.GetCheck() );
 }
 
 void DlgText::OnRadio1() 
@@ -320,7 +331,7 @@ void DlgText::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
         if ( GetCapture() == GetDlgItem( IDC_SLIDER_OPACITY ) )
         {
             m_textdata.b_opacity = (float)( 0.01 * m_sldr_opac.GetPos() );
-            m_lbl_opac.Format( "%.0f%%", 100*m_textdata.b_opacity );
+            m_lbl_opac.Format( _T("%.0f%%"), 100*m_textdata.b_opacity );
             m_opacTxt.SetWindowText ( m_lbl_opac.GetBuffer(0));
             m_opacTxt.UpdateWindow ();
         }
@@ -328,7 +339,7 @@ void DlgText::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
         if ( GetCapture() == GetDlgItem( IDC_SLIDER_RADIUS ) )
         {
             m_textdata.b_round = (unsigned char)( m_sldr_radius.GetPos() );
-            m_lbl_radius.Format( "%d%%", m_sldr_radius.GetPos() );
+            m_lbl_radius.Format( _T("%d%%"), m_sldr_radius.GetPos() );
             m_radiusTxt.SetWindowText ( m_lbl_radius.GetBuffer(0));
             m_radiusTxt.UpdateWindow ();
         }

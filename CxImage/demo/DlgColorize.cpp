@@ -25,6 +25,7 @@ DlgColorize::DlgColorize(CWnd* pParent /*=NULL*/)
 	m_g = 0;
 	m_b = 0;
 	m_blend = 50;
+	m_sol = 0;
 	//}}AFX_DATA_INIT
 }
 
@@ -33,7 +34,9 @@ void DlgColorize::DoDataExchange(CDataExchange* pDX)
 {
 	CDialog::DoDataExchange(pDX);
 	//{{AFX_DATA_MAP(DlgColorize)
+	DDX_Control(pDX, IDC_CHECK5, m_rbLink);
 	DDX_Control(pDX, IDC_RADIO3, m_rbHSL);
+	DDX_Control(pDX, IDC_RADIO6, m_rbSol);
 	DDX_Control(pDX, IDOK, m_ok);
 	DDX_Control(pDX, IDCANCEL, m_canc);
 	DDX_Control(pDX, IDCOLORS, m_colors);
@@ -43,6 +46,7 @@ void DlgColorize::DoDataExchange(CDataExchange* pDX)
 	DDX_Text(pDX, IDC_EDIT4, m_g);
 	DDX_Text(pDX, IDC_EDIT5, m_b);
 	DDX_Text(pDX, IDC_EDIT8, m_blend);
+	DDX_Text(pDX, IDC_EDIT10, m_sol);
 	//}}AFX_DATA_MAP
 }
 
@@ -64,7 +68,19 @@ BOOL DlgColorize::OnInitDialog()
 	m_canc.SetIcon(IDI_R,BS_LEFT);
 	m_colors.SetIcon(IDI_B,BS_LEFT);
 	
-	m_rbHSL.SetCheck(1);
+	switch(m_bHSL)
+	{
+	case 1:
+		m_rbHSL.SetCheck(1);
+		break;
+	case 2:
+		m_rbSol.SetCheck(1);
+		break;
+	default:
+		CheckRadioButton(IDC_RADIO3,IDC_RADIO4,IDC_RADIO4);
+	}
+
+	m_rbLink.SetCheck(m_bLinked);
 	
 	return TRUE;  // return TRUE unless you set the focus to a control
 	              // EXCEPTION: OCX Property Pages should return FALSE
@@ -72,7 +88,11 @@ BOOL DlgColorize::OnInitDialog()
 
 void DlgColorize::OnOK() 
 {
-	m_bHSL = m_rbHSL.GetCheck();
+	m_bHSL = 0;
+	if (m_rbHSL.GetCheck()) m_bHSL=1;
+	if (m_rbSol.GetCheck()) m_bHSL=2;
+	
+	m_bLinked = (BYTE)m_rbLink.GetCheck();
 	
 	CDialog::OnOK();
 }
@@ -100,18 +120,19 @@ void DlgColorize::OnColors()
 
 	if (dlg.DoModal() == IDOK){
 		c = dlg.GetColor();
-		if (bHSL){
+		//if (bHSL){
 			rgb.rgbRed = GetRValue(c);
 			rgb.rgbGreen = GetGValue(c);
 			rgb.rgbBlue = GetBValue(c);
 			hsl = CxImage::RGBtoHSL(rgb);
 			m_hue = hsl.rgbRed;
 			m_sat = hsl.rgbGreen;
-		} else {
+		//} else {
 			m_r=GetRValue(c);
 			m_g=GetGValue(c);
 			m_b=GetBValue(c);
-		}
+		//}
+			m_sol = (BYTE)RGB2GRAY(m_r,m_g,m_b);
 	}
 
 	UpdateData(0);

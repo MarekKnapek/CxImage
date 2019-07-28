@@ -15,7 +15,7 @@ class DlgIncBpp : public CDialog
 {
 // Construction
 public:
-	long m_bit;
+	BYTE m_bit;
 	DlgIncBpp(CWnd* pParent = NULL);   // standard constructor
 
 // Dialog Data

@@ -9,6 +9,7 @@
 #include "demoView.h"
 #include "xTargetButton.h"
 #include "DlgURL.h"
+#include "DlgOptions.h"
 
 #include "ximage.h"
 #include "ximagif.h"
@@ -25,62 +26,67 @@ static char BASED_CODE THIS_FILE[] = __FILE__;
 
 DocType doctypes[CMAX_IMAGE_FORMATS] =
 {
-	{ -1, TRUE, TRUE, "Supported files", "*.bmp;*.gif;*.jpg;*.jpeg;*.png;*.ico;*.tif;*.tiff;*.tga;*.pcx;*.wbmp;*.wmf;*.emf;*.j2k;*.jp2;*.jbg;*.j2c;*.jpc;*.pgx;*.pnm;*.pgm;*.ppm;*.ras" },
+	{ -1, TRUE, TRUE, _T("Supported files"), _T("*.bmp;*.gif;*.jpg;*.jpeg;*.png;*.ico;*.tif;*.tiff;*.tga;*.pcx;*.wbmp;*.wmf;*.emf;*.j2k;*.jp2;*.jbg;*.j2c;*.jpc;*.pgx;*.pnm;*.pgm;*.ppm;*.ras;*.mng;*.jng;*.ska;*.nef;*.crw;*.cr2;*.mrw;*.raf;*.erf;*.3fr;*.dcr;*.raw;*.dng;*.pef;*.x3f;*.arw;*.sr2;*.mef;*.orf") },
 #if CXIMAGE_SUPPORT_BMP
-	{ CXIMAGE_FORMAT_BMP, TRUE, TRUE, "BMP files", "*.bmp" },
+	{ CXIMAGE_FORMAT_BMP, TRUE, TRUE, _T("BMP files"), _T("*.bmp") },
 #endif
 #if CXIMAGE_SUPPORT_GIF
-	{ CXIMAGE_FORMAT_GIF, TRUE, TRUE, "GIF files", "*.gif" },
+	{ CXIMAGE_FORMAT_GIF, TRUE, TRUE, _T("GIF files"), _T("*.gif") },
 #endif
 #if CXIMAGE_SUPPORT_JPG
-	{ CXIMAGE_FORMAT_JPG, TRUE, TRUE, "JPG files", "*.jpg;*.jpeg" },
+	{ CXIMAGE_FORMAT_JPG, TRUE, TRUE, _T("JPG files"), _T("*.jpg;*.jpeg") },
 #endif
 #if CXIMAGE_SUPPORT_PNG
-	{ CXIMAGE_FORMAT_PNG, TRUE, TRUE, "PNG files", "*.png" },
+	{ CXIMAGE_FORMAT_PNG, TRUE, TRUE, _T("PNG files"), _T("*.png") },
 #endif
 #if CXIMAGE_SUPPORT_MNG
-	{ CXIMAGE_FORMAT_MNG, TRUE, TRUE, "MNG files", "*.mng;*.jng;*.png" },
+	{ CXIMAGE_FORMAT_MNG, TRUE, TRUE, _T("MNG files"), _T("*.mng;*.jng;*.png") },
 #endif
 #if CXIMAGE_SUPPORT_ICO
-	{ CXIMAGE_FORMAT_ICO, TRUE, TRUE, "ICO CUR files", "*.ico;*.cur" },
+	{ CXIMAGE_FORMAT_ICO, TRUE, TRUE, _T("ICO CUR files"), _T("*.ico;*.cur") },
 #endif
 #if CXIMAGE_SUPPORT_TIF
-	{ CXIMAGE_FORMAT_TIF, TRUE, TRUE, "TIF files", "*.tif;*.tiff" },
+	{ CXIMAGE_FORMAT_TIF, TRUE, TRUE, _T("TIF files"), _T("*.tif;*.tiff") },
 #endif
 #if CXIMAGE_SUPPORT_TGA
-	{ CXIMAGE_FORMAT_TGA, TRUE, TRUE, "TGA files", "*.tga" },
+	{ CXIMAGE_FORMAT_TGA, TRUE, TRUE, _T("TGA files"), _T("*.tga") },
 #endif
 #if CXIMAGE_SUPPORT_PCX
-	{ CXIMAGE_FORMAT_PCX, TRUE, TRUE, "PCX files", "*.pcx" },
+	{ CXIMAGE_FORMAT_PCX, TRUE, TRUE, _T("PCX files"), _T("*.pcx") },
 #endif
 #if CXIMAGE_SUPPORT_WBMP
-	{ CXIMAGE_FORMAT_WBMP, TRUE, TRUE, "WBMP files", "*.wbmp" },
+	{ CXIMAGE_FORMAT_WBMP, TRUE, TRUE, _T("WBMP files"), _T("*.wbmp") },
 #endif
 #if CXIMAGE_SUPPORT_WMF
-	{ CXIMAGE_FORMAT_WMF, TRUE, FALSE, "WMF EMF files", "*.wmf;*.emf" },
-#endif
-#if CXIMAGE_SUPPORT_J2K
-	{ CXIMAGE_FORMAT_J2K, TRUE, TRUE, "J2K files", "*.j2k;*.jp2" },
+	{ CXIMAGE_FORMAT_WMF, TRUE, FALSE, _T("WMF EMF files"), _T("*.wmf;*.emf") },
 #endif
 #if CXIMAGE_SUPPORT_JBG
-	{ CXIMAGE_FORMAT_JBG, TRUE, TRUE, "JBG files", "*.jbg" },
+	{ CXIMAGE_FORMAT_JBG, TRUE, TRUE, _T("JBG files"), _T("*.jbg") },
 #endif
 #if CXIMAGE_SUPPORT_JP2
-	{ CXIMAGE_FORMAT_JP2, TRUE, TRUE, "JP2 files", "*.j2k;*.jp2" },
+	{ CXIMAGE_FORMAT_JP2, TRUE, TRUE, _T("JP2 files"), _T("*.j2k;*.jp2") },
 #endif
 #if CXIMAGE_SUPPORT_JPC
-	{ CXIMAGE_FORMAT_JPC, TRUE, TRUE, "JPC files", "*.j2c;*.jpc" },
+	{ CXIMAGE_FORMAT_JPC, TRUE, TRUE, _T("JPC files"), _T("*.j2c;*.jpc") },
 #endif
 #if CXIMAGE_SUPPORT_PGX
-	{ CXIMAGE_FORMAT_PGX, TRUE, TRUE, "PGX files", "*.pgx" },
+	{ CXIMAGE_FORMAT_PGX, TRUE, TRUE, _T("PGX files"), _T("*.pgx") },
 #endif
 #if CXIMAGE_SUPPORT_RAS
-	{ CXIMAGE_FORMAT_RAS, TRUE, TRUE, "RAS files", "*.ras" },
+	{ CXIMAGE_FORMAT_RAS, TRUE, TRUE, _T("RAS files"), _T("*.ras") },
 #endif
 #if CXIMAGE_SUPPORT_PNM
-	{ CXIMAGE_FORMAT_PNM, TRUE, TRUE, "PNM files", "*.pnm;*.pgm;*.ppm" }
+	{ CXIMAGE_FORMAT_PNM, TRUE, TRUE, _T("PNM files"), _T("*.pnm;*.pgm;*.ppm") },
+#endif
+#if CXIMAGE_SUPPORT_SKA
+	{ CXIMAGE_FORMAT_SKA, TRUE, TRUE, _T("SKA files"), _T("*.ska") },
+#endif
+#if CXIMAGE_SUPPORT_RAW
+	{ CXIMAGE_FORMAT_RAW, TRUE, FALSE, _T("RAW files"), _T("*.nef;*.crw;*.cr2;*.mrw;*.raf;*.erf;*.3fr;*.dcr;*.raw;*.dng;*.pef;*.x3f;*.arw;*.sr2;*.mef;*.orf") }
 #endif
 };
+
+DlgDataExtInfo dlgDataExtInfos = {0.0f,100.0f,0.0f,100.0f,200,0,true,true,true,false,false};
 
 //////////////////////////////////////////////////////////////////////////////
 // CDemoApp
@@ -98,6 +104,10 @@ BEGIN_MESSAGE_MAP(CDemoApp, CWinApp)
 	ON_COMMAND(ID_CXIMAGE_DEMOSAVEANIMATEDGIF, OnCximageDemosaveanimatedgif)
 	ON_COMMAND(ID_CXIMAGE_DOWNLOADFROMURL, OnCximageDownloadfromurl)
 	ON_COMMAND(ID_CXIMAGE_DEMOCREATEFROMARRAY, OnCximageDemocreatefromarray)
+	ON_COMMAND(ID_CXIMAGE_DEMOSAVEMULTIPAGEICON, OnCximageDemosavemultipageicon)
+	ON_COMMAND(ID_CXIMAGE_OPTIONS, OnCximageOptions)
+	ON_COMMAND(ID_HELP_CXIMAGEONLINE_WWWXDPIT, OnHelpCximageonlineWwwxdpit)
+	ON_COMMAND(ID_HELP_CXIMAGEONLINE_WWWTHECODEPROJECTCOM, OnHelpCximageonlineWwwthecodeprojectcom)
 	//}}AFX_MSG_MAP
 	// Standard file based document commands
 	ON_COMMAND(ID_FILE_NEW, CWinApp::OnFileNew)
@@ -111,6 +121,7 @@ END_MESSAGE_MAP()
 CDemoApp::CDemoApp()
 {
 	m_nDocCount=1; //counter for documents
+	nDocType = 0;
 
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -126,11 +137,14 @@ BOOL CDemoApp::InitInstance()
 	_CrtDumpMemoryLeaks();
 	_CrtSetDbgFlag ( _CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF );
 #endif
+
+#if _MSC_VER <= 1200
 	// Standard initialization
 #ifdef _AFXDLL
 	Enable3dControls();			// Call this when using MFC in a shared DLL
 #else
 	Enable3dControlsStatic();	// Call this when linking to MFC statically
+#endif
 #endif
 
 	LoadStdProfileSettings(9);  // Load standard INI file options (including MRU)
@@ -175,21 +189,112 @@ BOOL CDemoApp::InitInstance()
 	delete ima;
     
 	//recall last used font data for Text tool
-    sprintf( m_text.lfont.lfFaceName, GetProfileString ( "TextTool", "lfFaceName", "Arial") );
-	m_text.lfont.lfCharSet   = GetProfileInt ( "TextTool", "lfCharSet", EASTEUROPE_CHARSET ) ;
-    m_text.lfont.lfWeight    = GetProfileInt ( "TextTool", "lfWeight", 0 );
-    m_text.lfont.lfItalic    = GetProfileInt ( "TextTool", "lfItalic", 0 ); 
-    m_text.lfont.lfUnderline = GetProfileInt ( "TextTool", "lfUnderline", 0 ); 
-    m_text.fcolor = GetProfileInt ( "TextTool", "fcolor", RGB( 255,255,160 ));
-    m_text.bcolor = GetProfileInt ( "TextTool", "bcolor", RGB( 32, 96, 0 ));
-    m_text.opaque = GetProfileInt ( "TextTool", "opaque", 1);
-    m_text.b_opacity = (float)(GetProfileInt( "TextTool", "opacity", 0 ))/(float)100.;  
-    m_text.b_round   = GetProfileInt ( "TextTool", "roundradius", 25 );
+    _stprintf( m_text.lfont.lfFaceName, GetProfileString ( _T("TextTool"), _T("lfFaceName"), _T("Times New Roman")) );
+	m_text.lfont.lfCharSet   = (BYTE)GetProfileInt ( _T("TextTool"), _T("lfCharSet"), EASTEUROPE_CHARSET ) ;
+    m_text.lfont.lfWeight    = GetProfileInt ( _T("TextTool"), _T("lfWeight"), 0 );
+    m_text.lfont.lfItalic    = (BYTE)GetProfileInt ( _T("TextTool"), _T("lfItalic"), 0 ); 
+    m_text.lfont.lfUnderline = (BYTE)GetProfileInt ( _T("TextTool"), _T("lfUnderline"), 0 ); 
+    m_text.fcolor = GetProfileInt ( _T("TextTool"), _T("fcolor"), RGB( 255,255,160 ));
+    m_text.bcolor = GetProfileInt ( _T("TextTool"), _T("bcolor"), RGB(   0, 80,160 ));
+    m_text.opaque = (BYTE)GetProfileInt ( _T("TextTool"), _T("opaque"), 1);
+    m_text.b_opacity = (float)(GetProfileInt( _T("TextTool"), _T("opacity"), 0 ))/(float)100.;  
+    m_text.b_round   = (BYTE)GetProfileInt ( _T("TextTool"), _T("roundradius"), 25 );
+    m_text.smooth    = (BYTE)GetProfileInt ( _T("TextTool"), _T("antialias"), 1 );
 
-	m_optJpegQuality = GetProfileInt("Options","JpegQuality",90);
+	m_optJpegQuality = GetProfileInt(_T("Options"),_T("JpegQualityI"),90) + 0.001f * GetProfileInt(_T("Options"),_T("JpegQualityF"),0);
+	m_optJpegOptions = GetProfileInt(_T("Options"),_T("JpegOptions"),0);
+
+	m_optRawOptions = GetProfileInt(_T("Options"),_T("RawOptions"),0);
+
+	nDocType = GetProfileInt(_T("General"),_T("DocType"),0);
+
+	BCMenu::SetMenuDrawMode(GetProfileInt(_T("General"),_T("MenuStyle"),1));
+
+	m_FloodColor.rgbBlue = 255;
+	m_FloodColor.rgbGreen = 255;
+	m_FloodColor.rgbRed = 255;
+	m_FloodColor.rgbReserved = 0;
+	m_FloodTolerance = 0;
+	m_FloodOpacity = 255;
+	m_FloodSelect = 0;
+
+	int i;
+	for(i=0;i<25;i++) m_Filters.Kernel5x5[i]=1;
+	for(i=0;i<9;i++) m_Filters.Kernel3x3[i]=1;
+	m_Filters.kSize = 3;
+	m_Filters.kBias = 0;
+	m_Filters.kDivisor = 9;
+
+	m_Filters.RotateAngle = 12.345f;
+	m_Filters.RotateMethod = 1;
+	m_Filters.RotateOverflow = 0;
+	m_Filters.RotateKeepsize = 1;
+
+	m_Filters.ResampleSizemode = 1;
+	m_Filters.ResampleFactor = 2;
+	m_Filters.ResampleW = 100;
+	m_Filters.ResampleH = 100;
+	m_Filters.ResampleKeepRatio = 1;
+	m_Filters.ResampleMethod = 2;
+
+	m_Filters.SkewPivotX = 0;
+	m_Filters.SkewPivotY = 0;
+	m_Filters.SkewX =  5.5f;
+	m_Filters.SkewY = -5.0f;
+	m_Filters.SkewInterp = 1;
+
+	m_Filters.DitherMethod = 0;
+
+	m_Filters.ThreshLevel = 128;
+	m_Filters.ThreshPreserveColors = 0;
+
+	m_Filters.ColorMode = 0;
+	m_Filters.ColorHSL.rgbBlue = 50;
+	m_Filters.ColorHSL.rgbGreen = 12;
+	m_Filters.ColorHSL.rgbRed = 50;
+	m_Filters.ColorHSL.rgbReserved = 0;
+	m_Filters.ColorBlue = -50;
+	m_Filters.ColorGreen = 0;
+	m_Filters.ColorRed = 50;
+	m_Filters.ColorSolarLevel = 128;
+	m_Filters.ColorSolarLink = 1;
+
+	m_Filters.GammaLevel = 1.23f;
+	m_Filters.GammaR = 0.9f;
+	m_Filters.GammaG = 1.1f;
+	m_Filters.GammaB = 1.2f;
+	m_Filters.GammaLink = 0;
+
+	m_Filters.IncBppBPP = 24;
+	m_Filters.DecBppBPP = 4;
+	m_Filters.DecBppPalMethod = 1;
+	m_Filters.DecBppErrDiff = 0;
+	m_Filters.DecBppLimitColors = 0;
+	m_Filters.DecBppMaxColors = 256;
+
+	m_Filters.CanvasMode = 0;
+	m_Filters.CanvasW = 800;
+	m_Filters.CanvasH = 600;
+	m_Filters.CanvasLeft = 20;
+	m_Filters.CanvasRight = 20;
+	m_Filters.CanvasTop = 10;
+	m_Filters.CanvasBottom = 10;
+	m_Filters.CanvasCenterH = 1;
+	m_Filters.CanvasCenterV = 1;
+	m_Filters.CanvasKeepRatio = 0;
+	m_Filters.CanvasUseImageBkg = 0;
+	m_Filters.CanvasBkg = RGB(255,255,255);
+
+	m_Filters.ShadowX = -5;
+	m_Filters.ShadowY = 5;
+	m_Filters.ShadowR = 7;
+	m_Filters.ShadowColor = RGB(0,0,0);
+	m_Filters.ShadowBkg = RGB(255,255,255);
+	m_Filters.ShadowIntensity = 128;
+	m_Filters.ShadowRelative = 0;
 
 	// recall if main window was maximized on last exit
-    if ( GetProfileInt ( "Screen", "maximized", 0 ))
+    if ( GetProfileInt ( _T("Screen"), _T("maximized"), 0 ))
         m_nCmdShow|=SW_MAXIMIZE;
 #endif;
 
@@ -199,6 +304,9 @@ BOOL CDemoApp::InitInstance()
 
 	// Enable drag/drop open
 	m_pMainWnd->DragAcceptFiles();
+
+	// Register our Clipboard format name
+	m_CF = ::RegisterClipboardFormat(_T("CF_CXIMAGE"));
 
 	// Enable open from command line
 	if (*m_lpCmdLine != 0)
@@ -281,12 +389,12 @@ void CDemoApp::OnFileOpen()
 //////////////////////////////////////////////////////////////////////////////
 // prompt for file name - used for open and save as
 // static function called from app
-BOOL CDemoApp::PromptForFileName(CString& fileName, UINT nIDSTitle, 
+BOOL CDemoApp::PromptForFileName(CString& fileName, UINT /*nIDSTitle*/, 
 	DWORD dwFlags, BOOL bOpenFileDialog, int* pType)
 {
 	CFileDialog dlgFile(bOpenFileDialog);
 	CString title;
-	if (bOpenFileDialog) title="Open image file"; else title="Save image file";
+	if (bOpenFileDialog) title=_T("Open image file"; else title="Save image file");
 
 	dlgFile.m_ofn.Flags |= dwFlags;
 
@@ -351,7 +459,7 @@ CString CDemoApp::GetExtFromType(int nDocType)
 		if (doctypes[i].nID == nDocType)
 			return doctypes[i].ext;
 	}
-	return CString("");
+	return CString(_T(""));
 }
 //////////////////////////////////////////////////////////////////////////////
 CString CDemoApp::GetDescFromType(int nDocType)
@@ -360,10 +468,11 @@ CString CDemoApp::GetDescFromType(int nDocType)
 		if (doctypes[i].nID == nDocType)
 			return doctypes[i].description;
 	}
-	return CString("");
+	return CString(_T(""));
 }
 //////////////////////////////////////////////////////////////////////////////
-BOOL CDemoApp::GetWritableType(int nDocType){
+BOOL CDemoApp::GetWritableType(int nDocType)
+{
 	for (int i=0;i<CMAX_IMAGE_FORMATS;i++){
 		if (doctypes[i].nID == nDocType)
 			return doctypes[i].bWrite;
@@ -396,13 +505,14 @@ void CDemoApp::OnImageFromBitmap()
 {
 /*	HBITMAP bitmap;
 	if (!(bitmap = ::LoadBitmap(AfxGetInstanceHandle(),MAKEINTRESOURCE(IDB_BITMAP1)))){
-		AfxMessageBox("Could not load bitmap from resource");
+		AfxMessageBox(_T("Could not load bitmap from resource"));
 		return;
 	}*/
 
 	CxImage* newImage = new CxImage();
 	if (!newImage->LoadResource(FindResource(NULL,MAKEINTRESOURCE(IDB_BITMAP1),RT_BITMAP),CXIMAGE_FORMAT_BMP)){
-		AfxMessageBox(newImage->GetLastError());
+		CString s = newImage->GetLastError();
+		AfxMessageBox(s);
 		delete newImage;
 		newImage =NULL;
 		return;
@@ -412,9 +522,9 @@ void CDemoApp::OnImageFromBitmap()
 	if (doc){
 		doc->image = newImage;
 		CString s;
-		s.Format("BITMAP Resource Image %d",m_nDocCount++);
+		s.Format(_T("BITMAP Resource Image %d"),m_nDocCount++);
 		doc->SetTitle(s);
-		doc->UpdateAllViews(0);
+		doc->UpdateAllViews(0,WM_USER_NEWIMAGE);
 		doc->UpdateStatusBar();
 	}
 }
@@ -422,8 +532,9 @@ void CDemoApp::OnImageFromBitmap()
 void CDemoApp::OnCximageLoadjpegresource() 
 {
 	CxImage* newImage = new CxImage();
-	if (!newImage->LoadResource(FindResource(NULL,"IDR_JPG2","JPG"),CXIMAGE_FORMAT_JPG)){
-		AfxMessageBox(newImage->GetLastError());
+	if (!newImage->LoadResource(FindResource(NULL,_T("IDR_JPG2"),_T("JPG")),CXIMAGE_FORMAT_JPG)){
+		CString s = newImage->GetLastError();
+		AfxMessageBox(s);
 		delete newImage;
 		newImage =NULL;
 		return;
@@ -432,9 +543,9 @@ void CDemoApp::OnCximageLoadjpegresource()
 	if (doc){
 		doc->image = newImage;
 		CString s;
-		s.Format("JPEG Resource Image %d",m_nDocCount++);
+		s.Format(_T("JPEG Resource Image %d"),m_nDocCount++);
 		doc->SetTitle(s);
-		doc->UpdateAllViews(0);
+		doc->UpdateAllViews(0,WM_USER_NEWIMAGE);
 		doc->UpdateStatusBar();
 	}
 }
@@ -442,13 +553,15 @@ void CDemoApp::OnCximageLoadjpegresource()
 void CDemoApp::OnCximageLoadiconresource() 
 {
 	CxImage* newImage = new CxImage();
-	if (!newImage->LoadResource(FindResource(NULL,MAKEINTRESOURCE(IDR_ICO1),"ICO"),CXIMAGE_FORMAT_ICO)){
-		AfxMessageBox(newImage->GetLastError());
+#if CXIMAGE_SUPPORT_ICO
+	if (!newImage->LoadResource(FindResource(NULL,MAKEINTRESOURCE(IDR_ICO1),_T("ICO")),CXIMAGE_FORMAT_ICO)){
+		CString s = newImage->GetLastError();
+		AfxMessageBox(s);
 		delete newImage;
 		newImage =NULL;
 		return;
 	}
-
+#endif
 //	HICON my_Icon = (HICON)::LoadImage(AfxGetInstanceHandle(),MAKEINTRESOURCE(IDI_G),IMAGE_ICON,0, 0, 0);
 //	CxImage my_image;
 //	my_image.CreateFromHICON(my_Icon);
@@ -458,7 +571,7 @@ void CDemoApp::OnCximageLoadiconresource()
 	if (doc){
 		doc->image = newImage;
 		CString s;
-		s.Format("Icon Resource Image %d",m_nDocCount++);
+		s.Format(_T("Icon Resource Image %d"),m_nDocCount++);
 		doc->SetTitle(s);
 		doc->UpdateAllViews(0);
 		doc->UpdateStatusBar();
@@ -468,8 +581,9 @@ void CDemoApp::OnCximageLoadiconresource()
 void CDemoApp::OnCximageLoadgifresource() 
 {
 	CxImage* newImage = new CxImage();
-	if (!newImage->LoadResource(FindResource(NULL,MAKEINTRESOURCE(IDR_GIF1),"GIF"),CXIMAGE_FORMAT_GIF)){
-		AfxMessageBox(newImage->GetLastError());
+	if (!newImage->LoadResource(FindResource(NULL,MAKEINTRESOURCE(IDR_GIF1),_T("GIF")),CXIMAGE_FORMAT_GIF)){
+		CString s = newImage->GetLastError();
+		AfxMessageBox(s);
 		delete newImage;
 		newImage =NULL;
 		return;
@@ -479,9 +593,9 @@ void CDemoApp::OnCximageLoadgifresource()
 		doc->image = newImage;
 
 		CString s;
-		s.Format("GIF Resource Image %d",m_nDocCount++);
+		s.Format(_T("GIF Resource Image %d"),m_nDocCount++);
 		doc->SetTitle(s);
-		doc->UpdateAllViews(0);
+		doc->UpdateAllViews(0,WM_USER_NEWIMAGE);
 		doc->UpdateStatusBar();
 	}
 }
@@ -489,8 +603,9 @@ void CDemoApp::OnCximageLoadgifresource()
 void CDemoApp::OnCximageLoadpngresource() 
 {
 	CxImage* newImage = new CxImage();
-	if (!newImage->LoadResource(FindResource(NULL,MAKEINTRESOURCE(IDR_PNG1),"PNG"),CXIMAGE_FORMAT_PNG)){
-		AfxMessageBox(newImage->GetLastError());
+	if (!newImage->LoadResource(FindResource(NULL,MAKEINTRESOURCE(IDR_PNG1),_T("PNG")),CXIMAGE_FORMAT_PNG)){
+		CString s = newImage->GetLastError();
+		AfxMessageBox(s);
 		delete newImage;
 		newImage =NULL;
 		return;
@@ -501,9 +616,9 @@ void CDemoApp::OnCximageLoadpngresource()
 		doc->image = newImage;
 
 		CString s;
-		s.Format("PNG Resource Image %d",m_nDocCount++);
+		s.Format(_T("PNG Resource Image %d"),m_nDocCount++);
 		doc->SetTitle(s);
-		doc->UpdateAllViews(0);
+		doc->UpdateAllViews(0,WM_USER_NEWIMAGE);
 		doc->UpdateStatusBar();
 	}
 }
@@ -511,20 +626,23 @@ void CDemoApp::OnCximageLoadpngresource()
 void CDemoApp::OnCximageLoadtifresource() 
 {
 	CxImage* newImage = new CxImage();
-	if (!newImage->LoadResource(FindResource(NULL,MAKEINTRESOURCE(IDR_TIF1),"TIF"),CXIMAGE_FORMAT_TIF)){
-		AfxMessageBox(newImage->GetLastError());
+#if CXIMAGE_SUPPORT_TIF
+	if (!newImage->LoadResource(FindResource(NULL,MAKEINTRESOURCE(IDR_TIF1),_T("TIF")),CXIMAGE_FORMAT_TIF)){
+		CString s = newImage->GetLastError();
+		AfxMessageBox(s);
 		delete newImage;
 		newImage =NULL;
 		return;
 	}
+#endif
 	CDemoDoc *doc = (CDemoDoc *)demoTemplate->OpenDocumentFile(NULL);
 	if (doc){
 		doc->image = newImage;
 
 		CString s;
-		s.Format("TIF Resource Image %d",m_nDocCount++);
+		s.Format(_T("TIF Resource Image %d"),m_nDocCount++);
 		doc->SetTitle(s);
-		doc->UpdateAllViews(0);
+		doc->UpdateAllViews(0,WM_USER_NEWIMAGE);
 		doc->UpdateStatusBar();
 	}
 }
@@ -545,23 +663,31 @@ void CDemoApp::OnWindowCloseall()
 //////////////////////////////////////////////////////////////////////////////
 void CDemoApp::OnCximageDemosavemultipagetiff() 
 {
+#if CXIMAGE_SUPPORT_TIF && CXIMAGE_SUPPORT_GIF && CXIMAGE_SUPPORT_JPG
+
 	CxImage* newImage1 = new CxImage();
-	if (!newImage1->LoadResource(FindResource(NULL,MAKEINTRESOURCE(IDR_TIF1),"TIF"),CXIMAGE_FORMAT_TIF)){
-		AfxMessageBox(newImage1->GetLastError());
+	if (!newImage1->LoadResource(FindResource(NULL,MAKEINTRESOURCE(IDR_TIF1),_T("TIF")),CXIMAGE_FORMAT_TIF)){
+		CString s = newImage1->GetLastError();
+		AfxMessageBox(s);
 		delete newImage1;
 		newImage1 =NULL;
+		return;
 	}
 	CxImage* newImage2 = new CxImage();
-	if (!newImage2->LoadResource(FindResource(NULL,MAKEINTRESOURCE(IDR_GIF1),"GIF"),CXIMAGE_FORMAT_GIF)){
-		AfxMessageBox(newImage2->GetLastError());
+	if (!newImage2->LoadResource(FindResource(NULL,MAKEINTRESOURCE(IDR_GIF1),_T("GIF")),CXIMAGE_FORMAT_GIF)){
+		CString s = newImage2->GetLastError();
+		AfxMessageBox(s);
 		delete newImage2;
 		newImage2 =NULL;
+		return;
 	}
 	CxImage* newImage3 = new CxImage();
-	if (!newImage3->LoadResource(FindResource(NULL,"IDR_JPG2","JPG"),CXIMAGE_FORMAT_JPG)){
-		AfxMessageBox(newImage3->GetLastError());
+	if (!newImage3->LoadResource(FindResource(NULL,_T("IDR_JPG2"),_T("JPG")),CXIMAGE_FORMAT_JPG)){
+		CString s = newImage3->GetLastError();
+		AfxMessageBox(s);
 		delete newImage3;
 		newImage3 =NULL;
+		return;
 	}
 	newImage3->DecreaseBpp(8,true);
 
@@ -571,7 +697,7 @@ void CDemoApp::OnCximageDemosavemultipagetiff()
 	pimage[2]=newImage3;
 
 	FILE* hFile;
-	hFile = fopen("multipage.tif","w+b");
+	hFile = _tfopen(_T("multipage.tif"),_T("w+b"));
 
 	CxImage multiimage;
 	multiimage.Encode(hFile,pimage,3,CXIMAGE_FORMAT_TIF);
@@ -584,27 +710,29 @@ void CDemoApp::OnCximageDemosavemultipagetiff()
 
 	/*{
 	FILE* hFile;
-	hFile = fopen("c:\\multi.tif","w+b");
+	hFile = _tfopen("c:\\multi.tif",_T("w+b"));
 
 	CxImageTIF image;
-	image.Load("c:\\1.tif",CXIMAGE_FORMAT_TIF);
+	image.Load(_T("c:\\1.tif"),CXIMAGE_FORMAT_TIF);
 	image.Encode(hFile,true);
-	image.Load("c:\\2.bmp",CXIMAGE_FORMAT_BMP);
+	image.Load(_T("c:\\2.bmp"),CXIMAGE_FORMAT_BMP);
 	image.Encode(hFile,true);
-	image.Load("c:\\3.png",CXIMAGE_FORMAT_PNG);
+	image.Load(_T("c:\\3.png"),CXIMAGE_FORMAT_PNG);
 	image.Encode(hFile);
 
 	fclose(hFile);
 	}*/
 
-	AfxMessageBox("file ""mulipage.tif"" saved to disk",MB_OK);
+	AfxMessageBox(_T("file 'mulipage.tif' saved to disk"),MB_OK);
+#endif
 }
 //////////////////////////////////////////////////////////////////////////////
 void CDemoApp::OnCximageDemosaveanimatedgif() 
 {
 	CxImage* newImage = new CxImage();
-	if (!newImage->LoadResource(FindResource(NULL,MAKEINTRESOURCE(IDR_GIF1),"GIF"),CXIMAGE_FORMAT_GIF)){
-		AfxMessageBox(newImage->GetLastError());
+	if (!newImage->LoadResource(FindResource(NULL,MAKEINTRESOURCE(IDR_GIF1),_T("GIF")),CXIMAGE_FORMAT_GIF)){
+		CString s = newImage->GetLastError();
+		AfxMessageBox(s);
 		delete newImage;
 		newImage =NULL;
 	}
@@ -616,6 +744,7 @@ void CDemoApp::OnCximageDemosaveanimatedgif()
 	ima1.Light(22);
 	ima2.Copy(*newImage);
 	ima2.Light(44);
+	ima2.Flip();
 	ima3.Copy(*newImage);
 	ima3.Light(66);
 
@@ -634,6 +763,10 @@ void CDemoApp::OnCximageDemosaveanimatedgif()
 	ima2.SetFrameDelay(22);
 	ima3.SetFrameDelay(44);
 
+	ima1.SetDisposalMethod(0);
+	ima2.SetDisposalMethod(0);
+	ima3.SetDisposalMethod(0);
+
 	CxImage *pimage[7];
 	pimage[0]=newImage;
 	pimage[1]=&ima1;
@@ -643,21 +776,79 @@ void CDemoApp::OnCximageDemosaveanimatedgif()
 	pimage[5]=&ima1;
 	pimage[6]=newImage;
 
-	FILE* hFile;
-	hFile = fopen("ani.gif","wb");
+	CxIOFile hFile;
+	hFile.Open(_T("ani.gif"),_T("wb"));
 
 	CxImageGIF multiimage;
 	multiimage.SetComment("CxImage demo");
 	multiimage.SetLoops(3);
 	multiimage.SetDisposalMethod(2);
-	multiimage.Encode(hFile,pimage,7);
+	multiimage.Encode(&hFile,pimage,7,false,false);
 
-	fclose(hFile);
+	hFile.Close();
 
 	delete newImage;
 
-	AfxMessageBox("file ""ani.gif"" saved to disk",MB_OK);
+	AfxMessageBox(_T("file 'ani.gif' saved to disk"),MB_OK);
 
+}
+//////////////////////////////////////////////////////////////////////////////
+void CDemoApp::OnCximageDemosavemultipageicon() 
+{
+#if CXIMAGE_SUPPORT_BMP && CXIMAGE_SUPPORT_ICO
+
+	CxImage* icon = new CxImage();
+	if (!icon->LoadResource(FindResource(NULL,MAKEINTRESOURCE(IDB_BITMAP1),RT_BITMAP),CXIMAGE_FORMAT_BMP)){
+		CString s = icon->GetLastError();
+		AfxMessageBox(s);
+		delete icon;
+		icon =NULL;
+		return;
+	}
+
+	RGBQUAD c = {255,255,255,0};
+	icon->SetTransIndex(icon->GetNearestIndex(c));
+
+	CxImage gray,ico2,ico3;
+
+	ico2.Copy(*icon);
+	ico2.IncreaseBpp(24);
+	ico2.Resample(128,128);
+	gray.Copy(ico2);
+	gray.IncreaseBpp(8);
+	gray.Negative();
+	gray.GrayScale();
+	ico2.AlphaSet(gray);
+
+	ico3.Copy(*icon);
+	ico3.IncreaseBpp(8);
+	ico3.Resample(256,256);
+	gray.Copy(ico3);
+	gray.IncreaseBpp(8);
+	gray.Negative();
+	gray.GrayScale();
+	ico3.AlphaSet(gray);
+
+	icon->Resample(32,32);
+
+	CxImage *pimage[3];
+	pimage[0]=icon;
+	pimage[1]=&ico2;
+	pimage[2]=&ico3;
+
+	FILE* hFile;
+	hFile = _tfopen(_T("multipage.ico"),_T("w+b"));
+
+	CxImage multiicon;
+	multiicon.Encode(hFile,pimage,3,CXIMAGE_FORMAT_ICO);
+
+	fclose(hFile);
+
+	delete icon;
+
+	AfxMessageBox(_T("file 'mulipage.ico' saved to disk"),MB_OK);
+
+#endif
 }
 //////////////////////////////////////////////////////////////////////////////
 void CDemoApp::OnCximageDownloadfromurl() 
@@ -672,7 +863,7 @@ void CDemoApp::OnCximageDownloadfromurl()
 			if (doc){
 				CString ext(doc->FindExtension(dlg.m_url));
 				ext.MakeLower();
-				if (ext == "") return;
+				if (ext == _T("")) return;
 
 				int type = doc->FindType(ext);
 
@@ -689,11 +880,11 @@ void CDemoApp::OnCximageDownloadfromurl()
 
 				if (ima->GetNumFrames()>1){
 					CString s;
-					s.Format("File with %d images. Read all?",ima->GetNumFrames());
+					s.Format(_T("File with %d images. Read all?"),ima->GetNumFrames());
 					if (AfxMessageBox(s,MB_OKCANCEL)==IDOK){
 						
 						int j; // points to the document name
-						for(j=strlen(dlg.m_url)-1;j>=0;j--){
+						for(j=_tcslen(dlg.m_url)-1;j>=0;j--){
 							if (dlg.m_url[j]=='\\'){	j++; break;	}
 						}
 						// create the documents for the other images
@@ -706,7 +897,7 @@ void CDemoApp::OnCximageDownloadfromurl()
 								newImage->Decode(&memfile,type);
 								NewDoc->image = newImage;
 								CString s;
-								s.Format("%s (%d)",dlg.m_url.Mid(j),i+1);
+								s.Format(_T("%s (%d)"),dlg.m_url.Mid(j),i+1);
 								NewDoc->SetTitle(s);
 								NewDoc->UpdateAllViews(NULL,WM_USER_NEWIMAGE);
 							}
@@ -746,7 +937,8 @@ void CDemoApp::OnCximageDemocreatefromarray()
 	free(pArray);
 
 	if (!newImage->IsValid()){
-		AfxMessageBox(newImage->GetLastError());
+		CString s = newImage->GetLastError();
+		AfxMessageBox(s);
 		delete newImage;
 		newImage =NULL;
 		return;
@@ -757,10 +949,74 @@ void CDemoApp::OnCximageDemocreatefromarray()
 		doc->image = newImage;
 
 		CString s;
-		s.Format("CreateFromArray Image %d",m_nDocCount++);
+		s.Format(_T("CreateFromArray Image %d"),m_nDocCount++);
 		doc->SetTitle(s);
 		doc->UpdateAllViews(0);
 		doc->UpdateStatusBar();
 	}
 }
 //////////////////////////////////////////////////////////////////////////////
+void CDemoApp::OnCximageOptions() 
+{
+	CxImage* image = new CxImage();
+
+	if (image==NULL) return;
+
+	DlgOptions dlg;
+	dlg.m_jpeg_quality = theApp.m_optJpegQuality;
+	dlg.m_xres = image->GetXDPI();
+	dlg.m_yres = image->GetYDPI();
+
+#if CXIMAGE_SUPPORT_TIF
+	dlg.m_Opt_tif = image->GetCodecOption(CXIMAGE_FORMAT_TIF);
+#endif
+#if CXIMAGE_SUPPORT_GIF
+	dlg.m_Opt_gif = image->GetCodecOption(CXIMAGE_FORMAT_GIF);
+#endif
+#if CXIMAGE_SUPPORT_PNG
+	dlg.m_Opt_png = image->GetCodecOption(CXIMAGE_FORMAT_PNG);
+#endif
+
+	dlg.m_Opt_jpg = theApp.m_optJpegOptions;
+	dlg.m_Opt_raw = theApp.m_optRawOptions;
+	dlg.m_exif = 0;
+	if (dlg.DoModal()==IDOK){
+#ifdef VATI_EXTENSIONS
+		theApp.m_optJpegQuality = dlg.m_jpeg_quality;
+		theApp.m_optJpegOptions = dlg.m_Opt_jpg;
+		theApp.m_optRawOptions  = dlg.m_Opt_raw;
+#endif
+	}
+
+	delete image;
+}
+
+void CDemoApp::OnHelpCximageonlineWwwxdpit() 
+{
+	// TODO: Add your command handler code here
+	SHELLEXECUTEINFO s;
+	s.cbSize=sizeof(SHELLEXECUTEINFO);
+	s.fMask=SEE_MASK_FLAG_NO_UI;
+	s.hwnd=AfxGetMainWnd()->m_hWnd;
+	s.lpVerb=_T("Open");
+	s.lpFile=_T("iexplore.exe");
+	s.lpParameters=_T("http://www.xdp.it/cximage/");
+	s.lpDirectory=NULL;
+	s.nShow=SW_NORMAL;
+	ShellExecuteEx(&s);
+}
+
+void CDemoApp::OnHelpCximageonlineWwwthecodeprojectcom() 
+{
+	// TODO: Add your command handler code here
+	SHELLEXECUTEINFO s;
+	s.cbSize=sizeof(SHELLEXECUTEINFO);
+	s.fMask=SEE_MASK_FLAG_NO_UI;
+	s.hwnd=AfxGetMainWnd()->m_hWnd;
+	s.lpVerb=_T("Open");
+	s.lpFile=_T("iexplore.exe");
+	s.lpParameters=_T("http://www.codeproject.com/KB/graphics/cximage.aspx");
+	s.lpDirectory=NULL;
+	s.nShow=SW_NORMAL;
+	ShellExecuteEx(&s);
+}

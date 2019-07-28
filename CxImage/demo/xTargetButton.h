@@ -37,6 +37,7 @@ public:
 	void SetIcon(UINT nIcon, UINT nIconAlign=BS_CENTER, UINT nIconDown=0, UINT nIconHighLight=0);
 	void SetToolTipText(CString s, CString sDown="");
 	COLORREF SetTextColor(COLORREF new_color);
+	COLORREF SetBkgColor(COLORREF new_color);
 	virtual ~CxTargetButton();
 	// Generated message map functions
 protected:
@@ -53,6 +54,7 @@ protected:
 	CToolTipCtrl m_tooltip;
 	short	m_FocusRectMargin;	//dotted margin offset
 	COLORREF m_TextColor;		//button text color
+	COLORREF m_BkgColor;		//button background color
 	BOOL	m_Border;			//0=flat; 1=3D;
 	HICON	m_Icon,m_IconDown,m_IconHighLight;
 	CRect	m_IconBox;

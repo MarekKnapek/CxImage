@@ -37,7 +37,7 @@ It should be called again if ReleaseTwain is called.
 */
 BOOL CTwain::InitTwain(HWND hWnd)
 {
-char libName[512];
+TCHAR libName[512];
 	if(IsValidDriver()) 
 	{
 		return TRUE;
@@ -48,12 +48,13 @@ char libName[512];
 		return FALSE;
 	}
 	m_hMessageWnd = hWnd;
-	strcpy(libName,"TWAIN_32.DLL");
+	_tcscpy(libName,_T("TWAIN_32.DLL"));
 	
 	m_hTwainDLL  = LoadLibrary(libName);
 	if(m_hTwainDLL != NULL)
 	{
-		if(!(m_pDSMProc = (DSMENTRYPROC)GetProcAddress(m_hTwainDLL,MAKEINTRESOURCE(1))))
+		m_pDSMProc = (DSMENTRYPROC)GetProcAddress(m_hTwainDLL,(LPSTR)((DWORD)((WORD)(1))));
+		if(!m_pDSMProc)
 		{
 			FreeLibrary(m_hTwainDLL);
 			m_hTwainDLL = NULL;
@@ -118,7 +119,7 @@ TW_UINT16 CTwain::CallDSMEntry(pTW_IDENTITY pApp, pTW_IDENTITY pSrc,
 	{
 		VERIFY((*m_pDSMProc)(pApp, pSrc, DG_CONTROL, DAT_STATUS, MSG_GET, 
 					(TW_MEMREF)&m_Status) == TWRC_SUCCESS);
-		TRACE("CallDSMEntry function: call failed with RC = %d, CC = %d.\n", 
+		TRACE(_T("CallDSMEntry function: call failed with RC = %d, CC = %d.\n"), 
 					twRC, m_Status);
 	}
 	return twRC;
@@ -415,7 +416,7 @@ BOOL CTwain::EnableSource(BOOL showUI)
 	if(DSOpen() && !SourceEnabled())
 	{
 		TW_USERINTERFACE twUI;
-		twUI.ShowUI = showUI;
+		twUI.ShowUI = (TW_BOOL)showUI;
 		twUI.hParent = (TW_HANDLE)m_hMessageWnd;
 		if(CallTwainProc(&m_AppId,&m_Source,DG_CONTROL,DAT_USERINTERFACE,MSG_ENABLEDS,(TW_MEMREF)&twUI))
 		{
@@ -440,7 +441,7 @@ BOOL CTwain::Acquire(int numImages)
 {
 	if(DSOpen() || OpenSource())
 	{
-		if(SetImageCount(numImages))
+		if(SetImageCount((TW_INT16)numImages))
 		{
 			if(EnableSource())
 			{

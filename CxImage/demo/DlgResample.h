@@ -15,11 +15,12 @@ class DlgResample : public CDialog
 {
 // Construction
 public:
-	long m_mode;
-	long m_sizemode;
+	BYTE m_mode;
+	BYTE m_sizemode;
 	float m_ratio;
 	DWORD m_w;
 	DWORD m_h;
+	BYTE m_bKeepRatio;
 	DlgResample(CWnd* pParent = NULL);   // standard constructor
 
 // Dialog Data
@@ -55,6 +56,7 @@ protected:
 	afx_msg void OnChangeEdit2();
 	afx_msg void OnChangeEdit3();
 	afx_msg void OnChangeEdit1();
+	afx_msg void OnCheck2();
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 };

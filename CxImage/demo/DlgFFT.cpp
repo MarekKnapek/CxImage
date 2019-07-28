@@ -57,9 +57,9 @@ BOOL DlgFFT::OnInitDialog()
 	m_cforcefft.SetCheck(1);
 	//m_cmagnitude.SetCheck(1);
 
-	m_real.AddString("(None)");
+	m_real.AddString(_T("(None)"));
 	m_real.SetItemData(m_real.GetCount()-1, 0);
-	m_imag.AddString("(None)");
+	m_imag.AddString(_T("(None)"));
 	m_imag.SetItemData(m_imag.GetCount()-1, 0);
 
 	POSITION pos = AfxGetApp()->GetFirstDocTemplatePosition();

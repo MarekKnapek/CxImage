@@ -46,6 +46,7 @@ BEGIN_MESSAGE_MAP(DlgResample, CDialog)
 	ON_EN_CHANGE(IDC_EDIT2, OnChangeEdit2)
 	ON_EN_CHANGE(IDC_EDIT3, OnChangeEdit3)
 	ON_EN_CHANGE(IDC_EDIT1, OnChangeEdit1)
+	ON_BN_CLICKED(IDC_CHECK2, OnCheck2)
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
@@ -59,9 +60,12 @@ BOOL DlgResample::OnInitDialog()
 	m_ok.SetIcon(IDI_G,BS_LEFT);
 	m_canc.SetIcon(IDI_R,BS_LEFT);
 
-	m_r1.SetCheck(1);
-	inMethod.SetCurSel(2);
-	m_ch2.SetCheck(1);
+	m_r1.SetCheck(m_sizemode);
+	m_r2.SetCheck(1-m_sizemode);
+
+	inMethod.SetCurSel(m_mode);
+
+	m_ch2.SetCheck(m_bKeepRatio);
 	
 	return TRUE;  // return TRUE unless you set the focus to a control
 	              // EXCEPTION: OCX Property Pages should return FALSE
@@ -73,6 +77,8 @@ void DlgResample::OnOK()
 
 	if (m_r1.GetCheck()) m_sizemode=1; //factor
 	if (m_r2.GetCheck()) m_sizemode=0; //pixel
+
+	m_bKeepRatio = m_ch2.GetCheck();
 
 	CDialog::OnOK();
 }
@@ -86,7 +92,7 @@ void DlgResample::OnChangeEdit2()
 
 	if (m_ch2.GetCheck()){
 		UpdateData(1);
-		m_newheight = (DWORD)(m_newwidth / m_ratio);
+		m_newheight = (DWORD)(m_newwidth / m_ratio + 0.5f);
 		UpdateData(0);
 	}
 	m_r1.SetCheck(0);
@@ -101,7 +107,7 @@ void DlgResample::OnChangeEdit3()
 	// with the ENM_CHANGE flag ORed into the mask.
 	if (m_ch2.GetCheck()){
 		UpdateData(1);
-		m_newwidth = (DWORD)(m_newheight * m_ratio);
+		m_newwidth = (DWORD)(m_newheight * m_ratio + 0.5f);
 		UpdateData(0);
 	}
 	m_r1.SetCheck(0);
@@ -125,4 +131,15 @@ void DlgResample::OnChangeEdit1()
 	}
 	m_r2.SetCheck(0);
 	m_r1.SetCheck(1);
+}
+
+void DlgResample::OnCheck2() 
+{
+	if (m_ch2.GetCheck()){
+		UpdateData(1);
+		m_newheight = (DWORD)(m_newwidth / m_ratio + 0.5f);
+		UpdateData(0);
+	}
+	m_r1.SetCheck(0);
+	m_r2.SetCheck(1);
 }

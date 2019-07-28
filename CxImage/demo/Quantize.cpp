@@ -121,8 +121,9 @@ void* CQuantizer::CreateNode (UINT nLevel, UINT	nColorBits,	UINT* pLeafCount,
 void CQuantizer::ReduceTree	(UINT nColorBits, UINT*	pLeafCount,
 	NODE** pReducibleNodes)
 {
+	int i;
 	// Find	the	deepest	level containing at	least one reducible	node.
-	for	(int i=nColorBits -	1; (i>0) &&	(pReducibleNodes[i]	== NULL); i--);
+	for	(i=nColorBits -	1; (i>0) &&	(pReducibleNodes[i]	== NULL); i--);
 
 	// Reduce the node most	recently added to the list at level	i.
 	NODE* pNode	= pReducibleNodes[i];
@@ -168,10 +169,10 @@ void CQuantizer::GetPaletteColors (NODE* pTree,	RGBQUAD* prgb, UINT* pIndex, UIN
 {
 	if (pTree){
 		if (pTree->bIsLeaf)	{
-			prgb[*pIndex].rgbRed = (BYTE)((pTree->nRedSum)/(pTree->nPixelCount));
-			prgb[*pIndex].rgbGreen = (BYTE)((pTree->nGreenSum)/(pTree->nPixelCount));
-			prgb[*pIndex].rgbBlue = (BYTE)((pTree->nBlueSum)/(pTree->nPixelCount));
-			prgb[*pIndex].rgbReserved =	(BYTE)((pTree->nAlphaSum)/(pTree->nPixelCount));
+			prgb[*pIndex].rgbRed   = (BYTE)min(255,0.5f + ((float)pTree->nRedSum)   / pTree->nPixelCount);
+			prgb[*pIndex].rgbGreen = (BYTE)min(255,0.5f + ((float)pTree->nGreenSum) / pTree->nPixelCount);
+			prgb[*pIndex].rgbBlue  = (BYTE)min(255,0.5f + ((float)pTree->nBlueSum)  / pTree->nPixelCount);
+			prgb[*pIndex].rgbReserved =	(BYTE)min(255,0.5f + ((float)pTree->nAlphaSum) / pTree->nPixelCount);
 			if (pSum) pSum[*pIndex] = pTree->nPixelCount;
 			(*pIndex)++;
 		} else {
@@ -208,10 +209,10 @@ void CQuantizer::SetColorTable (RGBQUAD* prgb)
 					na+=tmppal[k].rgbReserved * nSum[k];
 					ns+= nSum[k];
 				}
-				prgb[j].rgbRed = nr/ns;
-				prgb[j].rgbGreen = ng/ns;
-				prgb[j].rgbBlue = nb/ns;
-				prgb[j].rgbReserved = na/ns;
+				prgb[j].rgbRed   = (BYTE)min(255,0.5f + ((float)nr)/ns);
+				prgb[j].rgbGreen = (BYTE)min(255,0.5f + ((float)ng)/ns);
+				prgb[j].rgbBlue  = (BYTE)min(255,0.5f + ((float)nb)/ns);
+				prgb[j].rgbReserved = (BYTE)min(255,0.5f + ((float)na)/ns);
 			}
 		} else {
 			memcpy(prgb,tmppal,m_nLeafCount * sizeof(RGBQUAD));

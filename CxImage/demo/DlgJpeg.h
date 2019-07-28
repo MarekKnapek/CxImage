@@ -24,7 +24,7 @@ public:
 	CButton	m_r1;
 	CxTargetButton	m_ok;
 	CxTargetButton	m_canc;
-	long	m_quality;
+	float	m_quality;
 	long	m_format;
 	//}}AFX_DATA
 

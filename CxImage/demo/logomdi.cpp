@@ -16,9 +16,13 @@ CLogoMdi::CLogoMdi()  : m_sizeClient(0,0)
 {
   	m_LogoFont.CreateFont(36, 0, 0, 0, FW_BOLD, 1, FALSE, FALSE,
 	  ANSI_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY,
-	  FIXED_PITCH | FF_ROMAN, "Times New Roman");
+	  FIXED_PITCH | FF_ROMAN, _T("Times New Roman"));
 
-	sLogoString = "CxImage ";
+#ifdef _DEBUG
+	sLogoString = _T("CxImage Debug ");
+#else
+	sLogoString = _T("CxImage ");
+#endif
 
 /*	//BITMAP background
 	HBITMAP bitmap;
@@ -30,7 +34,7 @@ CLogoMdi::CLogoMdi()  : m_sizeClient(0,0)
 
 	//JPEG background
 	bgImage = new CxImage();
-	if (!bgImage->LoadResource(FindResource(NULL,"IDR_JPG1","JPG"),CXIMAGE_FORMAT_JPG)){
+	if (!bgImage->LoadResource(FindResource(NULL,_T("IDR_JPG1"),_T("JPG")),CXIMAGE_FORMAT_JPG)){
 		delete bgImage;
 		bgImage =NULL;
 	}
@@ -104,7 +108,7 @@ BOOL CLogoMdi::OnEraseBkgnd(CDC* pDC)
     return TRUE;
 }      
 //////////////////////////////////////////////////////////////////////////////
-void CLogoMdi::OnSize(UINT nType, int cx, int cy)
+void CLogoMdi::OnSize(UINT /*nType*/, int cx, int cy)
 {
     Default() ;    // Same as DefWindowProc(), or CWnd::OnSize();
     // if the app is just starting up, save the window

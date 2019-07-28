@@ -59,9 +59,17 @@ BOOL DlgDecBpp::OnInitDialog()
 	else if (m_bit == 4) m_r4.SetCheck(1);
 	else m_r1.SetCheck(1);
 
-	m_opt.SetCheck(1);
-	m_method=0;
-	
+	if (m_method)
+		CheckRadioButton(IDC_RADIO4,IDC_RADIO5,IDC_RADIO5);
+	else
+		CheckRadioButton(IDC_RADIO4,IDC_RADIO5,IDC_RADIO4);
+
+	m_err.SetCheck(m_errordiffusion);
+	m_limitcolors.SetCheck(m_bLimitColors);
+	if (m_bLimitColors==0) m_maxcolors = 256;
+
+	UpdateData(0);
+
 	return TRUE;  // return TRUE unless you set the focus to a control
 	              // EXCEPTION: OCX Property Pages should return FALSE
 }
@@ -72,9 +80,10 @@ void DlgDecBpp::OnOK()
 	else if (m_r4.GetCheck()) m_bit=4;
 	else m_bit=1;
 
-	if (m_opt.GetCheck()) m_method=1;
+	m_method=m_opt.GetCheck();
 
 	m_errordiffusion = m_err.GetCheck();
+	m_bLimitColors = m_limitcolors.GetCheck();
 
 	UpdateData(1);
 

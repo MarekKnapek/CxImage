@@ -6,6 +6,7 @@
 #include "TwainCpp.h" //<<<TWAIN>>>
 #include "BCMenu.h"
 #include "DlgHisto.h"
+#include "DlgFloodFill.h"
 
 class CMainFrame : public CMDIFrameWnd, public CTwain
 {
@@ -37,10 +38,12 @@ public:
 	BCMenu m_menu,m_default;
 	bool	m_fullscreen;
 	DlgHisto m_HistoBar;
+	DlgFloodFill* m_pDlgFlood;
 
 protected:  // control bar embedded members
 	CStatusBar  m_wndStatusBar;
 	CToolBar    m_wndToolBar;
+	CToolBar    m_wndCmdBar;
 	CLogoMdi m_LogoMdiClientWnd;
 //	CProgressCtrl m_wndProgressBar;
  

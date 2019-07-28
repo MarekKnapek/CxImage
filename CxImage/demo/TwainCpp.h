@@ -29,7 +29,7 @@ public:
 	virtual void GetIdentity();
 	virtual BOOL SelectSource();
 	virtual BOOL OpenSource(TW_IDENTITY *pSource=NULL);
-	virtual int  ShouldTransfer(TW_IMAGEINFO& info) { return TWCPP_DOTRANSFER;};
+	virtual int  ShouldTransfer(TW_IMAGEINFO& /*info*/) { return TWCPP_DOTRANSFER;};
 	
 	BOOL ProcessMessage(MSG msg);
 

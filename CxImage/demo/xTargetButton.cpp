@@ -1,6 +1,8 @@
 // CxTargetButton.cpp : implementation file
-/** 12/Aug/2001 v1.00
- * - ing.davide.pizzolato@libero.it
+/** 
+ * CxTargetButton  v1.00 12/Aug/2001
+ * CxTargetButton  v1.01 02/Gen/2008
+ * (c) Davide Pizzolato - www.xdp.it
  */
 
 #include "stdafx.h"
@@ -20,6 +22,7 @@ CxTargetButton::CxTargetButton()
 	m_Border=1;				//draw 3D border
 	m_FocusRectMargin=3;	//focus dotted rect margin
 	m_TextColor=GetSysColor(COLOR_BTNTEXT); // default button text color
+	m_BkgColor=GetSysColor(COLOR_BTNFACE); // default button background color
 	m_flat = m_Checked = m_button_down = m_tracking = false;
 
 	m_Icon=m_IconDown=m_IconHighLight=NULL;	// icon handle
@@ -80,7 +83,7 @@ void CxTargetButton::PreSubclassWindow()
 	ModifyStyle(0, BS_OWNERDRAW);
 }
 /////////////////////////////////////////////////////////////////////////////
-BOOL CxTargetButton::OnEraseBkgnd(CDC* pDC) 
+BOOL CxTargetButton::OnEraseBkgnd(CDC* /*pDC*/) 
 { return 1; }	// doesn't erase the button background
 /////////////////////////////////////////////////////////////////////////////
 void CxTargetButton::DrawItem(LPDRAWITEMSTRUCT lpDrawItemStruct) 
@@ -167,7 +170,11 @@ void CxTargetButton::DrawItem(LPDRAWITEMSTRUCT lpDrawItemStruct)
 		if ((lpDrawItemStruct->itemState & ODS_SELECTED)||m_Checked){ //SELECTED (DOWN) BUTTON
  
 			if (m_Style==BS_PUSHBUTTON){
-				pDC->FillSolidRect(&r,GetSysColor(COLOR_3DHILIGHT));
+				if (m_BkgColor == GetSysColor(COLOR_BTNFACE)){
+					pDC->FillSolidRect(&r,GetSysColor(COLOR_3DHILIGHT));
+				} else {
+					pDC->FillSolidRect(&r,m_BkgColor);
+				}
 				if (m_tracking)	{
 					DrawTarget(pDC,&r,m_TextColor,3,4,3);
 				}
@@ -200,11 +207,15 @@ void CxTargetButton::DrawItem(LPDRAWITEMSTRUCT lpDrawItemStruct)
 //---------------------------------------------------------------------------
 					// DEFAULT BUTTON
             if (m_tracking){
-				pDC->FillSolidRect(&r,GetSysColor(COLOR_3DHILIGHT));
+				if (m_BkgColor == GetSysColor(COLOR_BTNFACE)){
+					pDC->FillSolidRect(&r,GetSysColor(COLOR_3DHILIGHT));
+				} else {
+					pDC->FillSolidRect(&r,m_BkgColor);
+				}
 				DrawTarget(pDC,&r,m_TextColor,3,4,3);
 				btargetdone=true;
 			} else {
-				pDC->FillSolidRect(&r,GetSysColor(COLOR_BTNFACE));
+				pDC->FillSolidRect(&r,m_BkgColor);
 			}
 
 			if (m_IconHighLight && m_tracking) { // draw the highlighted icon
@@ -372,6 +383,13 @@ COLORREF CxTargetButton::SetTextColor(COLORREF new_color)
 {
 	COLORREF tmp_color=m_TextColor;
 	m_TextColor=new_color;
+	return tmp_color;			//returns the previous color
+}
+/////////////////////////////////////////////////////////////////////////////
+COLORREF CxTargetButton::SetBkgColor(COLORREF new_color)
+{
+	COLORREF tmp_color=m_BkgColor;
+	m_BkgColor=new_color;
 	return tmp_color;			//returns the previous color
 }
 /////////////////////////////////////////////////////////////////////////////
@@ -679,7 +697,7 @@ BOOL CxTargetButton::OnClicked()
 //Description :
 //  > Handle notification, that a Button in the same group was pushed
 //---------------------------------------------------------
-LRESULT CxTargetButton::OnRadioInfo(WPARAM wparam, LPARAM)
+LRESULT CxTargetButton::OnRadioInfo(WPARAM /*wparam*/, LPARAM)
 {
 	if (m_Checked){	//only checked buttons need to be unchecked
 		m_Checked = false;
@@ -751,7 +769,7 @@ LRESULT CxTargetButton::OnBMSetCheck(WPARAM wparam, LPARAM)
 	return 0;
 }
 /////////////////////////////////////////////////////////////////////////////
-LRESULT CxTargetButton::OnBMGetCheck(WPARAM wparam, LPARAM)
+LRESULT CxTargetButton::OnBMGetCheck(WPARAM /*wparam*/, LPARAM)
 { return m_Checked; }	//returns the state for check & radio buttons
 /////////////////////////////////////////////////////////////////////////////
 void CxTargetButton::SetButtonStyle(UINT nStyle, BOOL bRedraw)
@@ -778,7 +796,7 @@ bool CxTargetButton::SetFont(CString sFontName,long lSize, long lWeight, BYTE bI
 {
 	if (m_pLF==NULL) m_pLF=(LOGFONT*)calloc(1,sizeof(LOGFONT));
 	if (m_pLF){
-		strncpy(m_pLF->lfFaceName,sFontName,31);
+		_tcsncpy(m_pLF->lfFaceName,sFontName,LF_FACESIZE-1);
 		m_pLF->lfHeight=lSize;
 		m_pLF->lfWeight=lWeight;
 		m_pLF->lfItalic=bItalic;

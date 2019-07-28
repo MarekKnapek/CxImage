@@ -17,7 +17,7 @@ BOOL CALLBACK EnumWindowsProc(HWND hwnd,LPARAM lParam)
 {
     DWORD           i;
 	RECT			r;
-    CHAR            buf[MAX_PATH];
+    TCHAR           buf[MAX_PATH];
     PTASK_LIST_ENUM te = (PTASK_LIST_ENUM)lParam;
     PTASK_LIST      tlist = te->tlist;
     DWORD           numTasks = te->numtasks;
@@ -31,9 +31,9 @@ BOOL CALLBACK EnumWindowsProc(HWND hwnd,LPARAM lParam)
 			// discard strange windows
 			if (r.right>4 && r.bottom>4){
 				// get the window caption
-				if (GetWindowText(hwnd, buf, sizeof(buf) )) {
+				if (GetWindowText(hwnd, buf, MAX_PATH )) {
 					tlist[i].hwnd = hwnd;				 // store hwnd
-					strcpy( tlist[i].WindowTitle, buf ); // store caption
+					_tcscpy( tlist[i].WindowTitle, buf ); // store caption
 					tlist[0].dwProcessId++;
 				}
 			}
@@ -85,7 +85,7 @@ BOOL DlgCapture::OnInitDialog()
 	int numtasks=tlist[0].dwProcessId;
 	int idx;
 	// always add the desktop
-	idx = m_list.InsertString(-1,"Desktop");
+	idx = m_list.InsertString(-1,_T("Desktop"));
 	m_list.SetItemData(idx,(DWORD)::GetDesktopWindow());
 	// fill the list with the other windows
 	for(int i=1;i<numtasks;i++){

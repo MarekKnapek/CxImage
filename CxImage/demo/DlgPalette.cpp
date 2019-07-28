@@ -213,7 +213,7 @@ void DlgPalette::OnMouseMove(UINT nFlags, CPoint point)
 		if (i>=0 && i<m_numcolors){
 
 			CString s;
-			s.Format(" I : %d, RGBA : %d, %d, %d, %d",i,m_pal[i].rgbRed,m_pal[i].rgbGreen,m_pal[i].rgbBlue,m_pal[i].rgbReserved);
+			s.Format(_T(" I : %d, RGBA : %d, %d, %d, %d"),i,m_pal[i].rgbRed,m_pal[i].rgbGreen,m_pal[i].rgbBlue,m_pal[i].rgbReserved);
 			m_bar.SetWindowText(s);
 			m_bar.Invalidate(0);
 		}
@@ -232,12 +232,12 @@ void DlgPalette::OnOK()
 //////////////////////////////////////////////////////////////////////////////
 // prompt for file name - used for open and save as
 // static function called from app
-BOOL DlgPalette::PromptForFileName(CString& fileName, UINT nIDSTitle, 
+BOOL DlgPalette::PromptForFileName(CString& fileName, UINT /*nIDSTitle*/, 
 	DWORD dwFlags, BOOL bOpenFileDialog, int* pType)
 {
 	CFileDialog dlgFile(bOpenFileDialog);
 	CString title;
-	if (bOpenFileDialog) title="Open file"; else title="Save file";
+	if (bOpenFileDialog) title=_T("Open file"); else title=_T("Save file");
 
 	dlgFile.m_ofn.Flags |= dwFlags;
 
@@ -246,16 +246,16 @@ BOOL DlgPalette::PromptForFileName(CString& fileName, UINT nIDSTitle,
 	int nIndex = 0;
 
 	dlgFile.m_ofn.nFilterIndex = nIndex +1;
-	CString strDefExt = "pal";
+	CString strDefExt = _T("pal");
 	dlgFile.m_ofn.lpstrDefExt = strDefExt;
 		
-	CString strFilter = "*.pal";
+	CString strFilter = _T("*.pal");
 	strFilter += (TCHAR)NULL;
-	strFilter += "*.pal";
+	strFilter += _T("*.pal");
 	strFilter += (TCHAR)NULL;
-	strFilter += "*.*";
+	strFilter += _T("*.*");
 	strFilter += (TCHAR)NULL;
-	strFilter += "*.*";
+	strFilter += _T("*.*");
 	strFilter += (TCHAR)NULL;
 
 	dlgFile.m_ofn.lpstrFilter = strFilter;
@@ -281,8 +281,7 @@ void DlgPalette::OnLoad()
 		return; // open cancelled
 	
 	FILE* f;
-	f=fopen(filename,"rb");
-
+	f=_tfopen(filename,_T("rb"));
 	if (f==NULL) return;
 
 	char key[5];
@@ -306,21 +305,21 @@ void DlgPalette::OnLoad()
 			long numcolors=atol(token);
 			if (numcolors>256){
 				free(buffer);
-				AfxMessageBox("Too much colors!");
+				AfxMessageBox(_T("Too much colors!"));
 				return;
 			}
 			if (numcolors!=m_numcolors){
 				numcolors = min(m_numcolors,numcolors);
-				AfxMessageBox("Warning: numcolors doesn't match");
+				AfxMessageBox(_T("Warning: numcolors doesn't match"));
 			}
 			long i=0;
 			while (token && i<numcolors){
 				token=strtok(NULL," \n");
-				if (token) m_pal[i].rgbRed=atoi(token);
+				if (token) m_pal[i].rgbRed=(BYTE)atoi(token);
 				token=strtok(NULL," \n");
-				if (token) m_pal[i].rgbGreen=atoi(token);
+				if (token) m_pal[i].rgbGreen=(BYTE)atoi(token);
 				token=strtok(NULL," \n");
-				if (token) m_pal[i].rgbBlue=atoi(token);
+				if (token) m_pal[i].rgbBlue=(BYTE)atoi(token);
 				i++;
 			}
 		}
@@ -336,12 +335,12 @@ void DlgPalette::OnLoad()
 		fread(&numcolors,2,1,f);
 		if (numcolors>256){
 			fclose(f);
-			AfxMessageBox("Too much colors!");
+			AfxMessageBox(_T("Too much colors!"));
 			return;
 		}
 		if (numcolors!=m_numcolors){
 			numcolors = min(m_numcolors,numcolors);
-			AfxMessageBox("Warning: numcolors doesn't match");
+			AfxMessageBox(_T("Warning: numcolors doesn't match"));
 		}
 		fread(m_pal,numcolors,sizeof(RGBQUAD),f);
 		for (int i=0;i<numcolors;i++){
@@ -356,7 +355,7 @@ void DlgPalette::OnLoad()
 	}
 
 	fclose(f);
-	AfxMessageBox("Unknown contents!");
+	AfxMessageBox(_T("Unknown contents!"));
 }
 //////////////////////////////////////////////////////////////////////////////
 void DlgPalette::OnSave() 
@@ -364,7 +363,7 @@ void DlgPalette::OnSave()
 	CString filename;
 	if (PromptForFileName(filename, 0,	OFN_HIDEREADONLY | OFN_PATHMUSTEXIST, FALSE, 0)){
 		FILE* f;
-		f=fopen(filename,"wb");
+		f=_tfopen(filename,_T("wb"));
 		if (f) {
 			long tmp;
 			fwrite("RIFF",4,1,f);

@@ -56,8 +56,8 @@ protected:
 	BOOL    m_bSafeToClose;
 	CString m_sError;
 
-	void SetStatus(LPCSTR message);
-	void ThreadError(LPCSTR message);
+	void SetStatus(LPCTSTR message);
+	void ThreadError(LPCTSTR message);
 	LRESULT OnThreadFinished(WPARAM wParam);
 };
 

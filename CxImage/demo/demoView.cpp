@@ -106,8 +106,8 @@ void CDemoView::OnDraw(CDC* pDC)
 			int cxInch = pDC->GetDeviceCaps(LOGPIXELSX);
 			int cyInch = pDC->GetDeviceCaps(LOGPIXELSY);
 			// Best Fit case: create a rectangle which preserves the aspect ratio
-			int cx=(ima->GetWidth()*cxInch)/ima->GetXDPI();
-			int cy=(ima->GetHeight()*cyInch)/ima->GetYDPI();
+			int cx = ima->GetXDPI() ? (ima->GetWidth()*cxInch)/ima->GetXDPI():ima->GetWidth()*cxInch/96;
+			int cy = ima->GetYDPI() ? (ima->GetHeight()*cyInch)/ima->GetYDPI():ima->GetHeight()*cyInch/96;
 			// print it!
 			/*HDC TmpDC=CreateCompatibleDC(pDC->GetSafeHdc());
 			HBITMAP bm =::CreateCompatibleBitmap(pDC->GetSafeHdc(), cx, cy);
@@ -221,15 +221,15 @@ void CDemoView::OnMouseMove(UINT nFlags, CPoint point)
 	long y = point.y;
 	GetImageXY(pDoc, ima, &x,&y);
 
-	char s[80];
+	TCHAR s[80];
 	if (ima->IsInside(x,y))	{
 
 		long yflip = ima->GetHeight() - y - 1;
-		sprintf(s,"x: %d y: %d  idx: %d", x, y, ima->GetPixelIndex(x,yflip));
+		_stprintf(s,_T("x: %d y: %d  idx: %d"), x, y, ima->GetPixelIndex(x,yflip));
 		RGBQUAD rgb=ima->GetPixelColor(x,yflip);
 		if (ima->AlphaIsValid()) rgb.rgbReserved=ima->AlphaGet(x,yflip);
 		else rgb.rgbReserved=ima->GetPaletteColor(ima->GetPixelIndex(x,yflip)).rgbReserved;
-		sprintf(&s[strlen(s)],"  RGBA: (%d, %d, %d, %d)", rgb.rgbRed, rgb.rgbGreen, rgb.rgbBlue, rgb.rgbReserved);
+		_stprintf(&s[_tcslen(s)],_T("  RGBA: (%d, %d, %d, %d)"), rgb.rgbRed, rgb.rgbGreen, rgb.rgbBlue, rgb.rgbReserved);
 
 		//Enable these lines if you want draw over the image	
 		//if ((nFlags & MK_LBUTTON)==MK_LBUTTON){
@@ -356,7 +356,7 @@ void CDemoView::OnMouseMove(UINT nFlags, CPoint point)
 #endif
 		} //end switch
 
-	} else strcpy(s," ");
+	} else _tcscpy(s,_T(" "));
 	
 	CStatusBar& statusBar = ((CMainFrame *)(AfxGetApp()->m_pMainWnd))->GetStatusBar();
 	statusBar.SetPaneText(0, s);
@@ -364,7 +364,7 @@ void CDemoView::OnMouseMove(UINT nFlags, CPoint point)
 	CScrollView::OnMouseMove(nFlags, point);
 }
 //////////////////////////////////////////////////////////////////////////////
-BOOL CDemoView::OnEraseBkgnd(CDC* pDC) 
+BOOL CDemoView::OnEraseBkgnd(CDC* /*pDC*/) 
 {
 	return 1;
 }
@@ -426,28 +426,52 @@ void CDemoView::OnLButtonDown(UINT nFlags, CPoint point)
 			}
 			break;
 		case 3: //text
-			pDoc->m_tool=-1;
-			CxImage* ima = pDoc->GetImage();
-			if (ima){
-				pDoc->SubmitUndo();
-				long x = point.x;
-				long y = point.y;
-				GetImageXY(pDoc, ima, &x,&y);
+			{
+				//pDoc->m_tool=-1;
+				CxImage* ima = pDoc->GetImage();
+				if (ima){
+					pDoc->SubmitUndo();
+					long x = point.x;
+					long y = point.y;
+					GetImageXY(pDoc, ima, &x,&y);
 #ifndef VATI_EXTENSIONS
-				RGBQUAD c = ima->RGBtoRGBQUAD(pDoc->m_color);
-				c.rgbReserved=255;
-				ima->DrawString(0,x,y,pDoc->m_text,c,
-							pDoc->m_font.lfFaceName,
-							pDoc->m_font.lfHeight,
-							pDoc->m_font.lfWeight,
-							pDoc->m_font.lfItalic,
-							pDoc->m_font.lfUnderline,
-							true);
+					RGBQUAD c = ima->RGBtoRGBQUAD(pDoc->m_color);
+					c.rgbReserved=255;
+					ima->DrawString(0,x,y,pDoc->m_text,c,
+								pDoc->m_font.lfFaceName,
+								pDoc->m_font.lfHeight,
+								pDoc->m_font.lfWeight,
+								pDoc->m_font.lfItalic,
+								pDoc->m_font.lfUnderline,
+								true);
 #else
-				ima->DrawStringEx(0,x,y,&theApp.m_text );
+					ima->DrawStringEx(0,x,y,&theApp.m_text );
 #endif
+				}
+				Invalidate(0);
 			}
-			Invalidate(0);
+			break;
+		case 5: //flood fill
+			{
+				CxImage* ima = pDoc->GetImage();
+				if (ima){
+					DlgFloodFill* pDlg = ((CMainFrame *)(AfxGetApp()->m_pMainWnd))->m_pDlgFlood;
+					if (pDlg){
+						pDlg->UpdateData(1);
+						theApp.m_FloodColor = ima->RGBtoRGBQUAD(pDlg->m_color);
+						theApp.m_FloodTolerance = pDlg->m_tol;
+						theApp.m_FloodOpacity = pDlg->m_opacity;
+						theApp.m_FloodSelect = pDlg->m_select;
+					}
+					pDoc->SubmitUndo();
+					long x = point.x;
+					long y = point.y;
+					GetImageXY(pDoc, ima, &x,&y);
+					long yflip = ima->GetHeight() - y - 1;
+					ima->FloodFill(x,yflip,theApp.m_FloodColor,theApp.m_FloodTolerance,theApp.m_FloodOpacity,theApp.m_FloodSelect!=0);
+					Invalidate(0);
+				}
+			}
 			break;
 		}
 
@@ -577,7 +601,13 @@ void CDemoView::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 				if (!ima->SelectionIsValid()) KillTimer(1);
 
 #ifdef VATI_EXTENSIONS
-				ima->SetJpegQuality(theApp.m_optJpegQuality);
+				ima->SetJpegQualityF(theApp.m_optJpegQuality);
+  #if CXIMAGE_SUPPORT_JPG
+				ima->SetCodecOption(theApp.m_optJpegOptions,CXIMAGE_FORMAT_JPG);
+  #endif
+  #if CXIMAGE_SUPPORT_RAW
+				ima->SetCodecOption(theApp.m_optRawOptions,CXIMAGE_FORMAT_RAW);
+  #endif
 #endif
 
 				CMainFrame* pMain = (CMainFrame*) AfxGetMainWnd();
@@ -607,7 +637,7 @@ void CDemoView::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 	CScrollView::OnUpdate(pSender, lHint, pHint);
 }
 //////////////////////////////////////////////////////////////////////////////
-void CDemoView::OnContextMenu(CWnd* pWnd, CPoint point) 
+void CDemoView::OnContextMenu(CWnd* /*pWnd*/, CPoint point) 
 {
 	CDemoDoc* pDoc = GetDocument();
 	if (pDoc && pDoc->m_tool==2) return;
@@ -627,7 +657,7 @@ void CDemoView::OnContextMenu(CWnd* pWnd, CPoint point)
 	pContextMenu->TrackPopupMenu(TPM_LEFTALIGN|TPM_LEFTBUTTON|TPM_RIGHTBUTTON,point.x,point.y,AfxGetMainWnd());
 }
 //////////////////////////////////////////////////////////////////////////////
-LRESULT CDemoView::OnNewImage(WPARAM wParam, LPARAM lParam)
+LRESULT CDemoView::OnNewImage(WPARAM /*wParam*/, LPARAM /*lParam*/)
 {
 	CDemoDoc* pDoc = GetDocument();
 	pDoc->UpdateAllViews(0,WM_USER_NEWIMAGE);
@@ -635,11 +665,11 @@ LRESULT CDemoView::OnNewImage(WPARAM wParam, LPARAM lParam)
 	return 0;
 }
 //////////////////////////////////////////////////////////////////////////////
-LRESULT CDemoView::OnNewProgress(WPARAM wParam, LPARAM lParam)
+LRESULT CDemoView::OnNewProgress(WPARAM wParam, LPARAM /*lParam*/)
 {
 	CStatusBar& statusBar = ((CMainFrame *)(AfxGetApp()->m_pMainWnd))->GetStatusBar();
 	CString s;
-	s.Format("%d %%",(int)wParam);
+	s.Format(_T("%d %%"),(int)wParam);
 	statusBar.SetPaneText(2, s);
 	statusBar.Invalidate(1);
 
@@ -690,15 +720,24 @@ void CDemoView::OnDestroy()
 #if CXIMAGE_DEMO_SELECT
 	KillTimer(1);
 #endif
+	KillTimer(2);
 }
 //////////////////////////////////////////////////////////////////////////////
 void CDemoView::OnTimer(UINT nIDEvent) 
 {
 #if CXIMAGE_DEMO_SELECT
-	m_SelShift++;
-	if (m_SelShift==8) m_SelShift=0;
-	DrawSelection();
+	if (nIDEvent == 1) {
+		m_SelShift++;
+		if (m_SelShift==8) m_SelShift=0;
+		DrawSelection();
+	}
 #endif
+	if (nIDEvent == 2) {
+		CDemoDoc* pDoc = GetDocument();
+		if (pDoc) {
+			pDoc->PlayNextFrame();
+		}
+	}
 	CScrollView::OnTimer(nIDEvent);
 }
 //////////////////////////////////////////////////////////////////////////////

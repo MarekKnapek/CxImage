@@ -64,7 +64,7 @@ void DlgURL::OnOK()
 	SetStatus(_T("Connecting to site..."));
 	CString* m_strBuffer = &m_data;
 
-	CString       m_sServer=""; 
+	CString       m_sServer=_T(""); 
 	CString       m_sObject; 
 	INTERNET_PORT m_nPort = INTERNET_DEFAULT_HTTP_PORT;
 	DWORD         m_dwServiceType = INTERNET_SERVICE_HTTP;
@@ -73,7 +73,7 @@ void DlgURL::OnOK()
 	//Create the Internet session handle
 	m_hInternetSession = ::InternetOpen(AfxGetAppName(), INTERNET_OPEN_TYPE_PRECONFIG, NULL, NULL, 0);
 
-	if (m_hInternetSession == NULL){ ThreadError("cannot open internet session"); return; }
+	if (m_hInternetSession == NULL){ ThreadError(_T("cannot open internet session")); return; }
 
 	if (m_bAbort) { OnThreadFinished(1); return; }  
 
@@ -81,7 +81,7 @@ void DlgURL::OnOK()
 	m_hHttpConnection = ::InternetConnect(m_hInternetSession, m_sServer, m_nPort , NULL, 
                                           NULL, m_dwServiceType , 0, (DWORD) this);
 
-	if (m_hHttpConnection == NULL){ ThreadError("cannot connect to remote server"); return; }
+	if (m_hHttpConnection == NULL){ ThreadError(_T("cannot connect to remote server")); return; }
 
 	if (m_bAbort) { OnThreadFinished(1); return; }  
 
@@ -93,7 +93,7 @@ void DlgURL::OnOK()
 	m_hHttpFile = HttpOpenRequest(m_hHttpConnection, NULL, m_sObject, NULL, NULL, ppszAcceptTypes, INTERNET_FLAG_RELOAD | 
                                 INTERNET_FLAG_DONT_CACHE | INTERNET_FLAG_KEEP_CONNECTION, (DWORD) this);
 
-	if (m_hHttpFile == NULL){ ThreadError("Failed in call to HttpOpenRequest"); return; }
+	if (m_hHttpFile == NULL){ ThreadError(_T("Failed in call to HttpOpenRequest")); return; }
 
 	if (m_bAbort) { OnThreadFinished(1); return; }  
 
@@ -126,10 +126,10 @@ void DlgURL::OnOK()
 				m_strBuffer->ReleaseBuffer(dwTotalBytesRead+1);
 
 				CString s;
-				s.Format("%d/%d",dwTotalBytesRead,dwFileSize);
+				s.Format(_T("%d/%d"),dwTotalBytesRead,dwFileSize);
 				SetStatus(s);
 			}
-		} else { ThreadError("An error occurred while downloading the file"); return; }
+		} else { ThreadError(_T("An error occurred while downloading the file")); return; }
 	} while (dwBytesRead && !m_bAbort);
 
 	m_size = dwTotalBytesRead;
@@ -163,7 +163,7 @@ void DlgURL::OnClose()
 		//Just set the abort flag to TRUE and disable the cancel button
 		m_bAbort = TRUE;	
 		m_canc.EnableWindow(0);
-		SetStatus("Aborting transfer...");
+		SetStatus(_T("Aborting transfer..."));
 	}
 }
 
@@ -180,13 +180,13 @@ LRESULT DlgURL::OnThreadFinished(WPARAM wParam)
 	return 0L;
 }
 
-void DlgURL::SetStatus(LPCSTR message)
+void DlgURL::SetStatus(LPCTSTR message)
 {
 	CWnd* statwnd = GetDlgItem(IDC_STATUS);
 	statwnd->SetWindowText(message);
 }
 
-void DlgURL::ThreadError(LPCSTR message)
+void DlgURL::ThreadError(LPCTSTR message)
 {
   m_sError=message;
   OnThreadFinished(1);

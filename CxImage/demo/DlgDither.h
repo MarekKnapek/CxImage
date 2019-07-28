@@ -15,7 +15,7 @@ class DlgDither : public CDialog
 {
 // Construction
 public:
-	long m_method;
+	BYTE m_method;
 	DlgDither(CWnd* pParent = NULL);   // standard constructor
 
 // Dialog Data

@@ -100,11 +100,13 @@ public:
 	CxTargetButton	m_canc;
 	CxTargetButton	m_bfont;
     BOOL            m_opaque;
+    BOOL            m_textsmooth;
 	CString	m_lbl_opac;
 	CString	m_lbl_radius;
    	CButton	m_radio1;
 	CButton	m_radio2;
 	CButton	m_radio3;
+	CButton	m_check2;
 	//}}AFX_DATA
 
 
@@ -131,6 +133,7 @@ protected:
 	afx_msg void OnRadio1();
 	afx_msg void OnRadio2();
 	afx_msg void OnRadio3();
+	afx_msg void OnCheck2();
 	afx_msg void OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()

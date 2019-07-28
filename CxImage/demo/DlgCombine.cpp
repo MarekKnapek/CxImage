@@ -60,7 +60,7 @@ BOOL DlgCombine::OnInitDialog()
 	m_canc.SetIcon(IDI_R,BS_LEFT);
 	
 
-	m_imga.AddString("(None)");
+	m_imga.AddString(_T("(None)"));
 	m_imga.SetItemData(m_imga.GetCount()-1, 0);
 
 	POSITION pos = AfxGetApp()->GetFirstDocTemplatePosition();

@@ -26,10 +26,17 @@
 #include "DlgMix.h"
 #include "DlgSkew.h"
 #include "DlgJpeg.h"
+#include "DlgDataExt.h"
+#include "DlgCustomFilter.h"
+#include "DlgExpand.h"
+#include "DlgFloodFill.h"
+#include "DlgShadow.h"
 
 #include "ximage.h"
 #include <math.h>
 #include <process.h>
+
+extern DlgDataExtInfo dlgDataExtInfos;
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -209,6 +216,56 @@ BEGIN_MESSAGE_MAP(CDemoDoc, CDocument)
 	ON_UPDATE_COMMAND_UI(ID_FILTERS_JPEGCOMPRESSION, OnUpdateJpegcompression)
 	ON_COMMAND(ID_VIEW_SMOOTH, OnViewSmooth)
 	ON_UPDATE_COMMAND_UI(ID_VIEW_SMOOTH, OnUpdateViewSmooth)
+	ON_UPDATE_COMMAND_UI(ID_FILTERS_DATAEXT, OnUpdateFiltersDataext)
+	ON_COMMAND(ID_FILTERS_DATAEXT, OnFiltersDataext)
+	ON_UPDATE_COMMAND_UI(ID_CXIMAGE_UNSHARPMASK, OnUpdateCximageUnsharpmask)
+	ON_COMMAND(ID_CXIMAGE_UNSHARPMASK, OnCximageUnsharpmask)
+	ON_COMMAND(ID_CXIMAGE_TEXTBLUR, OnCximageTextblur)
+	ON_UPDATE_COMMAND_UI(ID_CXIMAGE_TEXTBLUR, OnUpdateCximageTextblur)
+	ON_UPDATE_COMMAND_UI(ID_CXIMAGE_REDEYEREMOVE, OnUpdateCximageRedeyeremove)
+	ON_COMMAND(ID_CXIMAGE_REDEYEREMOVE, OnCximageRedeyeremove)
+	ON_COMMAND(ID_CXIMAGE_BLURSELBORDER, OnCximageBlurselborder)
+	ON_UPDATE_COMMAND_UI(ID_CXIMAGE_BLURSELBORDER, OnUpdateCximageBlurselborder)
+	ON_COMMAND(ID_CXIMAGE_SELECTIVEBLUR, OnCximageSelectiveblur)
+	ON_UPDATE_COMMAND_UI(ID_CXIMAGE_SELECTIVEBLUR, OnUpdateCximageSelectiveblur)
+	ON_UPDATE_COMMAND_UI(ID_CXIMAGE_GETTRANSPARENCYMASK, OnUpdateCximageGettransparencymask)
+	ON_COMMAND(ID_CXIMAGE_GETTRANSPARENCYMASK, OnCximageGettransparencymask)
+	ON_COMMAND(ID_COLORS_COUNTCOLORS, OnColorsCountcolors)
+	ON_UPDATE_COMMAND_UI(ID_COLORS_COUNTCOLORS, OnUpdateColorsCountcolors)
+	ON_COMMAND(ID_FILTERS_LINEAR_CUSTOM, OnFiltersLinearCustom)
+	ON_UPDATE_COMMAND_UI(ID_FILTERS_LINEAR_CUSTOM, OnUpdateFiltersLinearCustom)
+	ON_COMMAND(ID_CXIMAGE_CANVASSIZE, OnCximageCanvassize)
+	ON_UPDATE_COMMAND_UI(ID_CXIMAGE_CANVASSIZE, OnUpdateCximageCanvassize)
+	ON_COMMAND(ID_VIEW_TOOLS_FLOODFILL, OnViewToolsFloodfill)
+	ON_UPDATE_COMMAND_UI(ID_VIEW_TOOLS_FLOODFILL, OnUpdateViewToolsFloodfill)
+	ON_COMMAND(ID_CXIMAGE_REMOVESELECTION, OnCximageRemoveselection)
+	ON_UPDATE_COMMAND_UI(ID_CXIMAGE_REMOVESELECTION, OnUpdateCximageRemoveselection)
+	ON_COMMAND(ID_COLORS_MORESATURATIONHSL, OnColorsMoresaturationhsl)
+	ON_UPDATE_COMMAND_UI(ID_COLORS_MORESATURATIONHSL, OnUpdateColorsMoresaturationhsl)
+	ON_COMMAND(ID_COLORS_MORESATURATIONYUV, OnColorsMoresaturationyuv)
+	ON_UPDATE_COMMAND_UI(ID_COLORS_MORESATURATIONYUV, OnUpdateColorsMoresaturationyuv)
+	ON_COMMAND(ID_COLORS_LESSSATURATION, OnColorsLesssaturation)
+	ON_UPDATE_COMMAND_UI(ID_COLORS_LESSSATURATION, OnUpdateColorsLesssaturation)
+	ON_COMMAND(ID_COLORS_HISTOGRAM_FULLSATURATION, OnColorsHistogramFullsaturation)
+	ON_UPDATE_COMMAND_UI(ID_COLORS_HISTOGRAM_FULLSATURATION, OnUpdateColorsHistogramFullsaturation)
+	ON_COMMAND(ID_COLORS_HISTOGRAM_HALFSATURATION, OnColorsHistogramHalfsaturation)
+	ON_UPDATE_COMMAND_UI(ID_COLORS_HISTOGRAM_HALFSATURATION, OnUpdateColorsHistogramHalfsaturation)
+	ON_COMMAND(ID_CXIMAGE_HISTOGRAM_STRETCHT0, OnCximageHistogramStretcht0)
+	ON_UPDATE_COMMAND_UI(ID_CXIMAGE_HISTOGRAM_STRETCHT0, OnUpdateCximageHistogramStretcht0)
+	ON_COMMAND(ID_CXIMAGE_HISTOGRAM_STRETCHT1, OnCximageHistogramStretcht1)
+	ON_UPDATE_COMMAND_UI(ID_CXIMAGE_HISTOGRAM_STRETCHT1, OnUpdateCximageHistogramStretcht1)
+	ON_COMMAND(ID_CXIMAGE_HISTOGRAM_STRETCHT2, OnCximageHistogramStretcht2)
+	ON_UPDATE_COMMAND_UI(ID_CXIMAGE_HISTOGRAM_STRETCHT2, OnUpdateCximageHistogramStretcht2)
+	ON_COMMAND(ID_COLORS_ADAPTIVETHRESHOLD, OnColorsAdaptivethreshold)
+	ON_UPDATE_COMMAND_UI(ID_COLORS_ADAPTIVETHRESHOLD, OnUpdateColorsAdaptivethreshold)
+	ON_UPDATE_COMMAND_UI(ID_VIEW_PREVIOUSFRAME, OnUpdateViewPreviousframe)
+	ON_COMMAND(ID_VIEW_PREVIOUSFRAME, OnViewPreviousframe)
+	ON_UPDATE_COMMAND_UI(ID_VIEW_NEXTFRAME, OnUpdateViewNextframe)
+	ON_COMMAND(ID_VIEW_NEXTFRAME, OnViewNextframe)
+	ON_UPDATE_COMMAND_UI(ID_VIEW_PLAYANIMATION, OnUpdateViewPlayanimation)
+	ON_COMMAND(ID_VIEW_PLAYANIMATION, OnViewPlayanimation)
+	ON_UPDATE_COMMAND_UI(ID_FILTERS_ADDSHADOW, OnUpdateFiltersAddshadow)
+	ON_COMMAND(ID_FILTERS_ADDSHADOW, OnFiltersAddshadow)
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
@@ -226,11 +283,12 @@ CDemoDoc::CDemoDoc()
 	hThread=hProgress=0;
 	m_NumSel=0;
 	m_tool=0;
+	m_playanimation = 0;
 	m_hmax=0;
 #ifndef VATI_EXTENSIONS
 	memset(&m_font,0,sizeof(m_font));
 	m_color=0;
-	m_text="text";
+	m_text=_T("text");
 #endif
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -294,67 +352,24 @@ CString CDemoDoc::FindExtension(const CString& name)
 			return name.Mid(i+1);
 		}
 	}
-	return CString("");
+	return CString(_T(""));
+}
+//////////////////////////////////////////////////////////////////////////////
+CString CDemoDoc::RemoveExtension(const CString& name)
+{
+	int len = name.GetLength();
+	int i;
+	for (i = len-1; i >= 0; i--){
+		if (name[i] == '.'){
+			return name.Mid(0,i);
+		}
+	}
+	return name;
 }
 //////////////////////////////////////////////////////////////////////////////
 int CDemoDoc::FindType(const CString& ext)
 {
-	int type = 0;
-	if (ext == "bmp")					type = CXIMAGE_FORMAT_BMP;
-#if CXIMAGE_SUPPORT_JPG
-	else if (ext=="jpg"||ext=="jpeg")	type = CXIMAGE_FORMAT_JPG;
-#endif
-#if CXIMAGE_SUPPORT_GIF
-	else if (ext == "gif")				type = CXIMAGE_FORMAT_GIF;
-#endif
-#if CXIMAGE_SUPPORT_PNG
-	else if (ext == "png")				type = CXIMAGE_FORMAT_PNG;
-#endif
-#if CXIMAGE_SUPPORT_MNG
-	else if (ext=="mng"||ext=="jng")	type = CXIMAGE_FORMAT_MNG;
-#endif
-#if CXIMAGE_SUPPORT_ICO
-	else if (ext == "ico")				type = CXIMAGE_FORMAT_ICO;
-#endif
-#if CXIMAGE_SUPPORT_TIF
-	else if (ext=="tiff"||ext=="tif")	type = CXIMAGE_FORMAT_TIF;
-#endif
-#if CXIMAGE_SUPPORT_TGA
-	else if (ext=="tga")				type = CXIMAGE_FORMAT_TGA;
-#endif
-#if CXIMAGE_SUPPORT_PCX
-	else if (ext=="pcx")				type = CXIMAGE_FORMAT_PCX;
-#endif
-#if CXIMAGE_SUPPORT_WBMP
-	else if (ext=="wbmp")				type = CXIMAGE_FORMAT_WBMP;
-#endif
-#if CXIMAGE_SUPPORT_WMF
-	else if (ext=="wmf"||ext=="emf")	type = CXIMAGE_FORMAT_WMF;
-#endif
-#if CXIMAGE_SUPPORT_J2K
-	else if (ext=="j2k"||ext=="jp2")	type = CXIMAGE_FORMAT_J2K;
-#endif
-#if CXIMAGE_SUPPORT_JBG
-	else if (ext=="jbg")				type = CXIMAGE_FORMAT_JBG;
-#endif
-#if CXIMAGE_SUPPORT_JP2
-	else if (ext=="jp2"||ext=="j2k")	type = CXIMAGE_FORMAT_JP2;
-#endif
-#if CXIMAGE_SUPPORT_JPC
-	else if (ext=="jpc"||ext=="j2c")	type = CXIMAGE_FORMAT_JPC;
-#endif
-#if CXIMAGE_SUPPORT_PGX
-	else if (ext=="pgx")				type = CXIMAGE_FORMAT_PGX;
-#endif
-#if CXIMAGE_SUPPORT_RAS
-	else if (ext=="ras")				type = CXIMAGE_FORMAT_RAS;
-#endif
-#if CXIMAGE_SUPPORT_PNM
-	else if (ext=="pnm"||ext=="pgm"||ext=="ppm") type = CXIMAGE_FORMAT_PNM;
-#endif
-	else type = CXIMAGE_FORMAT_UNKNOWN;
-
-	return type;
+	return CxImage::GetTypeIdFromName(ext);
 }
 //////////////////////////////////////////////////////////////////////////////
 BOOL CDemoDoc::OnOpenDocument(LPCTSTR lpszPathName) 
@@ -362,22 +377,27 @@ BOOL CDemoDoc::OnOpenDocument(LPCTSTR lpszPathName)
 	CString filename(lpszPathName);
 	CString ext(FindExtension(filename));
 	ext.MakeLower();
-	if (ext == "") return FALSE;
+	if (ext == _T("")) return FALSE;
 
 	int type = FindType(ext);
 
-	/*CxImage canvas;
-	canvas.SetEscape(-1);
+/*
+	CxImage iinfo;
 	CxIOFile file;
 	file.Open(filename,"rb");
-	canvas.Decode(&file, type);*/
+	bool bOk = iinfo.CheckFormat(&file);
+	long t = iinfo.GetType();
+	long w = iinfo.GetWidth();
+	long h = iinfo.GetHeight();
+*/
 
 	Stopwatch(0);
 	image = new CxImage(filename, type);
 	Stopwatch(1);
 
 	if (!image->IsValid()){
-		AfxMessageBox(image->GetLastError());
+		CString s = image->GetLastError();
+		AfxMessageBox(s);
 		delete image;
 		image = NULL;
 		return FALSE;
@@ -389,11 +409,11 @@ BOOL CDemoDoc::OnOpenDocument(LPCTSTR lpszPathName)
 	//multiple images (TIFF/ICO)
 	if (image->GetNumFrames()>1){
 		CString s;
-		s.Format("File with %d images. Read all?",image->GetNumFrames());
+		s.Format(_T("File with %d images. Read all?"),image->GetNumFrames());
 		if (AfxMessageBox(s,MB_OKCANCEL)==IDOK){
 			
 			int j; // points to the document name
-			for(j=strlen(filename)-1;j>=0;j--){
+			for(j=_tcslen(filename)-1;j>=0;j--){
 				if (filename[j]=='\\'){	j++; break;	}
 			}
 			// create the documents for the other images
@@ -405,9 +425,19 @@ BOOL CDemoDoc::OnOpenDocument(LPCTSTR lpszPathName)
 					newImage->Load(filename,type);
 					NewDoc->image = newImage;
 					CString s;
-					s.Format("%s (%d)",filename.Mid(j),i+1);
+					s.Format(_T("%s (%d)"),filename.Mid(j),i+1);
 					NewDoc->SetTitle(s);
 					NewDoc->UpdateAllViews(NULL,WM_USER_NEWIMAGE);
+				}
+			}
+		} else {
+			if (type == CXIMAGE_FORMAT_GIF){
+				image->SetRetreiveAllFrames(true);
+				image->SetFrame(image->GetNumFrames()-1);
+				image->Load(filename, type);
+				s = _T("Play animation?");
+				if (AfxMessageBox(s,MB_YESNO)==IDYES){
+					OnViewPlayanimation();
 				}
 			}
 		}
@@ -415,7 +445,7 @@ BOOL CDemoDoc::OnOpenDocument(LPCTSTR lpszPathName)
 
 	// EXIF jpegs
 	if (image->GetType() == CXIMAGE_FORMAT_JPG){
-		FILE* hfile = fopen(filename,"rb");
+		FILE* hfile = _tfopen(filename,_T("rb"));
 		m_exif.DecodeExif(hfile);
 		fclose(hfile);
 	}
@@ -428,13 +458,13 @@ BOOL CDemoDoc::OnSaveDocument(LPCTSTR lpszPathName)
 	CString filename(lpszPathName);
 	CString ext(FindExtension(filename));
 	ext.MakeLower();
-	if (ext == "") return FALSE;
+	if (ext == _T("")) return FALSE;
 
 	int type = FindType(ext);
 	if (type == CXIMAGE_FORMAT_UNKNOWN) return FALSE;
 
 	if (type == CXIMAGE_FORMAT_GIF && image->GetBpp()>8){
-		AfxMessageBox("The image will be saved as a true color GIF!\nThis is ok for CxImage, but not for many other programs.\nFor better compatibility, please use DecreaseBpp to 8 bits or less.",MB_ICONINFORMATION);
+		AfxMessageBox(_T("The image will be saved as a true color GIF!\nThis is ok for CxImage, but not for many other programs.\nFor better compatibility, please use DecreaseBpp to 8 bits or less."),MB_ICONINFORMATION);
 	}
 
 	bool retval;
@@ -443,7 +473,8 @@ BOOL CDemoDoc::OnSaveDocument(LPCTSTR lpszPathName)
 	Stopwatch(1);
 	UpdateStatusBar();
 	if (retval) return TRUE;
-	AfxMessageBox(image->GetLastError());
+	CString s = image->GetLastError();
+	AfxMessageBox(s);
 
 	return FALSE;
 }
@@ -461,20 +492,26 @@ BOOL CDemoDoc::DoSave(LPCTSTR pszPathName, BOOL bReplace /*=TRUE*/)
 
 	if (bSaveAs){
 		newName = m_strPathName;
+
+		newName = RemoveExtension(newName);
+
 		if (bReplace && newName.IsEmpty()){
 			newName = m_strTitle;
+			newName = RemoveExtension(newName);
 			int iBad = newName.FindOneOf(_T("#%;/\\"));    // dubious filename
 			if (iBad != -1)	//newName.ReleaseBuffer(iBad);
-				newName = "UntitledImage";
+				newName = _T("UntitledImage");
 
 			// append the default suffix if there is one
-			if (image->GetType()) newName += theApp.GetExtFromType(image->GetType()).Mid(1,4);
+			//if (image->GetType()) newName += theApp.GetExtFromType(image->GetType()).Mid(1,4);
 		}
 
-		int nDocType = image->GetType();
+		if (image->GetType())
+			theApp.nDocType = image->GetType();
+
 		if (!theApp.PromptForFileName(newName, 
 			bReplace ? AFX_IDS_SAVEFILE : AFX_IDS_SAVEFILECOPY,
-			OFN_HIDEREADONLY | OFN_PATHMUSTEXIST, FALSE, &nDocType))
+			OFN_HIDEREADONLY | OFN_PATHMUSTEXIST, FALSE, &theApp.nDocType))
 		{
 			return FALSE;       // don't even try to save
 		}
@@ -555,7 +592,10 @@ void CDemoDoc::OnUpdateStretchMode(CCmdUI* pCmdUI)
 }
 //////////////////////////////////////////////////////////////////////////////
 void CDemoDoc::OnUpdateCximageFlip(CCmdUI* pCmdUI) 
-{	if(image==0 || hThread) pCmdUI->Enable(0);}
+{
+	if(image==0 || hThread)
+		pCmdUI->Enable(0);
+}
 void CDemoDoc::OnUpdateCximageGrayscale(CCmdUI* pCmdUI) 
 {	if(image==0 || hThread) pCmdUI->Enable(0);}
 void CDemoDoc::OnUpdateCximageMirror(CCmdUI* pCmdUI) 
@@ -680,6 +720,52 @@ void CDemoDoc::OnUpdateCximageSkew(CCmdUI* pCmdUI)
 {	if(image==0 || hThread) pCmdUI->Enable(0);}
 void CDemoDoc::OnUpdateJpegcompression(CCmdUI* pCmdUI) 
 {	if(image==0 || hThread) pCmdUI->Enable(0);}
+void CDemoDoc::OnUpdateFiltersDataext(CCmdUI* pCmdUI) 
+{	if(image==0 || hThread) pCmdUI->Enable(0);}
+void CDemoDoc::OnUpdateCximageUnsharpmask(CCmdUI* pCmdUI) 
+{	if(image==0 || hThread) pCmdUI->Enable(0);}
+void CDemoDoc::OnUpdateCximageTextblur(CCmdUI* pCmdUI) 
+{	if(image==0 || hThread) pCmdUI->Enable(0);}
+void CDemoDoc::OnUpdateCximageRedeyeremove(CCmdUI* pCmdUI) 
+{	if(image==0 || hThread || !image->SelectionIsValid()) pCmdUI->Enable(0);}
+void CDemoDoc::OnUpdateCximageBlurselborder(CCmdUI* pCmdUI) 
+{	if(image==0 || hThread || !image->SelectionIsValid()) pCmdUI->Enable(0);}
+void CDemoDoc::OnUpdateCximageSelectiveblur(CCmdUI* pCmdUI) 
+{	if(image==0 || hThread) pCmdUI->Enable(0);}
+void CDemoDoc::OnUpdateCximageGettransparencymask(CCmdUI* pCmdUI) 
+{	if(image==0 || hThread || (image->GetTransIndex()<0 && !image->AlphaIsValid())) pCmdUI->Enable(0);}
+void CDemoDoc::OnUpdateColorsCountcolors(CCmdUI* pCmdUI) 
+{	if(image==0 || hThread) pCmdUI->Enable(0);}
+void CDemoDoc::OnUpdateFiltersLinearCustom(CCmdUI* pCmdUI) 
+{	if(image==0 || hThread) pCmdUI->Enable(0);}
+void CDemoDoc::OnUpdateCximageCanvassize(CCmdUI* pCmdUI) 
+{	if(image==0 || hThread) pCmdUI->Enable(0);}
+void CDemoDoc::OnUpdateCximageRemoveselection(CCmdUI* pCmdUI) 
+{	if(image==0 || hThread || !image->SelectionIsValid()) pCmdUI->Enable(0);}
+void CDemoDoc::OnUpdateColorsMoresaturationhsl(CCmdUI* pCmdUI) 
+{	if(image==0 || hThread) pCmdUI->Enable(0);}
+void CDemoDoc::OnUpdateColorsMoresaturationyuv(CCmdUI* pCmdUI) 
+{	if(image==0 || hThread) pCmdUI->Enable(0);}
+void CDemoDoc::OnUpdateColorsLesssaturation(CCmdUI* pCmdUI) 
+{	if(image==0 || hThread) pCmdUI->Enable(0);}
+void CDemoDoc::OnUpdateColorsHistogramHalfsaturation(CCmdUI* pCmdUI) 
+{	if(image==0 || hThread) pCmdUI->Enable(0);}
+void CDemoDoc::OnUpdateColorsHistogramFullsaturation(CCmdUI* pCmdUI) 
+{	if(image==0 || hThread) pCmdUI->Enable(0);}
+void CDemoDoc::OnUpdateCximageHistogramStretcht0(CCmdUI* pCmdUI) 
+{	if(image==0 || hThread) pCmdUI->Enable(0);}
+void CDemoDoc::OnUpdateCximageHistogramStretcht1(CCmdUI* pCmdUI) 
+{	if(image==0 || hThread) pCmdUI->Enable(0);}
+void CDemoDoc::OnUpdateCximageHistogramStretcht2(CCmdUI* pCmdUI) 
+{	if(image==0 || hThread) pCmdUI->Enable(0);}
+void CDemoDoc::OnUpdateColorsAdaptivethreshold(CCmdUI* pCmdUI) 
+{	if(image==0 || hThread) pCmdUI->Enable(0);}
+void CDemoDoc::OnUpdateViewPreviousframe(CCmdUI* pCmdUI) 
+{	if(image==0 || hThread || image->GetFrame(0)==0) pCmdUI->Enable(0);}
+void CDemoDoc::OnUpdateViewNextframe(CCmdUI* pCmdUI) 
+{	if(image==0 || hThread || image->GetFrame(0)==0) pCmdUI->Enable(0);}
+void CDemoDoc::OnUpdateFiltersAddshadow(CCmdUI* pCmdUI) 
+{	if(image==0 || hThread) pCmdUI->Enable(0);}
 
 //////////////////////////////////////////////////////////////////////////////
 void CDemoDoc::OnUpdateTransformEllipse(CCmdUI* pCmdUI) 
@@ -723,7 +809,7 @@ void CDemoDoc::OnWindowDuplicate()
 		NewDoc->image = newImage;
 
 		CString s;
-		s.Format("Copy %d of %s",((CDemoApp*)AfxGetApp())->m_nDocCount++,GetTitle());
+		s.Format(_T("Copy %d of %s"),((CDemoApp*)AfxGetApp())->m_nDocCount++,GetTitle());
 		NewDoc->SetTitle(s);
 		NewDoc->UpdateAllViews(0,WM_USER_NEWIMAGE);
 	}
@@ -736,13 +822,50 @@ void CDemoDoc::OnUpdateEditCopy(CCmdUI* pCmdUI)
 //////////////////////////////////////////////////////////////////////////////
 void CDemoDoc::OnEditCopy() 
 {
-	HANDLE hDIB=image->CopyToHandle();
+	CxImage* iSrc = image;
+
+	//copy only the selected region box
+	CxImage iSel;
+	if (image->SelectionIsValid()){
+		RECT r;
+		image->SelectionGetBox(r);
+		r.bottom = image->GetHeight() - 1 -r.bottom; 
+		r.top = image->GetHeight() - 1 -r.top; 
+		image->Crop(r, &iSel);
+		iSrc = &iSel;
+	}
+
+	// standard DIB image
+	HANDLE hDIB=iSrc->CopyToHandle();
+
+#define USE_CF_CXIMAGE 1
+
+#if USE_CF_CXIMAGE
+	//custom CXIMAGE object
+	HANDLE hMem=NULL;
+	if (iSrc->IsValid() && (iSrc->AlphaIsValid() || iSrc->SelectionIsValid() || iSrc->IsTransparent())){
+		hMem= GlobalAlloc(GHND, iSrc->DumpSize());
+		if (hMem){
+			BYTE* pDst=(BYTE*)GlobalLock(hMem);
+			iSrc->Dump(pDst);
+			GlobalUnlock(hMem);
+		}
+	}
+#endif //USE_CF_CXIMAGE
 
 	if (::OpenClipboard(AfxGetApp()->m_pMainWnd->GetSafeHwnd())) {
 		if(::EmptyClipboard()) {
 			if (::SetClipboardData(CF_DIB,hDIB) == NULL ) {
-				AfxMessageBox( "Unable to set Clipboard data" );
+				AfxMessageBox( _T("Unable to set DIB clipboard data") );
 			}
+#if USE_CF_CXIMAGE
+			if (hMem){
+				UINT cf = ((CDemoApp*)AfxGetApp())->GetCF();
+				if (::SetClipboardData(cf,hMem) == NULL ) {
+					AfxMessageBox( _T("Unable to set CXIMAGE clipboard data") );
+				}
+			}
+#endif //USE_CF_CXIMAGE
 		}
 	}
 	CloseClipboard();
@@ -754,7 +877,7 @@ void CDemoDoc::OnUpdateEditUndo(CCmdUI* pCmdUI)
 	else pCmdUI->Enable(m_UndoLevel>0);
 
 	CString s;
-	s.Format("Undo (%d)\tCtrl+Z",m_UndoLevel);
+	s.Format(_T("Undo (%d)\tCtrl+Z"),m_UndoLevel);
 	pCmdUI->SetText(s);
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -815,12 +938,13 @@ void CDemoDoc::SubmitUndo()
 void /*unsigned long _stdcall*/ RunProgressThread(void *lpParam)
 {
 	CDemoDoc *pDoc = (CDemoDoc *)lpParam;
-	long n;
 	POSITION pos;
 	CView *pView;
-	while((n=pDoc->image->GetProgress())<100){
+	while(pDoc->hThread){
 		Sleep(333);
+		if(!pDoc->image) break;
 		if(pDoc->image->GetEscape()) break;
+		long n=pDoc->image->GetProgress();
 		pos = pDoc->GetFirstViewPosition();
 		pView = pDoc->GetNextView(pos);
 		if (pView) SendMessage(pView->m_hWnd, WM_USER_PROGRESS,n,0);
@@ -841,7 +965,10 @@ void /*unsigned long _stdcall*/ RunCxImageThread(void *lpParam)
 {
 	CDemoDoc *pDoc = (CDemoDoc *)lpParam;
 	if (pDoc==NULL) return;
-	if (pDoc->image==NULL) return;
+	if (pDoc->image==NULL){
+		pDoc->hThread=0;
+		return;
+	}
 
 	 //prepare for elaboration
 	pDoc->image->SetProgress(0);
@@ -854,160 +981,302 @@ void /*unsigned long _stdcall*/ RunCxImageThread(void *lpParam)
 
 	pDoc->Stopwatch(0);
 
+	bool status = true;
+
 	switch (pDoc->m_MenuCommand)
 	{
 //	case ID_FILE_OPEN:
-//		pDoc->image->ReadFile(*(CString*)pDoc->m_fp[0],(int)pDoc->m_fp[1]);
+//		status = pDoc->image->ReadFile(theApp.m_filename,theApp.m_filetype);
 //		break;
 	case ID_CXIMAGE_FLIP:
-		pDoc->image->Flip();
+		status = pDoc->image->Flip();
 		break;
 	case ID_CXIMAGE_MIRROR:
-		pDoc->image->Mirror();
+		status = pDoc->image->Mirror();
 		break;
 	case ID_CXIMAGE_NEGATIVE:
-		pDoc->image->Negative();
+		status = pDoc->image->Negative();
 		break;
 	case ID_CXIMAGE_GRAYSCALE:
-		pDoc->image->GrayScale();
+		status = pDoc->image->GrayScale();
 		break;
 	case ID_CXIMAGE_DITHER:
-		pDoc->image->Dither((long)pDoc->m_fp[0]);
+		status = pDoc->image->Dither(theApp.m_Filters.DitherMethod);
 		break;
 	case ID_CXIMAGE_THRESHOLD:
-		pDoc->image->Threshold((BYTE)pDoc->m_fp[0]);
+		if (theApp.m_Filters.ThreshPreserveColors){
+			RGBQUAD c = {255,255,255,0};
+			status = pDoc->image->Threshold2(theApp.m_Filters.ThreshLevel,true,c,true);
+		} else {
+			status = pDoc->image->Threshold(theApp.m_Filters.ThreshLevel);
+		}
+		break;
+	case ID_COLORS_ADAPTIVETHRESHOLD:
+		{
+			/*
+			CxImage iContrastMask;
+			iContrastMask.Copy(*pDoc->image,true,false,false);
+			if (!iContrastMask.IsValid()) break;
+			iContrastMask.GrayScale();
+			long edge[]={-1,-1,-1,-1,8,-1,-1,-1,-1};
+			iContrastMask.Filter(edge,3,1,0);
+			long blur[]={1,1,1,1,1,1,1,1,1};
+			iContrastMask.Filter(blur,3,9,0);
+			status = pDoc->image->AdaptiveThreshold(0,64,&iContrastMask);
+			*/
+			status = pDoc->image->AdaptiveThreshold();
+		}
 		break;
 	case ID_CXIMAGE_COLORIZE:
-		if ((BYTE)pDoc->m_fp[0]){
-			pDoc->image->Colorize((BYTE)pDoc->m_fp[1],(BYTE)pDoc->m_fp[2],(BYTE)pDoc->m_fp[3]/100.0f);
-		} else {
-			pDoc->image->ShiftRGB((long)pDoc->m_fp[1],(long)pDoc->m_fp[2],(long)pDoc->m_fp[3]);
+		switch (theApp.m_Filters.ColorMode)
+		{
+		case 1:
+			status = pDoc->image->Colorize(theApp.m_Filters.ColorHSL.rgbRed,theApp.m_Filters.ColorHSL.rgbGreen,theApp.m_Filters.ColorHSL.rgbBlue/100.0f);
+			break;
+		case 2:
+			status = pDoc->image->Solarize(theApp.m_Filters.ColorSolarLevel,theApp.m_Filters.ColorSolarLink!=0);
+			break;
+		default:
+			status = pDoc->image->ShiftRGB(theApp.m_Filters.ColorRed,theApp.m_Filters.ColorGreen,theApp.m_Filters.ColorBlue);
 		}
 		break;
 	case ID_CXIMAGE_LIGHTEN:
-		pDoc->image->Light(20);
+		status = pDoc->image->Light(10);
 		break;
 	case ID_CXIMAGE_DARKEN:
-		pDoc->image->Light(-20);
+		status = pDoc->image->Light(-10);
 		break;
 	case ID_CXIMAGE_CONTRAST:
-		pDoc->image->Light((long)pDoc->m_fp[0],25);
+		status = pDoc->image->Light(0,10);
 		break;
 	case ID_CXIMAGE_LESSCONTRAST:
-		pDoc->image->Light((long)pDoc->m_fp[0],-25);
+		status = pDoc->image->Light(0,-10);
+		break;
+	case ID_COLORS_MORESATURATIONHSL:
+		status = pDoc->image->Saturate(25,1);
+		break;
+	case ID_COLORS_MORESATURATIONYUV:
+		status = pDoc->image->Saturate(25,2);
+		break;
+	case ID_COLORS_LESSSATURATION:
+		status = pDoc->image->Saturate(-20,2);
 		break;
 	case ID_CXIMAGE_DILATE:
-		pDoc->image->Dilate();
+		status = pDoc->image->Dilate(3);
 		break;
 	case ID_CXIMAGE_ERODE:
-		pDoc->image->Erode();
+		status = pDoc->image->Erode(3);
 		break;
 	case ID_CXIMAGE_CONTOUR:
-		pDoc->image->Contour();
+		status = pDoc->image->Contour();
 		break;
 	case ID_CXIMAGE_ADDNOISE:
-		pDoc->image->Noise(50);
+		status = pDoc->image->Noise(25);
 		break;
 	case ID_CXIMAGE_JITTER:
-		pDoc->image->Jitter();
+		status = pDoc->image->Jitter();
+		break;
+	case ID_CXIMAGE_TEXTBLUR:
+		status = pDoc->image->TextBlur(100,2,3,true,true);
+		break;
+	case ID_CXIMAGE_BLURSELBORDER:
+		{
+			CxImage iSel1,iSel2;
+			pDoc->image->SelectionSplit(&iSel1);
+			pDoc->image->SelectionSplit(&iSel2);
+			iSel2.Edge();
+			//iSel2.Erode();
+			iSel2.Negative();
+			pDoc->image->SelectionSet(iSel2);
+			pDoc->image->GaussianBlur();
+			pDoc->image->SelectionSet(iSel1);
+			break;
+		}
+	case ID_CXIMAGE_SELECTIVEBLUR:
+		status = pDoc->image->SelectiveBlur(1,25);
+		break;
+	case ID_CXIMAGE_REDEYEREMOVE:
+		status = pDoc->image->RedEyeRemove();
 		break;
 	case ID_FILTERS_NONLINEAR_EDGE:
-		pDoc->image->Edge();
+		status = pDoc->image->Edge();
 		break;
 	case ID_CXIMAGE_CIRCLETRANSFORM_CYLINDER:
-		pDoc->image->CircleTransform(3,0,100);
+		status = pDoc->image->CircleTransform(3,0,100);
 		break;
 	case ID_CXIMAGE_CIRCLETRANSFORM_PINCH:
-		pDoc->image->CircleTransform(1,0,100);
+		status = pDoc->image->CircleTransform(1,0,100);
 		break;
 	case ID_CXIMAGE_CIRCLETRANSFORM_PUNCH:
-		pDoc->image->CircleTransform(0,0,100);
+		status = pDoc->image->CircleTransform(0,0,100);
 		break;
 	case ID_CXIMAGE_CIRCLETRANSFORM_SWIRL:
-		pDoc->image->CircleTransform(2,0,100);
+		status = pDoc->image->CircleTransform(2,0,100);
 		break;
 	case ID_CXIMAGE_CIRCLETRANSFORM_BATHROOM:
-		pDoc->image->CircleTransform(4);
+		status = pDoc->image->CircleTransform(4);
 		break;
 	case ID_CXIMAGE_EMBOSS:
 		{
 		long kernel[]={0,0,-1,0,0,0,1,0,0};
-		pDoc->image->Filter(kernel,3,0,127);
+		status = pDoc->image->Filter(kernel,3,-1,127);
 		break;
 		}
 	case ID_CXIMAGE_BLUR:
 		{
 		long kernel[]={1,1,1,1,1,1,1,1,1};
-		pDoc->image->Filter(kernel,3,9,0);
+		status = pDoc->image->Filter(kernel,3,9,0);
 		break;
 		}
 	case ID_CXIMAGE_GAUSSIAN3X3:
 		{
-		long kernel[]={1,2,1,2,4,2,1,2,1};
-		pDoc->image->Filter(kernel,3,16,0);
+		//long kernel[]={1,2,1,2,4,2,1,2,1};
+		//status = pDoc->image->Filter(kernel,3,16,0);
+		status = pDoc->image->GaussianBlur(1.0f);
 		break;
 		}
 	case ID_CXIMAGE_GAUSSIAN5X5:
 		{
-		long kernel[]={0,1,2,1,0,1,3,4,3,1,2,4,8,4,2,1,3,4,3,1,0,1,2,1,0};
-		pDoc->image->Filter(kernel,5,52,0);
+		//long kernel[]={0,1,2,1,0,1,3,4,3,1,2,4,8,4,2,1,3,4,3,1,0,1,2,1,0};
+		//status = pDoc->image->Filter(kernel,5,52,0);
+		status = pDoc->image->GaussianBlur(2.0f);
 		break;
 		}
 	case ID_CXIMAGE_SOFTEN:
 		{
 		long kernel[]={1,1,1,1,8,1,1,1,1};
-		pDoc->image->Filter(kernel,3,16,0);
+		status = pDoc->image->Filter(kernel,3,16,0);
 		break;
 		}
 	case ID_CXIMAGE_SHARPEN:
 		{
 		long kernel[]={-1,-1,-1,-1,15,-1,-1,-1,-1};
-		pDoc->image->Filter(kernel,3,7,0);
+		status = pDoc->image->Filter(kernel,3,7,0);
 		break;
 		}
 	case ID_CXIMAGE_EDGE:
 		{
 		long kernel[]={-1,-1,-1,-1,8,-1,-1,-1,-1};
-		pDoc->image->Filter(kernel,3,-1,255);
+		status = pDoc->image->Filter(kernel,3,-1,255);
+		break;
+		}
+	case ID_FILTERS_LINEAR_CUSTOM: // [Priyank Bolia]
+		{
+			if(theApp.m_Filters.kSize==3)
+				pDoc->image->Filter(theApp.m_Filters.Kernel3x3,3,theApp.m_Filters.kDivisor,theApp.m_Filters.kBias);
+			else
+				pDoc->image->Filter(theApp.m_Filters.Kernel5x5,5,theApp.m_Filters.kDivisor,theApp.m_Filters.kBias);
 		break;
 		}
 	case ID_CXIMAGE_MEDIAN:
-		pDoc->image->Median(3);
+		status = pDoc->image->Median(3);
+		break;
+	case ID_CXIMAGE_UNSHARPMASK:
+		status = pDoc->image->UnsharpMask();
 		break;
 	case ID_CXIMAGE_GAMMA:
-		pDoc->image->Gamma((long)pDoc->m_fp[0]/1000.0f);
+		if (theApp.m_Filters.GammaLink){
+			status = pDoc->image->GammaRGB(theApp.m_Filters.GammaR,theApp.m_Filters.GammaG,theApp.m_Filters.GammaB);
+		} else {
+			status = pDoc->image->Gamma(theApp.m_Filters.GammaLevel);
+		}
 		break;
 	case ID_CXIMAGE_HISTOGRAM_LOG:
-		pDoc->image->HistogramLog();
+		status = pDoc->image->HistogramLog();
 		break;
 	case ID_CXIMAGE_HISTOGRAM_ROOT:
-		pDoc->image->HistogramRoot();
+		status = pDoc->image->HistogramRoot();
 		break; 
 	case ID_CXIMAGE_HISTOGRAM_EQUALIZE:
-		pDoc->image->HistogramEqualize();
+		status = pDoc->image->HistogramEqualize();
 		break;
 	case ID_CXIMAGE_HISTOGRAM_NORMALIZE:
-		pDoc->image->HistogramNormalize();
+		status = pDoc->image->HistogramNormalize();
 		break;
 	case ID_CXIMAGE_HISTOGRAM_STRETCH:
-		pDoc->image->HistogramStretch();
+		status = pDoc->image->HistogramStretch();
 		break;
 	case ID_CXIMAGE_HISTOGRAM_STRETCH1:
-		pDoc->image->HistogramStretch(1);
+		status = pDoc->image->HistogramStretch(1);
 		break;
 	case ID_CXIMAGE_HISTOGRAM_STRETCH2:
-		pDoc->image->HistogramStretch(2);
+		status = pDoc->image->HistogramStretch(2);
+		break;
+	case ID_CXIMAGE_HISTOGRAM_STRETCHT0:
+		status = pDoc->image->HistogramStretch(0,0.005f);
+		break;
+	case ID_CXIMAGE_HISTOGRAM_STRETCHT1:
+		status = pDoc->image->HistogramStretch(1,0.005f);
+		break;
+	case ID_CXIMAGE_HISTOGRAM_STRETCHT2:
+		status = pDoc->image->HistogramStretch(2,0.005f);
+		break;
+	case ID_COLORS_HISTOGRAM_FULLSATURATION:
+		{
+			CxImage tmp;
+			tmp.Copy(*(pDoc->image),true,false,false);
+			tmp.ConvertColorSpace(2,0);
+			long u[256];
+			long v[256];
+			tmp.Histogram(0,u,v,0,0);
+			int umin = 255;
+			int umax = 0;
+			int vmin = 255;
+			int vmax = 0;
+			for (int i = 0; i<255; i++){
+				if (u[i]) umin = i;
+				if (u[255-i]) umax = i;
+				if (v[i]) vmin = i;
+				if (v[255-i]) vmax = i;
+			}
+			float cmin = (float)min(umin,vmin);
+			float cmax = (float)max(umax,vmax);
+			if (cmin<128) cmin = 128.0f/(128-cmin);
+			else cmin = 128.0f;
+			if (cmax>128) cmax = 128.0f/(cmax-128);
+			else cmax = 128.0f;
+			int sat = (int)(100.0f*(min(cmin,cmax)-1.0f));
+			pDoc->image->Saturate(sat,2);
+		}
+		break;
+	case ID_COLORS_HISTOGRAM_HALFSATURATION:
+		{
+			CxImage tmp;
+			tmp.Copy(*(pDoc->image),true,false,false);
+			tmp.ConvertColorSpace(2,0);
+			long u[256];
+			long v[256];
+			tmp.Histogram(0,u,v,0,0);
+			int umin = 255;
+			int umax = 0;
+			int vmin = 255;
+			int vmax = 0;
+			for (int i = 0; i<255; i++){
+				if (u[i]) umin = i;
+				if (u[255-i]) umax = i;
+				if (v[i]) vmin = i;
+				if (v[255-i]) vmax = i;
+			}
+			float cmin = (float)min(umin,vmin);
+			float cmax = (float)max(umax,vmax);
+			if (cmin<128) cmin = 128.0f/(128-cmin);
+			else cmin = 128.0f;
+			if (cmax>128) cmax = 128.0f/(cmax-128);
+			else cmax = 128.0f;
+			int sat = (int)(50.0f*(min(cmin,cmax)-1.0f));
+			pDoc->image->Saturate(sat,2);
+		}
 		break;
 	case ID_CXIMAGE_SKEW:
-		pDoc->image->Skew((long)pDoc->m_fp[0]/1000.0f,(long)pDoc->m_fp[1]/1000.0f,
-							(long)pDoc->m_fp[2],(long)pDoc->m_fp[3],(long)pDoc->m_fp[4]!=0);
+		status = pDoc->image->Skew(theApp.m_Filters.SkewSlopeX,theApp.m_Filters.SkewSlopeY,
+							theApp.m_Filters.SkewPivotX,theApp.m_Filters.SkewPivotY,
+							theApp.m_Filters.SkewInterp!=0);
 		break;
 	case ID_CXIMAGE_ROTATE:
-		//pDoc->image->Rotate((float)(long)pDoc->m_fp[0]/1000);
 		//***bd*** more rotation options
 		CxImage::InterpolationMethod intm;
 		CxImage::OverflowMethod overm;
-		switch ((int)(pDoc->m_fp[1])) {
+		switch (theApp.m_Filters.RotateMethod) {
 		case 0: intm=CxImage::IM_NEAREST_NEIGHBOUR; break;
 		case 1: intm=CxImage::IM_BILINEAR; break;
 		case 2: intm=CxImage::IM_BICUBIC; break;
@@ -1017,7 +1286,7 @@ void /*unsigned long _stdcall*/ RunCxImageThread(void *lpParam)
 		case 6: intm=CxImage::IM_HERMITE; break;
 		default: throw(0);
 		}//switch
-		switch ((int)(pDoc->m_fp[2])) {
+		switch (theApp.m_Filters.RotateOverflow) {
 		case 0: overm=CxImage::OM_BACKGROUND; break;
 		case 1: overm=CxImage::OM_BACKGROUND; break;
 		case 2: overm=CxImage::OM_BACKGROUND; break;
@@ -1026,29 +1295,31 @@ void /*unsigned long _stdcall*/ RunCxImageThread(void *lpParam)
 		case 5: overm=CxImage::OM_MIRROR; break;
 		case 6: overm=CxImage::OM_TRANSPARENT; break;
 		}//switch
-		switch ((int)(pDoc->m_fp[2])) {
+		switch (theApp.m_Filters.RotateOverflow) {
 		case 0: {
 			RGBQUAD bkg = pDoc->image->GetPixelColor(0,0);
-			pDoc->image->Rotate2((long)pDoc->m_fp[0]/1000.0f, 0, intm, overm, &bkg,true,pDoc->m_fp[3]!=0);
+			status = pDoc->image->Rotate2(theApp.m_Filters.RotateAngle, 0, intm, overm, &bkg,true,theApp.m_Filters.RotateKeepsize!=0);
 			break; }
 		case 1: {
 			RGBQUAD bkg = {0,0,0,0};
-			pDoc->image->Rotate2((long)pDoc->m_fp[0]/1000.0f, 0, intm, overm, &bkg,true,pDoc->m_fp[3]!=0);
+			status = pDoc->image->Rotate2(theApp.m_Filters.RotateAngle, 0, intm, overm, &bkg,true,theApp.m_Filters.RotateKeepsize!=0);
 			break; }
 		default:
-			pDoc->image->Rotate2((long)pDoc->m_fp[0]/1000.0f, 0, intm, overm, 0,true,pDoc->m_fp[3]!=0);
+			status = pDoc->image->Rotate2(theApp.m_Filters.RotateAngle, 0, intm, overm, 0,true,theApp.m_Filters.RotateKeepsize!=0);
 		}
 		break;
 	case ID_CXIMAGE_ROTATEL:
-		pDoc->image->RotateLeft();
+		status = pDoc->image->RotateLeft();
+		if (status) pDoc->RegionRotateLeft();
 		break;
 	case ID_CXIMAGE_ROTATER:
-		pDoc->image->RotateRight();
+		status = pDoc->image->RotateRight();
+		if (status) pDoc->RegionRotateRight();
 		break;
 	case ID_CXIMAGE_RESAMPLE:
 		//***bd*** more resample options
 		CxImage::InterpolationMethod rintm;
-		switch ((long)(pDoc->m_fp[2])) {
+		switch (theApp.m_Filters.ResampleMethod) {
 		case 0: rintm=CxImage::IM_NEAREST_NEIGHBOUR; break;
 		case 1: rintm=CxImage::IM_BILINEAR; break;
 		case 2: rintm=CxImage::IM_BILINEAR; break;
@@ -1059,28 +1330,65 @@ void /*unsigned long _stdcall*/ RunCxImageThread(void *lpParam)
 		case 7: rintm=CxImage::IM_HERMITE; break;
 		default: throw(0);
 		}//switch
-		switch ((long)(pDoc->m_fp[2])) {
+		switch (theApp.m_Filters.ResampleMethod) {
 		case 0:
-			pDoc->image->Resample((long)pDoc->m_fp[0],(long)pDoc->m_fp[1],1);
+			status = pDoc->image->Resample(theApp.m_Filters.ResampleW,theApp.m_Filters.ResampleH,1);
 			break;
 		case 1:
-			pDoc->image->Resample((long)pDoc->m_fp[0],(long)pDoc->m_fp[1],0);
+			status = pDoc->image->Resample(theApp.m_Filters.ResampleW,theApp.m_Filters.ResampleH,0);
+			break;
+		case 2:
+			if ((long)pDoc->image->GetWidth()>theApp.m_Filters.ResampleW && (long)pDoc->image->GetHeight()>theApp.m_Filters.ResampleH)
+				status = pDoc->image->QIShrink(theApp.m_Filters.ResampleW,theApp.m_Filters.ResampleH);
+			else
+				status = pDoc->image->Resample2(theApp.m_Filters.ResampleW,theApp.m_Filters.ResampleH,rintm,CxImage::OM_REPEAT);
 			break;
 		default:
-			pDoc->image->Resample2((long)pDoc->m_fp[0],(long)pDoc->m_fp[1],rintm,CxImage::OM_REPEAT);
+			status = pDoc->image->Resample2(theApp.m_Filters.ResampleW,theApp.m_Filters.ResampleH,rintm,CxImage::OM_REPEAT);
+		}
+		break;
+	case ID_CXIMAGE_CANVASSIZE:
+		{
+			RGBQUAD color = CxImage::RGBtoRGBQUAD(theApp.m_Filters.CanvasBkg);
+			if (theApp.m_Filters.CanvasUseImageBkg)
+				color = pDoc->image->GetTransColor();
+
+			RECT r;
+			if (theApp.m_Filters.CanvasMode == 0){
+				r.top = 0;
+				r.left = 0;
+				r.right = theApp.m_Filters.CanvasW - pDoc->image->GetWidth();
+				r.bottom = theApp.m_Filters.CanvasH - pDoc->image->GetHeight();
+				if (theApp.m_Filters.CanvasCenterH){
+					r.left = (theApp.m_Filters.CanvasW - pDoc->image->GetWidth()) / 2;
+					r.right = theApp.m_Filters.CanvasW - pDoc->image->GetWidth() - r.left;
+				}
+				if (theApp.m_Filters.CanvasCenterV){
+					r.top = (theApp.m_Filters.CanvasH - pDoc->image->GetHeight()) / 2;
+					r.bottom = theApp.m_Filters.CanvasH - pDoc->image->GetHeight() - r.top;
+				}
+			} else {
+				r.top = theApp.m_Filters.CanvasTop;
+				r.left = theApp.m_Filters.CanvasLeft;
+				r.right = theApp.m_Filters.CanvasRight;
+				r.bottom = theApp.m_Filters.CanvasBottom;
+			}
+
+			status = pDoc->image->Expand(r.left, r.top,	r.right, r.bottom, color);											
 		}
 		break;
 	case ID_CXIMAGE_INCREASEBPP:
-		pDoc->image->IncreaseBpp((long)pDoc->m_fp[0]);
+		status = pDoc->image->IncreaseBpp(theApp.m_Filters.IncBppBPP);
 		break;
 	case ID_CXIMAGE_DECREASEBPP:
 		{
-			long bit=(long)pDoc->m_fp[0];
-			long method=(long)pDoc->m_fp[1];
-			bool errordiffusion=((long)pDoc->m_fp[2])!=0;
-			long colors=(long)pDoc->m_fp[3];
+			long bit = theApp.m_Filters.DecBppBPP;
+			long method = theApp.m_Filters.DecBppPalMethod;
+			bool errordiffusion = theApp.m_Filters.DecBppErrDiff!=0;
+			long colors = theApp.m_Filters.DecBppMaxColors;
 
 			//pDoc->image->IncreaseBpp(24);
+			RGBQUAD c = pDoc->image->GetTransColor();
 
 			RGBQUAD* ppal = NULL;
 			if (method==1){
@@ -1109,10 +1417,14 @@ void /*unsigned long _stdcall*/ RunCxImageThread(void *lpParam)
 						q.SetColorTable(ppal);
 					}
 				}
-				pDoc->image->DecreaseBpp(bit,errordiffusion,ppal,colors);
-			} else pDoc->image->DecreaseBpp(bit,errordiffusion,0);
+				status = pDoc->image->DecreaseBpp(bit,errordiffusion,ppal,colors);
+			} else status = pDoc->image->DecreaseBpp(bit,errordiffusion,0);
 
 			if (!pDoc->image->AlphaPaletteIsValid()) pDoc->image->AlphaPaletteEnable(0);
+
+			if (pDoc->image->IsTransparent()){
+				pDoc->image->SetTransIndex(pDoc->image->GetNearestIndex(c));
+			}
 
 			if (ppal) free(ppal);
 			break;
@@ -1123,7 +1435,13 @@ void /*unsigned long _stdcall*/ RunCxImageThread(void *lpParam)
 
 	pDoc->image->SetProgress(100);
 
+	if (!status){
+		CString s = pDoc->image->GetLastError();
+		AfxMessageBox(s);
+	}
+
 	pDoc->hThread=0;
+
 	_endthread();
 	return ;
 }
@@ -1156,14 +1474,19 @@ void CDemoDoc::OnCximageDecreasebpp()
 {
 	if (image==NULL) return;
 	DlgDecBpp dlg;
-	dlg.m_bit=4;
-	dlg.m_maxcolors = 256;
+	dlg.m_bit = theApp.m_Filters.DecBppBPP;
+	dlg.m_method = theApp.m_Filters.DecBppPalMethod;
+	dlg.m_errordiffusion = theApp.m_Filters.DecBppErrDiff;
+	dlg.m_bLimitColors = theApp.m_Filters.DecBppLimitColors;
+	dlg.m_maxcolors = theApp.m_Filters.DecBppMaxColors;
+
 	if (dlg.DoModal()==IDOK){
 		m_MenuCommand=ID_CXIMAGE_DECREASEBPP;
-		m_fp[0]=(void *)dlg.m_bit;
-		m_fp[1]=(void *)dlg.m_method;
-		m_fp[2]=(void *)dlg.m_errordiffusion;
-		m_fp[3]=(void *)dlg.m_maxcolors;
+		theApp.m_Filters.DecBppBPP = dlg.m_bit;
+		theApp.m_Filters.DecBppPalMethod = dlg.m_method;
+		theApp.m_Filters.DecBppErrDiff = dlg.m_errordiffusion;
+		theApp.m_Filters.DecBppLimitColors = dlg.m_bLimitColors;
+		theApp.m_Filters.DecBppMaxColors = dlg.m_maxcolors;
 		hThread=(HANDLE)_beginthread(RunCxImageThread,0,this);
 	}
 }
@@ -1172,10 +1495,10 @@ void CDemoDoc::OnCximageIncreasebpp()
 {
 	if (image==NULL) return;
 	DlgIncBpp dlg;
-	dlg.m_bit=24;
+	dlg.m_bit = theApp.m_Filters.IncBppBPP;
 	if (dlg.DoModal()==IDOK){
 		m_MenuCommand=ID_CXIMAGE_INCREASEBPP;
-		m_fp[0]=(void *)dlg.m_bit;
+		theApp.m_Filters.IncBppBPP = dlg.m_bit;
 		hThread=(HANDLE)_beginthread(RunCxImageThread,0,this);
 	}
 }
@@ -1196,14 +1519,16 @@ void CDemoDoc::OnCximageRotate()
 {
 	if (image==NULL) return;
 	DlgRotate dlg;
-	dlg.m_angle=(float)12.345;
-	dlg.m_method=1;
+	dlg.m_angle = theApp.m_Filters.RotateAngle;
+	dlg.m_method = theApp.m_Filters.RotateMethod;
+	dlg.m_overflow = theApp.m_Filters.RotateOverflow;
+	dlg.m_keepsize = theApp.m_Filters.RotateKeepsize;
 	if (dlg.DoModal()==IDOK){
 		m_MenuCommand=ID_CXIMAGE_ROTATE;
-		m_fp[0]=(void *)(long)(dlg.m_angle*1000);
-		m_fp[1]=(void *)(long)(dlg.m_method);
-		m_fp[2]=(void *)(long)(dlg.m_overflow);
-		m_fp[3]=(void *)(long)(dlg.m_keepsize);
+		theApp.m_Filters.RotateAngle = dlg.m_angle;
+		theApp.m_Filters.RotateMethod = dlg.m_method;
+		theApp.m_Filters.RotateOverflow = dlg.m_overflow;
+		theApp.m_Filters.RotateKeepsize = dlg.m_keepsize;
 		hThread=(HANDLE)_beginthread(RunCxImageThread,0,this);
 	}
 }
@@ -1215,10 +1540,16 @@ void CDemoDoc::OnCximageResample()
 	DlgResample dlg;
 	dlg.m_w = image->GetWidth();
 	dlg.m_h = image->GetHeight();
-	dlg.m_factor=(float)2;
 	dlg.m_ratio = ((float)image->GetWidth())/((float)image->GetHeight());
-	dlg.m_newwidth = 100;
-	dlg.m_newheight = (DWORD)(dlg.m_newwidth / dlg.m_ratio);
+
+	dlg.m_sizemode = theApp.m_Filters.ResampleSizemode;
+	dlg.m_factor = theApp.m_Filters.ResampleFactor;
+	dlg.m_newwidth = theApp.m_Filters.ResampleW;
+	dlg.m_newheight = theApp.m_Filters.ResampleH;
+	dlg.m_bKeepRatio = theApp.m_Filters.ResampleKeepRatio;
+	dlg.m_mode = theApp.m_Filters.ResampleMethod;
+	if (dlg.m_bKeepRatio) dlg.m_newheight = (DWORD)(dlg.m_newwidth/dlg.m_ratio);
+
 	if (dlg.DoModal()==IDOK){
 		m_MenuCommand=ID_CXIMAGE_RESAMPLE;
 
@@ -1227,9 +1558,13 @@ void CDemoDoc::OnCximageResample()
 			dlg.m_newheight = (DWORD)(dlg.m_h * fabs(dlg.m_factor));
 		}
 
-		m_fp[0]=(void *)(long)(dlg.m_newwidth);
-		m_fp[1]=(void *)(long)(dlg.m_newheight);
-		m_fp[2]=(void *)(long)(dlg.m_mode);
+		theApp.m_Filters.ResampleSizemode = dlg.m_sizemode;
+		theApp.m_Filters.ResampleFactor = dlg.m_factor;
+		theApp.m_Filters.ResampleW = dlg.m_newwidth;
+		theApp.m_Filters.ResampleH = dlg.m_newheight;
+		theApp.m_Filters.ResampleKeepRatio = dlg.m_bKeepRatio;
+		theApp.m_Filters.ResampleMethod = dlg.m_mode;
+
 		hThread=(HANDLE)_beginthread(RunCxImageThread,0,this);
 	}
 }
@@ -1240,10 +1575,10 @@ void CDemoDoc::UpdateStatusBar()
 		CStatusBar& statusBar = ((CMainFrame *)(AfxGetApp()->m_pMainWnd))->GetStatusBar();
 		CString s,t;
 		t = theApp.GetDescFromType(image->GetType());
-		s.Format("(%dx%dx%d)",image->GetWidth(),image->GetHeight(),image->GetBpp());
+		s.Format(_T("(%dx%dx%d)"),image->GetWidth(),image->GetHeight(),image->GetBpp());
 		statusBar.SetPaneText(4, s);
 		statusBar.SetPaneText(3,t.Mid(0,3));
-		s.Format("Time (s): %.3f",m_etime);
+		s.Format(_T("Time (s): %.3f"),m_etime);
 		statusBar.SetPaneText(2, s);
 
 //		((CMainFrame *)(AfxGetApp()->m_pMainWnd))->GetProgressBar().SetPos(0);
@@ -1262,7 +1597,7 @@ void CDemoDoc::OnViewZoomin()
 
 	CStatusBar& statusBar = ((CMainFrame *)(AfxGetApp()->m_pMainWnd))->GetStatusBar();
 	CString s;
-	s.Format("%4.0f %%",m_ZoomFactor*100);
+	s.Format(_T("%4.0f %%"),m_ZoomFactor*100);
 	statusBar.SetPaneText(2, s);
 
 	UpdateAllViews(NULL,WM_USER_NEWIMAGE);
@@ -1280,7 +1615,7 @@ void CDemoDoc::OnViewZoomout()
 
 	CStatusBar& statusBar = ((CMainFrame *)(AfxGetApp()->m_pMainWnd))->GetStatusBar();
 	CString s;
-	s.Format("%4.1f %%",m_ZoomFactor*100);
+	s.Format(_T("%4.1f %%"),m_ZoomFactor*100);
 	statusBar.SetPaneText(2, s);
 
 	UpdateAllViews(NULL,WM_USER_NEWIMAGE);
@@ -1347,24 +1682,52 @@ void CDemoDoc::OnCximageOptions()
 	if (image==NULL) return;
 	
 	DlgOptions dlg;
-	dlg.m_quality = image->GetJpegQuality();
+	dlg.m_jpeg_quality = image->GetJpegQualityF();
 	dlg.m_xres = image->GetXDPI();
 	dlg.m_yres = image->GetYDPI();
+
+#if CXIMAGE_SUPPORT_TIF
 	dlg.m_Opt_tif = image->GetCodecOption(CXIMAGE_FORMAT_TIF);
+#endif
+#if CXIMAGE_SUPPORT_GIF
 	dlg.m_Opt_gif = image->GetCodecOption(CXIMAGE_FORMAT_GIF);
+#endif
+#if CXIMAGE_SUPPORT_JPG
 	dlg.m_Opt_jpg = image->GetCodecOption(CXIMAGE_FORMAT_JPG);
+#endif
+#if CXIMAGE_SUPPORT_PNG
 	dlg.m_Opt_png = image->GetCodecOption(CXIMAGE_FORMAT_PNG);
+#endif
+#if CXIMAGE_SUPPORT_RAW
+	dlg.m_Opt_raw = image->GetCodecOption(CXIMAGE_FORMAT_RAW);
+#endif
+	
 	dlg.m_exif = &m_exif;
 	if (dlg.DoModal()==IDOK){
-		image->SetJpegQuality(dlg.m_quality);
+		image->SetJpegQualityF(dlg.m_jpeg_quality);
 		image->SetXDPI(dlg.m_xres);
 		image->SetYDPI(dlg.m_yres);
+
+#if CXIMAGE_SUPPORT_TIF
 		image->SetCodecOption(dlg.m_Opt_tif, CXIMAGE_FORMAT_TIF);
+#endif
+#if CXIMAGE_SUPPORT_GIF
 		image->SetCodecOption(dlg.m_Opt_gif, CXIMAGE_FORMAT_GIF);
+#endif
+#if CXIMAGE_SUPPORT_JPG
 		image->SetCodecOption(dlg.m_Opt_jpg, CXIMAGE_FORMAT_JPG);
+#endif
+#if CXIMAGE_SUPPORT_PNG
 		image->SetCodecOption(dlg.m_Opt_png, CXIMAGE_FORMAT_PNG);
+#endif
+#if CXIMAGE_SUPPORT_RAW
+		image->SetCodecOption(dlg.m_Opt_raw, CXIMAGE_FORMAT_RAW);
+#endif
+
 #ifdef VATI_EXTENSIONS
-		theApp.m_optJpegQuality = dlg.m_quality;
+		theApp.m_optJpegQuality = dlg.m_jpeg_quality;
+		theApp.m_optJpegOptions = dlg.m_Opt_jpg;
+		theApp.m_optRawOptions  = dlg.m_Opt_raw;
 #endif
 	}
 }
@@ -1374,9 +1737,10 @@ void CDemoDoc::OnCximageDither()
 	if (image==NULL) return;
 	
 	DlgDither dlg;
+	dlg.m_method = theApp.m_Filters.DitherMethod;
 	if (dlg.DoModal()==IDOK){
 		m_MenuCommand=ID_CXIMAGE_DITHER;
-		m_fp[0]=(void*)dlg.m_method;
+		theApp.m_Filters.DitherMethod = dlg.m_method;
 		hThread=(HANDLE)_beginthread(RunCxImageThread,0,this);
 	}
 }
@@ -1385,10 +1749,38 @@ void CDemoDoc::OnCximageThreshold()
 {
 	if (image==NULL) return;
 	DlgThreshold dlg;
-	dlg.m_level=(BYTE)image->Mean();
+
+	CxImage iContrastMask;
+	iContrastMask.Copy(*image,true,false,false);
+	if (!iContrastMask.IsValid()){
+		AfxMessageBox(_T("cannot create ContrastMask")); 
+		return;
+	}
+	iContrastMask.GrayScale();
+	long edge[]={-1,-1,-1,-1,8,-1,-1,-1,-1};
+	iContrastMask.Filter(edge,3,1,0);
+	long blur[]={1,1,1,1,1,1,1,1,1};
+	iContrastMask.Filter(blur,3,9,0);
+
+	if (image->IsGrayScale()){
+		dlg.m_thresh1 = (long)image->OptimalThreshold(0,0);
+		dlg.m_thresh2 = (long)image->OptimalThreshold(0,0,&iContrastMask);
+	} else {
+		CxImage iGray;
+		iGray.Copy(*image,true,false,false);
+		iGray.GrayScale();
+		dlg.m_thresh1 = (long)iGray.OptimalThreshold(0,0);
+		dlg.m_thresh2 = (long)iGray.OptimalThreshold(0,0,&iContrastMask);
+	}
+
+	dlg.m_mean = (BYTE)image->Mean();
+	dlg.m_bPreserve = theApp.m_Filters.ThreshPreserveColors;
+	dlg.m_level = theApp.m_Filters.ThreshLevel;
+
 	if (dlg.DoModal()==IDOK){
 		m_MenuCommand=ID_CXIMAGE_THRESHOLD;
-		m_fp[0]=(void *)(BYTE)(dlg.m_level);
+		theApp.m_Filters.ThreshLevel = dlg.m_level;
+		theApp.m_Filters.ThreshPreserveColors = dlg.m_bPreserve;
 		hThread=(HANDLE)_beginthread(RunCxImageThread,0,this);
 	}
 }
@@ -1413,7 +1805,7 @@ void CDemoDoc::OnCximageSplitrgb()
 	if (NewDocr)	{
 		NewDocr->image = newr;
 		CString s;
-		s.Format("Red Channel %d from %s",((CDemoApp*)AfxGetApp())->m_nDocCount,GetTitle());
+		s.Format(_T("Red Channel %d from %s"),((CDemoApp*)AfxGetApp())->m_nDocCount,GetTitle());
 		NewDocr->SetTitle(s);
 		NewDocr->UpdateAllViews(0,WM_USER_NEWIMAGE);
 	}
@@ -1421,7 +1813,7 @@ void CDemoDoc::OnCximageSplitrgb()
 	if (NewDocg)	{
 		NewDocg->image = newg;
 		CString s;
-		s.Format("Green Channel %d from %s",((CDemoApp*)AfxGetApp())->m_nDocCount,GetTitle());
+		s.Format(_T("Green Channel %d from %s"),((CDemoApp*)AfxGetApp())->m_nDocCount,GetTitle());
 		NewDocg->SetTitle(s);
 		NewDocg->UpdateAllViews(0,WM_USER_NEWIMAGE);
 	}
@@ -1429,7 +1821,7 @@ void CDemoDoc::OnCximageSplitrgb()
 	if (NewDocb)	{
 		NewDocb->image = newb;
 		CString s;
-		s.Format("Blue Channel %d from %s",((CDemoApp*)AfxGetApp())->m_nDocCount,GetTitle());
+		s.Format(_T("Blue Channel %d from %s"),((CDemoApp*)AfxGetApp())->m_nDocCount,GetTitle());
 		NewDocb->SetTitle(s);
 		NewDocb->UpdateAllViews(0,WM_USER_NEWIMAGE);
 	}
@@ -1455,7 +1847,7 @@ void CDemoDoc::OnCximageSplityuv()
 	if (NewDocr)	{
 		NewDocr->image = newr;
 		CString s;
-		s.Format("Y Channel %d from %s",((CDemoApp*)AfxGetApp())->m_nDocCount,GetTitle());
+		s.Format(_T("Y Channel %d from %s"),((CDemoApp*)AfxGetApp())->m_nDocCount,GetTitle());
 		NewDocr->SetTitle(s);
 		NewDocr->UpdateAllViews(0,WM_USER_NEWIMAGE);
 	}
@@ -1463,7 +1855,7 @@ void CDemoDoc::OnCximageSplityuv()
 	if (NewDocg)	{
 		NewDocg->image = newg;
 		CString s;
-		s.Format("U Channel %d from %s",((CDemoApp*)AfxGetApp())->m_nDocCount,GetTitle());
+		s.Format(_T("U Channel %d from %s"),((CDemoApp*)AfxGetApp())->m_nDocCount,GetTitle());
 		NewDocg->SetTitle(s);
 		NewDocg->UpdateAllViews(0,WM_USER_NEWIMAGE);
 	}
@@ -1471,7 +1863,7 @@ void CDemoDoc::OnCximageSplityuv()
 	if (NewDocb)	{
 		NewDocb->image = newb;
 		CString s;
-		s.Format("V Channel %d from %s",((CDemoApp*)AfxGetApp())->m_nDocCount,GetTitle());
+		s.Format(_T("V Channel %d from %s"),((CDemoApp*)AfxGetApp())->m_nDocCount,GetTitle());
 		NewDocb->SetTitle(s);
 		NewDocb->UpdateAllViews(0,WM_USER_NEWIMAGE);
 	}
@@ -1497,7 +1889,7 @@ void CDemoDoc::OnCximageSplithsl()
 	if (NewDocr)	{
 		NewDocr->image = newr;
 		CString s;
-		s.Format("Hue Channel %d from %s",((CDemoApp*)AfxGetApp())->m_nDocCount,GetTitle());
+		s.Format(_T("Hue Channel %d from %s"),((CDemoApp*)AfxGetApp())->m_nDocCount,GetTitle());
 		NewDocr->SetTitle(s);
 		NewDocr->UpdateAllViews(0,WM_USER_NEWIMAGE);
 	}
@@ -1505,7 +1897,7 @@ void CDemoDoc::OnCximageSplithsl()
 	if (NewDocg)	{
 		NewDocg->image = newg;
 		CString s;
-		s.Format("Saturation Channel %d from %s",((CDemoApp*)AfxGetApp())->m_nDocCount,GetTitle());
+		s.Format(_T("Saturation Channel %d from %s"),((CDemoApp*)AfxGetApp())->m_nDocCount,GetTitle());
 		NewDocg->SetTitle(s);
 		NewDocg->UpdateAllViews(0,WM_USER_NEWIMAGE);
 	}
@@ -1513,7 +1905,7 @@ void CDemoDoc::OnCximageSplithsl()
 	if (NewDocb)	{
 		NewDocb->image = newb;
 		CString s;
-		s.Format("Lightness Channel %d from %s",((CDemoApp*)AfxGetApp())->m_nDocCount,GetTitle());
+		s.Format(_T("Lightness Channel %d from %s"),((CDemoApp*)AfxGetApp())->m_nDocCount,GetTitle());
 		NewDocb->SetTitle(s);
 		NewDocb->UpdateAllViews(0,WM_USER_NEWIMAGE);
 	}
@@ -1540,7 +1932,7 @@ void CDemoDoc::OnCximageSplitcmyk()
 	if (NewDocr)	{
 		NewDocr->image = newc;
 		CString s;
-		s.Format("C Channel %d from %s",((CDemoApp*)AfxGetApp())->m_nDocCount,GetTitle());
+		s.Format(_T("C Channel %d from %s"),((CDemoApp*)AfxGetApp())->m_nDocCount,GetTitle());
 		NewDocr->SetTitle(s);
 		NewDocr->UpdateAllViews(0,WM_USER_NEWIMAGE);
 	}
@@ -1548,7 +1940,7 @@ void CDemoDoc::OnCximageSplitcmyk()
 	if (NewDocg)	{
 		NewDocg->image = newm;
 		CString s;
-		s.Format("M Channel %d from %s",((CDemoApp*)AfxGetApp())->m_nDocCount,GetTitle());
+		s.Format(_T("M Channel %d from %s"),((CDemoApp*)AfxGetApp())->m_nDocCount,GetTitle());
 		NewDocg->SetTitle(s);
 		NewDocg->UpdateAllViews(0,WM_USER_NEWIMAGE);
 	}
@@ -1556,7 +1948,7 @@ void CDemoDoc::OnCximageSplitcmyk()
 	if (NewDocb)	{
 		NewDocb->image = newy;
 		CString s;
-		s.Format("Y Channel %d from %s",((CDemoApp*)AfxGetApp())->m_nDocCount,GetTitle());
+		s.Format(_T("Y Channel %d from %s"),((CDemoApp*)AfxGetApp())->m_nDocCount,GetTitle());
 		NewDocb->SetTitle(s);
 		NewDocb->UpdateAllViews(0,WM_USER_NEWIMAGE);
 	}
@@ -1564,7 +1956,7 @@ void CDemoDoc::OnCximageSplitcmyk()
 	if (NewDock)	{
 		NewDock->image = newk;
 		CString s;
-		s.Format("K Channel %d from %s",((CDemoApp*)AfxGetApp())->m_nDocCount,GetTitle());
+		s.Format(_T("K Channel %d from %s"),((CDemoApp*)AfxGetApp())->m_nDocCount,GetTitle());
 		NewDock->SetTitle(s);
 		NewDock->UpdateAllViews(0,WM_USER_NEWIMAGE);
 	}
@@ -1591,7 +1983,7 @@ void CDemoDoc::OnCximagePseudocolors()
 	::BitBlt(memDC, 0, 0, sz.cx, sz.cy, srcDC, xshift, yshift, SRCCOPY);
 //	image->SetTransIndex(-1);
 //	image->Draw(memDC);
-	::TextOut(memDC,10,10,"test",4);
+	::TextOut(memDC,10,10,_T("test"),4);
 	
 	CxImage newima;
 	newima.CreateFromHBITMAP(bm);
@@ -1607,24 +1999,30 @@ void CDemoDoc::OnCximageFiltersColorize()
 {
 	if (image==NULL) return;
 	DlgColorize dlg;
-	dlg.m_sat=50;
-	dlg.m_hue=12;
-	dlg.m_r=50;
-	dlg.m_g=0;
-	dlg.m_b=-50;
+
+	dlg.m_bHSL = theApp.m_Filters.ColorMode;
+	dlg.m_blend = theApp.m_Filters.ColorHSL.rgbBlue;
+	dlg.m_sat = theApp.m_Filters.ColorHSL.rgbGreen;
+	dlg.m_hue = theApp.m_Filters.ColorHSL.rgbRed;
+	dlg.m_b = theApp.m_Filters.ColorBlue;
+	dlg.m_g = theApp.m_Filters.ColorGreen;
+	dlg.m_r = theApp.m_Filters.ColorRed;
+	dlg.m_sol = theApp.m_Filters.ColorSolarLevel;
+	dlg.m_bLinked = theApp.m_Filters.ColorSolarLink;
+
 	if (dlg.DoModal()==IDOK){
 		m_MenuCommand=ID_CXIMAGE_COLORIZE;
-		if (dlg.m_bHSL){
-			m_fp[0]=(void *)(BYTE)(dlg.m_bHSL);
-			m_fp[1]=(void *)(BYTE)(dlg.m_hue);
-			m_fp[2]=(void *)(BYTE)(dlg.m_sat);
-			m_fp[3]=(void *)(BYTE)(dlg.m_blend);
-		} else {
-			m_fp[0]=(void *)(BYTE)(dlg.m_bHSL);
-			m_fp[1]=(void *)(long)(dlg.m_r);
-			m_fp[2]=(void *)(long)(dlg.m_g);
-			m_fp[3]=(void *)(long)(dlg.m_b);
-		}
+
+		theApp.m_Filters.ColorMode = dlg.m_bHSL;
+		theApp.m_Filters.ColorHSL.rgbBlue = dlg.m_blend;
+		theApp.m_Filters.ColorHSL.rgbGreen = dlg.m_sat;
+		theApp.m_Filters.ColorHSL.rgbRed = dlg.m_hue;
+		theApp.m_Filters.ColorBlue = dlg.m_b;
+		theApp.m_Filters.ColorGreen = dlg.m_g;
+		theApp.m_Filters.ColorRed = dlg.m_r;
+		theApp.m_Filters.ColorSolarLevel = dlg.m_sol;
+		theApp.m_Filters.ColorSolarLink = dlg.m_bLinked;
+
 		hThread=(HANDLE)_beginthread(RunCxImageThread,0,this);
 	}
 }
@@ -1644,8 +2042,6 @@ void CDemoDoc::OnCximageLighten()
 void CDemoDoc::OnCximageContrast() 
 {
 	m_MenuCommand=ID_CXIMAGE_CONTRAST;
-//	m_fp[0]=(void *)(long)((128-image->Mean())/4);
-	m_fp[0]=(void *)(long)(0);
 	hThread=(HANDLE)_beginthread(RunCxImageThread,0,this);
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -1791,9 +2187,16 @@ void CDemoDoc::OnCximageAlphapalettetoggle()
 void CDemoDoc::OnCximageAlphastrip() 
 {
 	SubmitUndo();
+	SetCursor(LoadCursor(0,IDC_WAIT));
+	Stopwatch(0);
+
 	RGBQUAD c={255,255,255,0};
 	image->SetTransColor(c);
 	image->AlphaStrip();
+
+	Stopwatch(1);
+	SetCursor(LoadCursor(0,IDC_ARROW));
+	UpdateStatusBar();
 	UpdateAllViews(NULL,WM_USER_NEWIMAGE);	
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -1801,10 +2204,20 @@ void CDemoDoc::OnCximageGamma()
 {
 	if (image==NULL) return;
 	DlgGamma dlg;
-	dlg.m_gamma=(float)1.23;
+	dlg.m_gamma = theApp.m_Filters.GammaLevel;
+	dlg.m_gammaR = theApp.m_Filters.GammaR;
+	dlg.m_gammaG = theApp.m_Filters.GammaG;
+	dlg.m_gammaB = theApp.m_Filters.GammaB;
+	dlg.m_bGammaMode = theApp.m_Filters.GammaLink;
+
 	if (dlg.DoModal()==IDOK){
 		m_MenuCommand=ID_CXIMAGE_GAMMA;
-		m_fp[0]=(void *)(long)(dlg.m_gamma*1000);
+		theApp.m_Filters.GammaLevel = dlg.m_gamma;
+		theApp.m_Filters.GammaR = dlg.m_gammaR;
+		theApp.m_Filters.GammaG = dlg.m_gammaG;
+		theApp.m_Filters.GammaB = dlg.m_gammaB;
+		theApp.m_Filters.GammaLink = dlg.m_bGammaMode;
+
 		hThread=(HANDLE)_beginthread(RunCxImageThread,0,this);
 	}
 }
@@ -2011,7 +2424,7 @@ void CDemoDoc::OnCximageCombine()
 		if (NewDocr)	{
 			NewDocr->image = mix;
 			CString s;
-			s.Format("NewImage%d",((CDemoApp*)AfxGetApp())->m_nDocCount++);
+			s.Format(_T("NewImage%d"),((CDemoApp*)AfxGetApp())->m_nDocCount++);
 			NewDocr->SetTitle(s);
 			NewDocr->UpdateAllViews(0,WM_USER_NEWIMAGE);
 		}
@@ -2063,9 +2476,9 @@ void CDemoDoc::OnCximageFft()
 			NewDoci->image = dsti;
 			CString s;
 			if (dlg.bMagnitude){
-				s.Format("FFT Phase %d",((CDemoApp*)AfxGetApp())->m_nDocCount);
+				s.Format(_T("FFT Phase %d"),((CDemoApp*)AfxGetApp())->m_nDocCount);
 			} else {
-				s.Format("FFT Imag %d",((CDemoApp*)AfxGetApp())->m_nDocCount);
+				s.Format(_T("FFT Imag %d"),((CDemoApp*)AfxGetApp())->m_nDocCount);
 			}
 			NewDoci->SetTitle(s);
 			NewDoci->UpdateAllViews(0,WM_USER_NEWIMAGE);
@@ -2075,9 +2488,9 @@ void CDemoDoc::OnCximageFft()
 			NewDocr->image = dstr;
 			CString s;
 			if (dlg.bMagnitude){
-				s.Format("FFT Magnitude %d",((CDemoApp*)AfxGetApp())->m_nDocCount);
+				s.Format(_T("FFT Magnitude %d"),((CDemoApp*)AfxGetApp())->m_nDocCount);
 			} else {
-				s.Format("FFT Real %d",((CDemoApp*)AfxGetApp())->m_nDocCount);
+				s.Format(_T("FFT Real %d"),((CDemoApp*)AfxGetApp())->m_nDocCount);
 			}
 			NewDocr->SetTitle(s);
 			NewDocr->UpdateAllViews(0,WM_USER_NEWIMAGE);
@@ -2109,7 +2522,7 @@ void CDemoDoc::OnCximageSplityiq()
 	if (NewDocr)	{
 		NewDocr->image = newr;
 		CString s;
-		s.Format("Y Channel %d from %s",((CDemoApp*)AfxGetApp())->m_nDocCount,GetTitle());
+		s.Format(_T("Y Channel %d from %s"),((CDemoApp*)AfxGetApp())->m_nDocCount,GetTitle());
 		NewDocr->SetTitle(s);
 		NewDocr->UpdateAllViews(0,WM_USER_NEWIMAGE);
 	}
@@ -2117,7 +2530,7 @@ void CDemoDoc::OnCximageSplityiq()
 	if (NewDocg)	{
 		NewDocg->image = newg;
 		CString s;
-		s.Format("I Channel %d from %s",((CDemoApp*)AfxGetApp())->m_nDocCount,GetTitle());
+		s.Format(_T("I Channel %d from %s"),((CDemoApp*)AfxGetApp())->m_nDocCount,GetTitle());
 		NewDocg->SetTitle(s);
 		NewDocg->UpdateAllViews(0,WM_USER_NEWIMAGE);
 	}
@@ -2125,7 +2538,7 @@ void CDemoDoc::OnCximageSplityiq()
 	if (NewDocb)	{
 		NewDocb->image = newb;
 		CString s;
-		s.Format("Q Channel %d from %s",((CDemoApp*)AfxGetApp())->m_nDocCount,GetTitle());
+		s.Format(_T("Q Channel %d from %s"),((CDemoApp*)AfxGetApp())->m_nDocCount,GetTitle());
 		NewDocb->SetTitle(s);
 		NewDocb->UpdateAllViews(0,WM_USER_NEWIMAGE);
 	}
@@ -2151,7 +2564,7 @@ void CDemoDoc::OnCximageSplitxyz()
 	if (NewDocr)	{
 		NewDocr->image = newr;
 		CString s;
-		s.Format("X Channel %d from %s",((CDemoApp*)AfxGetApp())->m_nDocCount,GetTitle());
+		s.Format(_T("X Channel %d from %s"),((CDemoApp*)AfxGetApp())->m_nDocCount,GetTitle());
 		NewDocr->SetTitle(s);
 		NewDocr->UpdateAllViews(0,WM_USER_NEWIMAGE);
 	}
@@ -2159,7 +2572,7 @@ void CDemoDoc::OnCximageSplitxyz()
 	if (NewDocg)	{
 		NewDocg->image = newg;
 		CString s;
-		s.Format("Y Channel %d from %s",((CDemoApp*)AfxGetApp())->m_nDocCount,GetTitle());
+		s.Format(_T("Y Channel %d from %s"),((CDemoApp*)AfxGetApp())->m_nDocCount,GetTitle());
 		NewDocg->SetTitle(s);
 		NewDocg->UpdateAllViews(0,WM_USER_NEWIMAGE);
 	}
@@ -2167,7 +2580,7 @@ void CDemoDoc::OnCximageSplitxyz()
 	if (NewDocb)	{
 		NewDocb->image = newb;
 		CString s;
-		s.Format("Z Channel %d from %s",((CDemoApp*)AfxGetApp())->m_nDocCount,GetTitle());
+		s.Format(_T("Z Channel %d from %s"),((CDemoApp*)AfxGetApp())->m_nDocCount,GetTitle());
 		NewDocb->SetTitle(s);
 		NewDocb->UpdateAllViews(0,WM_USER_NEWIMAGE);
 	}
@@ -2212,7 +2625,7 @@ void CDemoDoc::OnCximageAlphachannelSplit()
 	if (NewDocr)	{
 		NewDocr->image = newa;
 		CString s;
-		s.Format("Alpha Channel %d from %s",((CDemoApp*)AfxGetApp())->m_nDocCount,GetTitle());
+		s.Format(_T("Alpha Channel %d from %s"),((CDemoApp*)AfxGetApp())->m_nDocCount,GetTitle());
 		NewDocr->SetTitle(s);
 		NewDocr->UpdateAllViews(0,WM_USER_NEWIMAGE);
 	}
@@ -2280,7 +2693,6 @@ void CDemoDoc::OnCximageContour()
 void CDemoDoc::OnCximageLesscontrast() 
 {
 	m_MenuCommand=ID_CXIMAGE_LESSCONTRAST;
-	m_fp[0]=(void *)(long)(0);
 	hThread=(HANDLE)_beginthread(RunCxImageThread,0,this);
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -2313,7 +2725,7 @@ void CDemoDoc::OnFiltersMix()
 		if (NewDoci)	{
 			NewDoci->image = tmp;
 			CString s;
-			s.Format("Mix %d",((CDemoApp*)AfxGetApp())->m_nDocCount);
+			s.Format(_T("Mix %d"),((CDemoApp*)AfxGetApp())->m_nDocCount);
 			NewDoci->SetTitle(s);
 			NewDoci->UpdateAllViews(0,WM_USER_NEWIMAGE);
 		}
@@ -2379,15 +2791,23 @@ void CDemoDoc::OnCximageSkew()
 	DlgSkew dlg;
 	dlg.m_w = image->GetWidth();
 	dlg.m_h = image->GetHeight();
-	dlg.m_bEnableInterpolation = TRUE;
+
+	dlg.m_skewx = theApp.m_Filters.SkewX;
+	dlg.m_skewy = theApp.m_Filters.SkewY;
+	dlg.m_pivotx = theApp.m_Filters.SkewPivotX;
+	dlg.m_pivoty = theApp.m_Filters.SkewPivotY;
+	dlg.m_bEnableInterpolation = theApp.m_Filters.SkewInterp;
+
 	if (dlg.DoModal()==IDOK){
 		m_MenuCommand=ID_CXIMAGE_SKEW;
 
-		m_fp[0]=(void *)(long)(1000*dlg.m_slopex);
-		m_fp[1]=(void *)(long)(1000*dlg.m_slopey);
-		m_fp[2]=(void *)(long)(dlg.m_pivotx);
-		m_fp[3]=(void *)(long)(dlg.m_pivoty);
-		m_fp[4]=(void *)(long)(dlg.m_bEnableInterpolation);
+		theApp.m_Filters.SkewX = dlg.m_skewx;
+		theApp.m_Filters.SkewY = dlg.m_skewy;
+		theApp.m_Filters.SkewSlopeX = dlg.m_slopex;
+		theApp.m_Filters.SkewSlopeY = dlg.m_slopey;
+		theApp.m_Filters.SkewPivotX = dlg.m_pivotx;
+		theApp.m_Filters.SkewPivotY = dlg.m_pivoty;
+		theApp.m_Filters.SkewInterp = dlg.m_bEnableInterpolation;
 
 		hThread=(HANDLE)_beginthread(RunCxImageThread,0,this);
 	}
@@ -2407,7 +2827,7 @@ void CDemoDoc::OnJpegcompression()
 {
 	if (image==NULL) return;
 	DlgJpeg dlg;
-	dlg.m_quality=50;
+	dlg.m_quality=50.0f;
 	if (dlg.DoModal()==IDOK){
 
 		SetCursor(LoadCursor(0,IDC_WAIT));
@@ -2417,11 +2837,15 @@ void CDemoDoc::OnJpegcompression()
 		tmp = new CxImage(*image);
 		if (!tmp->IsGrayScale()) tmp->IncreaseBpp(24);
 		tmp->SetTransIndex(-1);
-		tmp->SetJpegQuality((BYTE)dlg.m_quality);
+		tmp->SetJpegQualityF(dlg.m_quality);
 
 		DWORD imagetype = 0;
+#if CXIMAGE_SUPPORT_JPG
 		if (dlg.m_format==0) imagetype = CXIMAGE_FORMAT_JPG;
+#endif
+#if CXIMAGE_SUPPORT_JPC
 		if (dlg.m_format==1) imagetype = CXIMAGE_FORMAT_JPC;
+#endif
 
 		CxMemFile tmpFile;
 		tmpFile.Open();
@@ -2436,17 +2860,19 @@ void CDemoDoc::OnJpegcompression()
 				if (NewDoc)	{
 					NewDoc->image = tmp;
 					CString s;
-					s.Format("Jpeg compr. %d, q = %d, size = %d",
-							((CDemoApp*)AfxGetApp())->m_nDocCount, dlg.m_quality, tmpFile.Size());
+					s.Format(_T("Jpeg compr. %d, q = %.3f, size = %d"),
+							((CDemoApp*)AfxGetApp())->m_nDocCount, (double)dlg.m_quality, tmpFile.Size());
 					NewDoc->SetTitle(s);
 					NewDoc->UpdateAllViews(0,WM_USER_NEWIMAGE);
 				}
 			} else {
-				AfxMessageBox(tmp->GetLastError());
+				CString s = tmp->GetLastError();
+				AfxMessageBox(s);
 				delete tmp;
 			}
 		} else {
-			AfxMessageBox(tmp->GetLastError());
+			CString s = tmp->GetLastError();
+			AfxMessageBox(s);
 			delete tmp;
 		}
 
@@ -2465,5 +2891,519 @@ void CDemoDoc::OnViewSmooth()
 void CDemoDoc::OnUpdateViewSmooth(CCmdUI* pCmdUI) 
 {
 	pCmdUI->SetCheck(m_bSmoothDisplay);
+}
+//////////////////////////////////////////////////////////////////////////////
+void CDemoDoc::OnFiltersDataext() 
+{
+	if (image==NULL) return;
+	DlgDataExt dlg;
+
+	dlg.m_image = image;
+
+	dlg.m_Ymin = dlgDataExtInfos.fYmin;
+	dlg.m_Ymax = dlgDataExtInfos.fYmax;
+	dlg.m_Xmin = dlgDataExtInfos.fXmin;
+	dlg.m_Xmax = dlgDataExtInfos.fXmax;
+	dlg.m_thresh = dlgDataExtInfos.nThresh;
+	dlg.m_color = dlgDataExtInfos.cColor;
+	dlg.m_bMinmax = dlgDataExtInfos.bMinmax;
+	dlg.m_bAvg = dlgDataExtInfos.bAvg;
+	dlg.m_bDetect = dlgDataExtInfos.bDetect;
+	dlg.m_bLogXaxis = dlgDataExtInfos.bLogXaxis;
+	dlg.m_bLogYaxis = dlgDataExtInfos.bLogYaxis;
+
+
+	if (dlg.DoModal()==IDOK){
+		dlgDataExtInfos.fYmin = dlg.m_Ymin;
+		dlgDataExtInfos.fYmax = dlg.m_Ymax;
+		dlgDataExtInfos.fXmin = dlg.m_Xmin;
+		dlgDataExtInfos.fXmax = dlg.m_Xmax ;
+		dlgDataExtInfos.nThresh = dlg.m_thresh;
+		dlgDataExtInfos.cColor = dlg.m_color;
+		dlgDataExtInfos.bMinmax = dlg.m_bMinmax;
+		dlgDataExtInfos.bAvg = dlg.m_bAvg;
+		dlgDataExtInfos.bDetect = dlg.m_bDetect;
+		dlgDataExtInfos.bLogXaxis = dlg.m_bLogXaxis;
+		dlgDataExtInfos.bLogYaxis = dlg.m_bLogYaxis;
+	}
+
+}
+//////////////////////////////////////////////////////////////////////////////
+void CDemoDoc::OnCximageUnsharpmask() 
+{
+	m_MenuCommand=ID_CXIMAGE_UNSHARPMASK;
+	hThread=(HANDLE)_beginthread(RunCxImageThread,0,this);
+}
+//////////////////////////////////////////////////////////////////////////////
+void CDemoDoc::RegionRotateLeft()
+{
+	long i,n;
+	long h=image->GetHeight();
+	for(i=0;i<m_NumSel;i++){
+		n = m_Sel[i].x;
+		m_Sel[i].x = m_Sel[i].y;
+		m_Sel[i].y = h-1-n;
+	}
+
+}
+//////////////////////////////////////////////////////////////////////////////
+void CDemoDoc::RegionRotateRight()
+{
+	long i,n;
+	long w=image->GetWidth();
+	for(i=0;i<m_NumSel;i++){
+		n = m_Sel[i].y;
+		m_Sel[i].y = m_Sel[i].x;
+		m_Sel[i].x = w-1-n;
+	}
+
+}
+//////////////////////////////////////////////////////////////////////////////
+void CDemoDoc::OnCximageTextblur() 
+{
+	m_MenuCommand=ID_CXIMAGE_TEXTBLUR;
+	hThread=(HANDLE)_beginthread(RunCxImageThread,0,this);
+}
+//////////////////////////////////////////////////////////////////////////////
+void CDemoDoc::OnCximageRedeyeremove() 
+{
+	m_MenuCommand=ID_CXIMAGE_REDEYEREMOVE;
+	hThread=(HANDLE)_beginthread(RunCxImageThread,0,this);
+}
+//////////////////////////////////////////////////////////////////////////////
+void CDemoDoc::OnCximageBlurselborder() 
+{
+	m_MenuCommand=ID_CXIMAGE_BLURSELBORDER;
+	hThread=(HANDLE)_beginthread(RunCxImageThread,0,this);
+}
+//////////////////////////////////////////////////////////////////////////////
+
+void CDemoDoc::OnCximageSelectiveblur() 
+{
+	m_MenuCommand=ID_CXIMAGE_SELECTIVEBLUR;
+	hThread=(HANDLE)_beginthread(RunCxImageThread,0,this);
+}
+//////////////////////////////////////////////////////////////////////////////
+/*void CDemoDoc::OnFiltersSka280x350() 
+{
+	if (image==NULL) return;
+
+	SubmitUndo();
+
+	image->IncreaseBpp(24);
+
+	if (image->GetWidth()<280 && image->GetHeight()<350){
+		image->Resample2((image->GetWidth()*350)/image->GetHeight(),350);
+	}
+
+	RGBQUAD canvas = {0,0,0,0};
+	image->Thumbnail(280,350,canvas);
+
+	long colors=232;
+	RGBQUAD* ppal = NULL;
+	CQuantizer q(colors,(colors>16?7:8));
+	q.ProcessImage(image->GetDIB());
+	ppal=(RGBQUAD*)calloc(256*sizeof(RGBQUAD),1);
+	q.SetColorTable(ppal);
+
+	int idx=0;
+	for(; colors>0;colors--){
+		ppal[colors+23]=ppal[colors];
+		idx++;
+	}
+
+	const BYTE data[96] = {
+			0x00,0x00,0x00,0x00,
+			0xA8,0x00,0x00,0x00,
+			0x00,0xA8,0x00,0x00,
+			0xA8,0xA8,0x00,0x00,
+			0x00,0x00,0xA8,0x00,
+			0xA8,0x00,0xA8,0x00,
+			0x00,0x54,0xA8,0x00,
+			0xA8,0xA8,0xA8,0x00,
+			0x54,0x54,0x54,0x00,
+			0xFF,0x54,0x54,0x00,
+			0x54,0xFF,0x54,0x00,
+			0xFF,0xFF,0x54,0x00,
+			0x54,0x54,0xFF,0x00,
+			0xFF,0x54,0xFF,0x00,
+			0x54,0xFF,0xFF,0x00,
+			0xFF,0xFF,0xFF,0x00,
+			0x00,0x00,0x00,0x00,
+			0x00,0x00,0x00,0x00,
+			0x00,0x00,0x00,0x00,
+			0x00,0x00,0x00,0x00,
+			0x00,0x00,0x00,0x00,
+			0x00,0x00,0x00,0x00,
+			0x00,0x00,0x00,0x00,
+			0x00,0x00,0x00,0x00
+	};
+	memcpy(ppal,data,96);
+
+	image->DecreaseBpp(8,1,ppal,256);
+
+	free(ppal);
+	
+	image->SetType(CXIMAGE_FORMAT_SKA);
+
+	UpdateAllViews(0,WM_USER_NEWIMAGE);
+	UpdateStatusBar();
+}*/
+//////////////////////////////////////////////////////////////////////////////
+void CDemoDoc::OnCximageGettransparencymask() 
+{
+	if (image==NULL) return;
+
+	CxImage *newa = new CxImage();
+
+	Stopwatch(0);
+
+	image->GetTransparentMask(newa);
+
+	Stopwatch(1);
+	UpdateStatusBar();
+
+	((CDemoApp*)AfxGetApp())->m_nDocCount++;
+	CDemoDoc *NewDocr=(CDemoDoc*)((CDemoApp*)AfxGetApp())->demoTemplate->OpenDocumentFile(NULL); 
+	if (NewDocr)	{
+		NewDocr->image = newa;
+		CString s;
+		s.Format(_T("Transparency mask %d from %s"),((CDemoApp*)AfxGetApp())->m_nDocCount,GetTitle());
+		NewDocr->SetTitle(s);
+		NewDocr->UpdateAllViews(0,WM_USER_NEWIMAGE);
+	}
+}
+//////////////////////////////////////////////////////////////////////////////
+void CDemoDoc::OnColorsCountcolors() 
+{
+	if (image==NULL) return;
+
+	SetCursor(LoadCursor(0,IDC_WAIT));
+	Stopwatch(0);
+
+	CQuantizer q(16777216,8);
+	q.ProcessImage(image->GetDIB());
+
+	Stopwatch(1);
+	UpdateStatusBar();
+	SetCursor(LoadCursor(0,IDC_ARROW));
+
+	CString s;
+	s.Format(_T("The number of colors in the active image is: %d"), q.GetColorCount());
+	AfxMessageBox(s);
+
+}
+//////////////////////////////////////////////////////////////////////////////
+
+void CDemoDoc::OnFiltersLinearCustom() 
+{
+	// <Priyank Bolia> priyank_bolia@yahoo.com
+	// TODO: Add your command handler code here
+	if (image==NULL) return;
+	DlgCustomFilter dlg;
+
+	memcpy(dlg.dlgkernel,theApp.m_Filters.Kernel5x5,25*sizeof(long));
+	dlg.m_kSize = theApp.m_Filters.kSize;
+	dlg.m_EditBias = theApp.m_Filters.kBias;
+	dlg.m_EditDivisor = theApp.m_Filters.kDivisor;
+
+	if (dlg.DoModal()==IDOK){
+		m_MenuCommand=ID_FILTERS_LINEAR_CUSTOM;
+
+		theApp.m_Filters.kDivisor = dlg.m_EditDivisor;
+		theApp.m_Filters.kBias = dlg.m_EditBias;
+		theApp.m_Filters.kSize = dlg.m_kSize;
+
+		memcpy(theApp.m_Filters.Kernel5x5,dlg.dlgkernel,25*sizeof(long));
+
+		theApp.m_Filters.Kernel3x3[0]=(long)dlg.dlgkernel[6];
+		theApp.m_Filters.Kernel3x3[1]=(long)dlg.dlgkernel[7];
+		theApp.m_Filters.Kernel3x3[2]=(long)dlg.dlgkernel[8];
+
+		theApp.m_Filters.Kernel3x3[3]=(long)dlg.dlgkernel[11];
+		theApp.m_Filters.Kernel3x3[4]=(long)dlg.dlgkernel[12];
+		theApp.m_Filters.Kernel3x3[5]=(long)dlg.dlgkernel[13];
+
+		theApp.m_Filters.Kernel3x3[6]=(long)dlg.dlgkernel[16];
+		theApp.m_Filters.Kernel3x3[7]=(long)dlg.dlgkernel[17];
+		theApp.m_Filters.Kernel3x3[8]=(long)dlg.dlgkernel[18];
+
+		hThread=(HANDLE)_beginthread(RunCxImageThread,0,this);
+	}
+}
+//////////////////////////////////////////////////////////////////////////////
+void CDemoDoc::OnCximageCanvassize() 
+{
+	if (image==NULL) return;
+	DlgExpand dlg;
+
+	dlg.m_Mode = theApp.m_Filters.CanvasMode;
+	dlg.m_CenterH = theApp.m_Filters.CanvasCenterH;
+	dlg.m_CenterV = theApp.m_Filters.CanvasCenterV;
+	dlg.m_KeepRatio = theApp.m_Filters.CanvasKeepRatio;
+	dlg.m_UseImageBkg = theApp.m_Filters.CanvasUseImageBkg;
+	dlg.m_color = theApp.m_Filters.CanvasBkg;
+	dlg.m_newwidth = theApp.m_Filters.CanvasW;
+	dlg.m_newheight = theApp.m_Filters.CanvasH;
+	dlg.m_left = theApp.m_Filters.CanvasLeft;
+	dlg.m_right = theApp.m_Filters.CanvasRight;
+	dlg.m_top = theApp.m_Filters.CanvasTop;
+	dlg.m_bottom = theApp.m_Filters.CanvasBottom;
+
+	if (dlg.m_newwidth < (long)image->GetWidth()) dlg.m_newwidth = (long)image->GetWidth();
+	if (dlg.m_newheight < (long)image->GetHeight()) dlg.m_newheight = (long)image->GetHeight();
+
+	dlg.m_ratio = ((float)image->GetWidth())/((float)image->GetHeight());
+
+	if (dlg.DoModal()==IDOK){
+
+		m_MenuCommand=ID_CXIMAGE_CANVASSIZE;
+
+		theApp.m_Filters.CanvasMode = dlg.m_Mode;
+		theApp.m_Filters.CanvasCenterH = dlg.m_CenterH;
+		theApp.m_Filters.CanvasCenterV = dlg.m_CenterV;
+		theApp.m_Filters.CanvasKeepRatio = dlg.m_KeepRatio;
+		theApp.m_Filters.CanvasUseImageBkg = dlg.m_UseImageBkg;
+		theApp.m_Filters.CanvasBkg = dlg.m_color;
+		theApp.m_Filters.CanvasW = dlg.m_newwidth;
+		theApp.m_Filters.CanvasH = dlg.m_newheight;
+		theApp.m_Filters.CanvasLeft = dlg.m_left;
+		theApp.m_Filters.CanvasRight = dlg.m_right;
+		theApp.m_Filters.CanvasTop = dlg.m_top;
+		theApp.m_Filters.CanvasBottom = dlg.m_bottom;
+
+		if (dlg.m_Mode == 0 && ((dlg.m_newwidth < (long)image->GetWidth()) || (dlg.m_newheight < (long)image->GetHeight()))){
+			AfxMessageBox(_T("New canvas size must be greater than the original"));
+			return;
+		}
+		if (dlg.m_Mode == 1 && (dlg.m_left<0 || dlg.m_right<0 || dlg.m_top<0 || dlg.m_bottom<0)){
+			AfxMessageBox(_T("New canvas size must be greater than the original"));
+			return;
+		}
+
+		hThread=(HANDLE)_beginthread(RunCxImageThread,0,this);
+	}
+
+}
+//////////////////////////////////////////////////////////////////////////////
+void CDemoDoc::OnUpdateViewToolsFloodfill(CCmdUI* pCmdUI) 
+{
+	pCmdUI->SetCheck(m_tool==5);
+	DlgFloodFill* pDlg = ((CMainFrame *)(AfxGetApp()->m_pMainWnd))->m_pDlgFlood;
+	if (pDlg && pDlg->GetSafeHwnd() && m_tool!=5){
+		pDlg->ShowWindow(SW_HIDE);
+	}
+}
+//////////////////////////////////////////////////////////////////////////////
+void CDemoDoc::OnViewToolsFloodfill() 
+{
+	m_tool=5;
+	DlgFloodFill* pDlg = ((CMainFrame *)(AfxGetApp()->m_pMainWnd))->m_pDlgFlood;
+	if (pDlg){
+		if (pDlg->GetSafeHwnd()==0){
+			pDlg->m_color = RGB(theApp.m_FloodColor.rgbRed, theApp.m_FloodColor.rgbGreen, theApp.m_FloodColor.rgbBlue);
+			pDlg->m_tol = theApp.m_FloodTolerance;
+			pDlg->m_opacity = theApp.m_FloodOpacity;
+			pDlg->m_select = theApp.m_FloodSelect;
+			pDlg->Create();
+		} else {
+			pDlg->ShowWindow(SW_SHOW);
+		}
+	}
+}
+//////////////////////////////////////////////////////////////////////////////
+void CDemoDoc::OnCximageRemoveselection() 
+{
+	if (image==NULL) return;
+	image->SelectionDelete();
+
+	POSITION pos = GetFirstViewPosition();
+	CDemoView *pView = (CDemoView *)GetNextView(pos);
+	if (pView) pView->KillTimer(1);
+	pView->m_SelShift=0;
+	m_NumSel=0;
+
+	UpdateAllViews(NULL);
+}
+//////////////////////////////////////////////////////////////////////////////
+void CDemoDoc::OnColorsMoresaturationhsl() 
+{
+	m_MenuCommand=ID_COLORS_MORESATURATIONHSL;
+	hThread=(HANDLE)_beginthread(RunCxImageThread,0,this);
+}
+//////////////////////////////////////////////////////////////////////////////
+void CDemoDoc::OnColorsMoresaturationyuv() 
+{
+	m_MenuCommand=ID_COLORS_MORESATURATIONYUV;
+	hThread=(HANDLE)_beginthread(RunCxImageThread,0,this);
+}
+//////////////////////////////////////////////////////////////////////////////
+void CDemoDoc::OnColorsLesssaturation() 
+{
+	m_MenuCommand=ID_COLORS_LESSSATURATION;
+	hThread=(HANDLE)_beginthread(RunCxImageThread,0,this);
+}
+//////////////////////////////////////////////////////////////////////////////
+void CDemoDoc::OnColorsHistogramFullsaturation() 
+{
+	m_MenuCommand=ID_COLORS_HISTOGRAM_FULLSATURATION;
+	hThread=(HANDLE)_beginthread(RunCxImageThread,0,this);
+}
+//////////////////////////////////////////////////////////////////////////////
+void CDemoDoc::OnColorsHistogramHalfsaturation() 
+{
+	m_MenuCommand=ID_COLORS_HISTOGRAM_HALFSATURATION;
+	hThread=(HANDLE)_beginthread(RunCxImageThread,0,this);
+}
+//////////////////////////////////////////////////////////////////////////////
+void CDemoDoc::OnCximageHistogramStretcht0() 
+{
+	m_MenuCommand=ID_CXIMAGE_HISTOGRAM_STRETCHT0;
+	hThread=(HANDLE)_beginthread(RunCxImageThread,0,this);
+}
+//////////////////////////////////////////////////////////////////////////////
+void CDemoDoc::OnCximageHistogramStretcht1() 
+{
+	m_MenuCommand=ID_CXIMAGE_HISTOGRAM_STRETCHT1;
+	hThread=(HANDLE)_beginthread(RunCxImageThread,0,this);
+}
+//////////////////////////////////////////////////////////////////////////////
+void CDemoDoc::OnCximageHistogramStretcht2() 
+{
+	m_MenuCommand=ID_CXIMAGE_HISTOGRAM_STRETCHT2;
+	hThread=(HANDLE)_beginthread(RunCxImageThread,0,this);
+}
+//////////////////////////////////////////////////////////////////////////////
+void CDemoDoc::OnColorsAdaptivethreshold() 
+{
+	m_MenuCommand=ID_COLORS_ADAPTIVETHRESHOLD;
+	hThread=(HANDLE)_beginthread(RunCxImageThread,0,this);
+}
+//////////////////////////////////////////////////////////////////////////////
+void CDemoDoc::OnViewPreviousframe() 
+{
+	long m = image->GetNumFrames();
+	long n = image->GetFrame()-1;
+	if (n<0) n=m-1;
+	if (image->GetFrame(n))
+		image->Copy(*image->GetFrame(n));
+	image->SetFrame(n);
+	UpdateAllViews(NULL);
+}
+//////////////////////////////////////////////////////////////////////////////
+void CDemoDoc::OnViewNextframe() 
+{
+	long m = image->GetNumFrames();
+	long n = image->GetFrame()+1;
+	if (n>=m) n=0;
+	if (image->GetFrame(n))
+		image->Copy(*image->GetFrame(n));
+	image->SetFrame(n);
+	UpdateAllViews(NULL);
+}
+//////////////////////////////////////////////////////////////////////////////
+void CDemoDoc::OnUpdateViewPlayanimation(CCmdUI* pCmdUI) 
+{
+	if(image==0 || hThread || image->GetFrame(0)==0) pCmdUI->Enable(0);
+	pCmdUI->SetCheck(m_playanimation);
+}
+//////////////////////////////////////////////////////////////////////////////
+void CDemoDoc::OnViewPlayanimation() 
+{
+	m_playanimation = 1-m_playanimation;
+
+	POSITION pos = GetFirstViewPosition();
+	CDemoView *pView = (CDemoView *)GetNextView(pos);
+	if (pView){
+		if (m_playanimation){
+			pView->SetTimer(2,200,NULL);
+		} else {
+			pView->KillTimer(2);
+		}
+	}
+}
+//////////////////////////////////////////////////////////////////////////////
+void CDemoDoc::PlayNextFrame()
+{
+	POSITION pos = GetFirstViewPosition();
+	CDemoView *pView = (CDemoView *)GetNextView(pos);
+	if (pView && image){
+		pView->KillTimer(2);
+		pView->SetTimer(2,10*max(1,image->GetFrameDelay()),NULL);
+	}
+	OnViewNextframe();
+}
+//////////////////////////////////////////////////////////////////////////////
+void CDemoDoc::OnFiltersAddshadow() 
+{
+	if (image==NULL) return;
+	DlgShadow dlg;
+
+	dlg.m_x = theApp.m_Filters.ShadowX;
+	dlg.m_y = theApp.m_Filters.ShadowY;
+	dlg.m_radius = theApp.m_Filters.ShadowR;
+	dlg.m_shadow = theApp.m_Filters.ShadowColor;
+	dlg.m_bkg = theApp.m_Filters.ShadowBkg;
+	dlg.m_intensity = theApp.m_Filters.ShadowIntensity;
+	dlg.m_relative = theApp.m_Filters.ShadowRelative;
+
+	if (dlg.DoModal()==IDOK){
+
+		theApp.m_Filters.ShadowX = dlg.m_x;
+		theApp.m_Filters.ShadowY = dlg.m_y;
+		theApp.m_Filters.ShadowR = dlg.m_radius;
+		theApp.m_Filters.ShadowColor = dlg.m_shadow;
+		theApp.m_Filters.ShadowBkg = dlg.m_bkg;
+		theApp.m_Filters.ShadowIntensity = dlg.m_intensity;
+		theApp.m_Filters.ShadowRelative = dlg.m_relative;
+
+		SetCursor(LoadCursor(0,IDC_WAIT));
+		Stopwatch(0);
+
+		RGBQUAD c0 = CxImage::RGBtoRGBQUAD(theApp.m_Filters.ShadowColor);
+		RGBQUAD c1 = CxImage::RGBtoRGBQUAD(theApp.m_Filters.ShadowBkg);
+
+		CxImage *mix = new CxImage(*image);
+		mix->IncreaseBpp(24);
+		mix->SelectionClear();
+		mix->SelectionAddColor(c1);
+		CxImage iShadow;
+		mix->SelectionSplit(&iShadow);
+		mix->SelectionDelete();
+
+		if (theApp.m_Filters.ShadowRelative){
+			CxImage gray(*image);
+			gray.GrayScale();
+			iShadow.Mix(gray,CxImage::OpOr);
+		}
+
+		iShadow.GaussianBlur(theApp.m_Filters.ShadowR);
+
+		for (int n = 0; n<256; n++){
+			BYTE r = (BYTE)(c1.rgbRed   + ((theApp.m_Filters.ShadowIntensity*n*((long)c0.rgbRed   - (long)c1.rgbRed))>>16));
+			BYTE g = (BYTE)(c1.rgbGreen + ((theApp.m_Filters.ShadowIntensity*n*((long)c0.rgbGreen - (long)c1.rgbGreen))>>16));
+			BYTE b = (BYTE)(c1.rgbBlue  + ((theApp.m_Filters.ShadowIntensity*n*((long)c0.rgbBlue  - (long)c1.rgbBlue))>>16));
+			iShadow.SetPaletteColor((BYTE)(255-n),r,g,b);
+		}
+
+		mix->SetTransColor(c1);
+		mix->SetTransIndex(0);
+		mix->Mix(iShadow,CxImage::OpSrcCopy,theApp.m_Filters.ShadowX,theApp.m_Filters.ShadowY);
+		//mix->Transfer(iShadow);
+		mix->SetTransIndex(-1);
+
+		CDemoDoc *NewDocr=(CDemoDoc*)((CDemoApp*)AfxGetApp())->demoTemplate->OpenDocumentFile(NULL); 
+		if (NewDocr)	{
+			NewDocr->image = mix;
+			CString s;
+			s.Format(_T("NewImage%d"),((CDemoApp*)AfxGetApp())->m_nDocCount++);
+			NewDocr->SetTitle(s);
+			NewDocr->UpdateAllViews(0,WM_USER_NEWIMAGE);
+		}
+
+		Stopwatch(1);
+		UpdateStatusBar();
+		SetCursor(LoadCursor(0,IDC_ARROW));
+	}
 }
 //////////////////////////////////////////////////////////////////////////////

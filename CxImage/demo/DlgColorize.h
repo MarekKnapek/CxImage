@@ -16,12 +16,15 @@ class DlgColorize : public CDialog
 // Construction
 public:
 	BYTE m_bHSL;
+	BYTE m_bLinked;
 	DlgColorize(CWnd* pParent = NULL);   // standard constructor
 
 // Dialog Data
 	//{{AFX_DATA(DlgColorize)
 	enum { IDD = IDD_COLORIZE };
+	CButton	m_rbLink;
 	CButton	m_rbHSL;
+	CButton	m_rbSol;
 	CxTargetButton	m_ok;
 	CxTargetButton	m_canc;
 	CxTargetButton	m_colors;
@@ -31,6 +34,7 @@ public:
 	long	m_g;
 	long	m_b;
 	BYTE	m_blend;
+	BYTE	m_sol;
 	//}}AFX_DATA
 
 

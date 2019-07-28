@@ -409,7 +409,7 @@ TIFFFileName(TIFF* tif)
 int
 TIFFFileno(TIFF* tif)
 {
-	return (tif->tif_fd);
+	return (int)(tif->tif_fd);
 }
 
 /*

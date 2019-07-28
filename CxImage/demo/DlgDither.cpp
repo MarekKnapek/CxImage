@@ -56,7 +56,32 @@ BOOL DlgDither::OnInitDialog()
 	m_ok.SetIcon(IDI_G,BS_LEFT);
 	m_canc.SetIcon(IDI_R,BS_LEFT);
 	
-	m_r1.SetCheck(1);
+	switch(m_method)
+	{
+	case 1:
+		m_r2.SetCheck(1);
+		break;
+	case 2:
+		m_r3.SetCheck(1);
+		break;
+	case 3:
+		m_r4.SetCheck(1);
+		break;
+	case 4:
+		m_r5.SetCheck(1);
+		break;
+	case 5:
+		m_r6.SetCheck(1);
+		break;
+	case 6:
+		m_r7.SetCheck(1);
+		break;
+	case 7:
+		m_r8.SetCheck(1);
+		break;
+	default:
+		m_r1.SetCheck(1);
+	}
 
 	return TRUE;  // return TRUE unless you set the focus to a control
 	              // EXCEPTION: OCX Property Pages should return FALSE

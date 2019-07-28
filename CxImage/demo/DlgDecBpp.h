@@ -15,9 +15,10 @@ class DlgDecBpp : public CDialog
 {
 // Construction
 public:
-	long m_method;
-	long m_bit;
-	long m_errordiffusion;
+	BYTE m_method;
+	BYTE m_bit;
+	BYTE m_errordiffusion;
+	BYTE m_bLimitColors;
 	DlgDecBpp(CWnd* pParent = NULL);   // standard constructor
 
 // Dialog Data
