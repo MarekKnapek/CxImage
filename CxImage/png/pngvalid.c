@@ -1,7 +1,7 @@
 
 /* pngvalid.c - validate libpng by constructing then reading png files.
  *
- * Last changed in libpng 1.5.0 [January 6, 2011]
+ * Last changed in libpng 1.5.1 [February 3, 2011]
  * Copyright (c) 2011 Glenn Randers-Pehrson
  * Written by John Cunningham Bowler
  *
@@ -20,8 +20,40 @@
  */
 
 #include "png.h"
+#if PNG_LIBPNG_VER < 10500
+/* This delibarately lacks the PNG_CONST. */
+typedef png_byte *png_const_bytep;
+
+/* This is copied from 1.5.1 png.h: */
+#define PNG_INTERLACE_ADAM7_PASSES 7
+#define PNG_PASS_START_ROW(pass) (((1U&~(pass))<<(3-((pass)>>1)))&7)
+#define PNG_PASS_START_COL(pass) (((1U& (pass))<<(3-(((pass)+1)>>1)))&7)
+#define PNG_PASS_ROW_SHIFT(pass) ((pass)>2?(8-(pass))>>1:3)
+#define PNG_PASS_COL_SHIFT(pass) ((pass)>1?(7-(pass))>>1:3)
+#define PNG_PASS_ROWS(height, pass) (((height)+(((1<<PNG_PASS_ROW_SHIFT(pass))\
+   -1)-PNG_PASS_START_ROW(pass)))>>PNG_PASS_ROW_SHIFT(pass))
+#define PNG_PASS_COLS(width, pass) (((width)+(((1<<PNG_PASS_COL_SHIFT(pass))\
+   -1)-PNG_PASS_START_COL(pass)))>>PNG_PASS_COL_SHIFT(pass))
+#define PNG_ROW_FROM_PASS_ROW(yIn, pass) \
+   (((yIn)<<PNG_PASS_ROW_SHIFT(pass))+PNG_PASS_START_ROW(pass))
+#define PNG_COL_FROM_PASS_COL(xIn, pass) \
+   (((xIn)<<PNG_PASS_COL_SHIFT(pass))+PNG_PASS_START_COL(pass))
+#define PNG_PASS_MASK(pass,off) ( \
+   ((0x110145AFU>>(((7-(off))-(pass))<<2)) & 0xFU) | \
+   ((0x01145AF0U>>(((7-(off))-(pass))<<2)) & 0xF0U))
+#define PNG_ROW_IN_INTERLACE_PASS(y, pass) \
+   ((PNG_PASS_MASK(pass,0) >> ((y)&7)) & 1)
+#define PNG_COL_IN_INTERLACE_PASS(x, pass) \
+   ((PNG_PASS_MASK(pass,1) >> ((x)&7)) & 1)
+
+/* These are needed too for the defualt build: */
+#define PNG_WRITE_16BIT_SUPPORTED
+#define PNG_READ_16BIT_SUPPORTED
+#endif
+
 #include "zlib.h"   /* For crc32 */
 
+#include <float.h>  /* For floating point constants */
 #include <stdlib.h> /* For malloc */
 #include <string.h> /* For memcpy, memset */
 #include <math.h>   /* For floor */
@@ -30,7 +62,11 @@
  * expected to have no bad effects on performance.
  */
 #ifndef UNUSED
-#  define UNUSED(param) param = param;
+#  if defined(__GNUC__) || defined(_MSC_VER)
+#     define UNUSED(param) (void)param;
+#  else
+#     define UNUSED(param)
+#  endif
 #endif
 
 /***************************** EXCEPTION HANDLING *****************************/
@@ -238,25 +274,28 @@ next_format(png_bytep colour_type, png_bytep bit_depth)
 
 static unsigned int
 sample(png_const_bytep row, png_byte colour_type, png_byte bit_depth,
-    png_uint_32 x, unsigned int sample)
+    png_uint_32 x, unsigned int sample_index)
 {
-   png_uint_32 index, result;
+   png_uint_32 bit_index, result;
 
    /* Find a sample index for the desired sample: */
    x *= bit_depth;
-   index = x;
+   bit_index = x;
 
    if ((colour_type & 1) == 0) /* !palette */
    {
       if (colour_type & 2)
-         index *= 3, index += sample; /* Colour channels; select one */
+         bit_index *= 3;
 
       if (colour_type & 4)
-         index += x; /* Alpha channel */
+         bit_index += x; /* Alpha channel */
+
+      if (colour_type & (2+4))
+         bit_index += sample_index * bit_depth; /* Multiple channels: select one */
    }
 
    /* Return the sample from the row as an integer. */
-   row += index >> 3;
+   row += bit_index >> 3;
    result = *row;
 
    if (bit_depth == 8)
@@ -266,8 +305,8 @@ sample(png_const_bytep row, png_byte colour_type, png_byte bit_depth,
       return (result << 8) + *++row;
 
    /* Less than 8 bits per sample. */
-   index &= 7;
-   return (result >> (8-index-bit_depth)) & ((1U<<bit_depth)-1);
+   bit_index &= 7;
+   return (result >> (8-bit_index-bit_depth)) & ((1U<<bit_depth)-1);
 }
 
 /* Copy a single pixel, of a given size, from one buffer to another -
@@ -399,8 +438,8 @@ typedef struct png_store
    unsigned int       validated :1;   /* used as a temporary flag */
    int                nerrors;
    int                nwarnings;
-   char               test[64]; /* Name of test */
-   char               error[128];
+   char               test[128]; /* Name of test */
+   char               error[256];
 
    /* Read fields */
    png_structp        pread;    /* Used to read a saved file */
@@ -447,6 +486,26 @@ store_pool_mark(png_byte *mark)
       u0 <<= 8;
       u0 |= u;
       *mark++ = (png_byte)u;
+   }
+}
+
+/* Use this for random 32 bit values, this function makes sure the result is
+ * non-zero.
+ */
+static png_uint_32
+random_32(void)
+{
+
+   for(;;)
+   {
+      png_byte mark[4];
+      png_uint_32 result;
+
+      store_pool_mark(mark);
+      result = png_get_uint_32(mark);
+
+      if (result != 0)
+         return result;
    }
 }
 
@@ -1274,16 +1333,19 @@ typedef struct png_modifier
    /* Run the odd-sized image and interlace read/write tests? */
    unsigned int             test_size :1;
 
+   /* Run tests on reading with a combiniation of transforms, */
+   unsigned int             test_transform :1;
+
    /* When to use the use_input_precision option: */
    unsigned int             use_input_precision :1;
    unsigned int             use_input_precision_sbit :1;
    unsigned int             use_input_precision_16to8 :1;
 
    /* Which gamma tests to run: */
-   unsigned int             test_threshold :1;
-   unsigned int             test_transform :1; /* main tests */
-   unsigned int             test_sbit :1;
-   unsigned int             test_strip16 :1;
+   unsigned int             test_gamma_threshold :1;
+   unsigned int             test_gamma_transform :1; /* main tests */
+   unsigned int             test_gamma_sbit :1;
+   unsigned int             test_gamma_strip16 :1;
 
    unsigned int             log :1;   /* Log max error */
 
@@ -1347,15 +1409,16 @@ modifier_init(png_modifier *pm)
    pm->error_gray_2 = pm->error_gray_4 = pm->error_gray_8 = 0;
    pm->error_gray_16 = pm->error_color_8 = pm->error_color_16 = 0;
    pm->interlace_type = PNG_INTERLACE_NONE;
-   pm->test_standard = 1;
+   pm->test_standard = 0;
    pm->test_size = 0;
+   pm->test_transform = 0;
    pm->use_input_precision = 0;
    pm->use_input_precision_sbit = 0;
    pm->use_input_precision_16to8 = 0;
-   pm->test_threshold = 1;
-   pm->test_transform = 1;
-   pm->test_sbit = 1;
-   pm->test_strip16 = 1;
+   pm->test_gamma_threshold = 0;
+   pm->test_gamma_transform = 0;
+   pm->test_gamma_sbit = 0;
+   pm->test_gamma_strip16 = 0;
    pm->log = 0;
 
    /* Rely on the memset for all the other fields - there are no pointers */
@@ -1875,7 +1938,7 @@ static png_uint_32
 standard_width(png_structp pp, png_uint_32 id)
 {
    png_uint_32 width = WIDTH_FROM_ID(id);
-   UNUSED(pp);
+   UNUSED(pp)
 
    if (width == 0)
       width = transform_width(pp, COL_FROM_ID(id), DEPTH_FROM_ID(id));
@@ -2490,6 +2553,8 @@ make_error(png_store* volatile ps, png_byte PNG_CONST colour_type,
       /* Time for a few errors, these are in various optional chunks, the
        * standard tests test the standard chunks pretty well.
        */
+#     define exception__prev exception_prev_1
+#     define exception__env exception_env_1
       Try
       {
          /* Expect this to throw: */
@@ -2513,6 +2578,8 @@ make_error(png_store* volatile ps, png_byte PNG_CONST colour_type,
 
       Catch (fault)
          ps = fault; /* expected exit, make sure ps is not clobbered */
+#undef exception__prev
+#undef exception__env
 
       /* And clear these flags */
       ps->expect_error = 0;
@@ -2637,11 +2704,23 @@ perform_error_test(png_modifier *pm)
  * functions in the gamma test code; something that could not be done with
  * nested funtions!
  */
+typedef struct standard_palette_entry /* pngvalid format palette! */
+{
+   png_byte red;
+   png_byte green;
+   png_byte blue;
+   png_byte alpha;
+} standard_palette[256];
+
 typedef struct standard_display
 {
    png_store*  ps;             /* Test parameters (passed to the function) */
    png_byte    colour_type;
    png_byte    bit_depth;
+   png_byte    red_sBIT;       /* Input data sBIT values. */
+   png_byte    green_sBIT;
+   png_byte    blue_sBIT;
+   png_byte    alpha_sBIT;
    int         interlace_type;
    png_uint_32 id;             /* Calculated file ID */
    png_uint_32 w;              /* Width of image */
@@ -2651,6 +2730,15 @@ typedef struct standard_display
    png_uint_32 bit_width;      /* Width of output row in bits */
    size_t      cbRow;          /* Bytes in a row of the output image */
    int         do_interlace;   /* Do interlacing internally */
+   int         is_transparent; /* Transparecy information was present. */
+   struct
+   {
+      png_uint_16 red;
+      png_uint_16 green;
+      png_uint_16 blue;
+   }           transparent;    /* The transparent color, if set. */
+   standard_palette
+               palette;
 } standard_display;
 
 static void
@@ -2660,6 +2748,8 @@ standard_display_init(standard_display *dp, png_store* ps, png_uint_32 id,
    dp->ps = ps;
    dp->colour_type = COL_FROM_ID(id);
    dp->bit_depth = DEPTH_FROM_ID(id);
+   dp->alpha_sBIT = dp->blue_sBIT = dp->green_sBIT = dp->alpha_sBIT =
+      dp->bit_depth;
    dp->interlace_type = INTERLACE_FROM_ID(id);
    dp->id = id;
    /* All the rest are filled in after the read_info: */
@@ -2670,6 +2760,80 @@ standard_display_init(standard_display *dp, png_store* ps, png_uint_32 id,
    dp->bit_width = 0;
    dp->cbRow = 0;
    dp->do_interlace = do_interlace;
+   dp->is_transparent = 0;
+   /* Preset the transparent color to black: */
+   memset(&dp->transparent, 0, sizeof dp->transparent);
+   /* Preset the palette to full intensity/opaque througout: */
+   memset(dp->palette, 0xff, sizeof dp->palette);
+
+}
+
+/* Call this only if the colour type is 3 - PNG_COLOR_TYPE_PALETTE - otherwise
+ * it will png_error out.  The API returns true if tRNS information was
+ * present.
+ */
+static int
+standard_palette_init(standard_palette palette, png_structp pp, png_infop pi)
+{
+   png_colorp pal;
+   png_bytep trans_alpha;
+   int num;
+
+   pal = 0;
+   num = -1;
+   if (png_get_PLTE(pp, pi, &pal, &num) & PNG_INFO_PLTE)
+   {
+      int i;
+
+      for (i=0; i<num; ++i)
+      {
+         palette[i].red = pal[i].red;
+         palette[i].green = pal[i].green;
+         palette[i].blue = pal[i].blue;
+      }
+
+      /* Mark the remainder of the entries with a flag value: */
+      for (; i<256; ++i)
+         palette[i].red = palette[i].green = palette[i].blue = 126;
+   }
+
+   else /* !png_get_PLTE */
+      png_error(pp, "validate: missing PLTE with color type 3");
+
+   trans_alpha = 0;
+   num = -1;
+   if (png_get_tRNS(pp, pi, &trans_alpha, &num, 0) & PNG_INFO_tRNS)
+   {
+      int i;
+
+      /* Any of these are crash-worthy - given the implementation of
+       * png_get_tRNS up to 1.5 an app won't crash if it just checks the
+       * result above and fails to check that the variables it passed have
+       * actually been filled in!  Note that if the app were to pass the
+       * last, png_color_16p, variable too it couldn't rely on this.
+       */
+      if (trans_alpha == 0 || num <= 0 || num > 256)
+         png_error(pp, "validate: unexpected png_get_tRNS (palette) result");
+
+      for (i=0; i<num; ++i)
+         palette[i].alpha = trans_alpha[i];
+
+      for (; i<256; ++i)
+         palette[i].alpha = 255;
+
+      return 1; /* transparency */
+   }
+
+   else
+   {
+      /* No transparency - just set the alpha channel to opaque. */
+      int i;
+
+      for (i=0; i<256; ++i)
+         palette[i].alpha = 255;
+
+      return 0; /* no transparency */
+   }
 }
 
 /* By passing a 'standard_display' the progressive callbacks can be used
@@ -2708,6 +2872,61 @@ standard_info_part1(standard_display *dp, png_structp pp, png_infop pi)
    if (dp->h != standard_height(pp, dp->id))
       png_error(pp, "validate: image height changed");
 
+   /* Record (but don't check at present) the input sBIT according to the colour
+    * type information.
+    */
+   {
+      png_color_8p sBIT = 0;
+
+      if (png_get_sBIT(pp, pi, &sBIT) & PNG_INFO_sBIT)
+      {
+         int sBIT_invalid = 0;
+
+         if (sBIT == 0)
+            png_error(pp, "validate: unexpected png_get_sBIT result");
+
+         if (dp->colour_type & PNG_COLOR_MASK_COLOR)
+         {
+            if (sBIT->red == 0 || sBIT->red > dp->bit_depth)
+               sBIT_invalid = 1;
+            else
+               dp->red_sBIT = sBIT->red;
+
+            if (sBIT->green == 0 || sBIT->green > dp->bit_depth)
+               sBIT_invalid = 1;
+            else
+               dp->green_sBIT = sBIT->green;
+
+            if (sBIT->blue == 0 || sBIT->blue > dp->bit_depth)
+               sBIT_invalid = 1;
+            else
+               dp->blue_sBIT = sBIT->blue;
+         }
+
+         else /* !COLOR */
+         {
+            if (sBIT->gray == 0 || sBIT->gray > dp->bit_depth)
+               sBIT_invalid = 1;
+            else
+               dp->blue_sBIT = dp->green_sBIT = dp->red_sBIT = sBIT->gray;
+         }
+
+         /* All 8 bits in tRNS for a palette image are significant - see the
+          * spec.
+          */
+         if (dp->colour_type & PNG_COLOR_MASK_ALPHA)
+         {
+            if (sBIT->alpha == 0 || sBIT->alpha > dp->bit_depth)
+               sBIT_invalid = 1;
+            else
+               dp->alpha_sBIT = sBIT->alpha;
+         }
+
+         if (sBIT_invalid)
+            png_error(pp, "validate: sBIT value out of range");
+      }
+   }
+
    /* Important: this is validating the value *before* any transforms have been
     * put in place.  It doesn't matter for the standard tests, where there are
     * no transforms, but it does for other tests where rowbytes may change after
@@ -2716,28 +2935,57 @@ standard_info_part1(standard_display *dp, png_structp pp, png_infop pi)
    if (png_get_rowbytes(pp, pi) != standard_rowsize(pp, dp->id))
       png_error(pp, "validate: row size changed");
 
+   /* The palette is never read for non-palette images, even though it is valid
+    * - this could be changed.
+    */
    if (dp->colour_type == 3) /* palette */
    {
-      png_colorp pal;
-      int num;
+      int i;
 
-      /* This could be passed in but isn't - the values set above when the
-       * standard images were made are just repeated here.
-       */
-      if (png_get_PLTE(pp, pi, &pal, &num) & PNG_INFO_PLTE)
+      dp->is_transparent = standard_palette_init(dp->palette, pp, pi);
+
+      /* And validate the result. */
+      for (i=0; i<256; ++i)
+         if (dp->palette[i].red != i || dp->palette[i].green != i ||
+            dp->palette[i].blue != i)
+            png_error(pp, "validate: color type 3 PLTE chunk changed");
+   }
+
+   /* In any case always check for a tranparent color: */
+   {
+      png_color_16p trans_color = 0;
+
+      if (png_get_tRNS(pp, pi, 0, 0, &trans_color) & PNG_INFO_tRNS)
       {
-         int i;
+         if (trans_color == 0)
+            png_error(pp, "validate: unexpected png_get_tRNS (color) result");
 
-         if (num != 256)
-            png_error(pp, "validate: color type 3 PLTE chunk size changed");
+         switch (dp->colour_type)
+         {
+         case 0:
+            dp->transparent.red = dp->transparent.green = dp->transparent.blue =
+               trans_color->gray;
+            dp->is_transparent = 1;
+            break;
 
-         for (i=0; i<num; ++i)
-            if (pal[i].red != i || pal[i].green != i || pal[i].blue != i)
-               png_error(pp, "validate: color type 3 PLTE chunk changed");
+         case 2:
+            dp->transparent.red = trans_color->red;
+            dp->transparent.green = trans_color->green;
+            dp->transparent.blue = trans_color->blue;
+            dp->is_transparent = 1;
+            break;
+
+         case 3:
+            /* Not expected because it should result in the array case
+             * above.
+             */
+            png_error(pp, "validate: unexpected png_get_tRNS result");
+            break;
+
+         default:
+            png_error(pp, "validate: invalid tRNS chunk with alpha image");
+         }
       }
-
-      else
-         png_error(pp, "validate: missing PLTE with color type 3");
    }
 
    /* Read the number of passes - expected to match the value used when
@@ -2979,7 +3227,7 @@ standard_end(png_structp pp, png_infop pi)
 {
    standard_display *dp = png_get_progressive_ptr(pp);
 
-   UNUSED(pi);
+   UNUSED(pi)
 
    /* Validate the image - progressive reading only produces one variant for
     * interlaced images.
@@ -3213,6 +3461,1567 @@ perform_size_test(png_modifier *pm)
 }
 
 
+/******************************* TRANSFORM TESTS ******************************/
+/* A set of tests to validate libpng image transforms.  The possibilities here
+ * are legion because the transforms can be combined in a combinatorial
+ * fashion.  To deal with this some measure of restraint is required, otherwise
+ * the tests would take forever.
+ */
+typedef struct image_pixel
+{
+   /* A local (pngvalid) representation of a PNG pixel, in all its
+    * various forms.
+    */
+   unsigned int red, green, blue, alpha; /* For non-palette images. */
+   unsigned int palette_index;           /* For a palette image. */
+   png_byte colour_type;                 /* As in the spec. */
+   png_byte bit_depth;                   /* Defines bit size in row */
+   png_byte sample_depth;                /* Scale of samples */
+   int      have_tRNS;                   /* tRNS chunk may need processing */
+
+   /* For checking the code calculates double precision floating point values
+    * along with an error value, accumulated from the transforms.  Because an
+    * sBIT setting allows larger error bounds (indeed, by the spec, apparently
+    * up to just less than +/-1 in the scaled value) the *lowest* sBIT for each
+    * channel is stored.  This sBIT value is folded in to the stored error value
+    * at the end of the application of the transforms to the pixel.
+    */
+   double   redf, greenf, bluef, alphaf;
+   double   rede, greene, bluee, alphae;
+   png_byte red_sBIT, green_sBIT, blue_sBIT, alpha_sBIT;
+} image_pixel;
+
+/* Shared utility function, see below. */
+static void
+image_pixel_setf(image_pixel *this, unsigned int max)
+{
+   this->redf = this->red / (double)max;
+   this->greenf = this->green / (double)max;
+   this->bluef = this->blue / (double)max;
+   this->alphaf = this->alpha / (double)max;
+
+   if (this->red < max)
+      this->rede = this->redf * DBL_EPSILON;
+   else
+      this->rede = 0;
+   if (this->green < max)
+      this->greene = this->greenf * DBL_EPSILON;
+   else
+      this->greene = 0;
+   if (this->blue < max)
+      this->bluee = this->bluef * DBL_EPSILON;
+   else
+      this->bluee = 0;
+   if (this->alpha < max)
+      this->alphae = this->alphaf * DBL_EPSILON;
+   else
+      this->alphae = 0;
+}
+
+/* Initialize the structure for the next pixel - call this before doing any
+ * transforms and call it for each pixel since all the fields may need to be
+ * reset.
+ */
+static void
+image_pixel_init(image_pixel *this, png_const_bytep row, png_byte colour_type,
+    png_byte bit_depth, png_uint_32 x, standard_palette palette)
+{
+   PNG_CONST png_byte sample_depth = (png_byte)(colour_type ==
+      PNG_COLOR_TYPE_PALETTE ? 8 : bit_depth);
+   PNG_CONST unsigned int max = (1U<<sample_depth)-1;
+
+   /* Initially just set everything to the same number and the alpha to opaque.
+    * Note that this currently assumes a simple palette where entry x has colour
+    * rgb(x,x,x)!
+    */
+   this->palette_index = this->red = this->green = this->blue =
+      sample(row, colour_type, bit_depth, x, 0);
+   this->alpha = max;
+   this->red_sBIT = this->green_sBIT = this->blue_sBIT = this->alpha_sBIT =
+      sample_depth;
+
+   /* Then override as appropriate: */
+   if (colour_type == 3) /* palette */
+   {
+      /* This permits the caller to default to the sample value. */
+      if (palette != 0)
+      {
+         PNG_CONST unsigned int i = this->palette_index;
+
+         this->red = palette[i].red;
+         this->green = palette[i].green;
+         this->blue = palette[i].blue;
+         this->alpha = palette[i].alpha;
+      }
+   }
+
+   else /* not palette */
+   {
+      unsigned int i = 0;
+
+      if (colour_type & 2)
+      {
+         this->green = sample(row, colour_type, bit_depth, x, 1);
+         this->blue = sample(row, colour_type, bit_depth, x, 2);
+         i = 2;
+      }
+      if (colour_type & 4)
+         this->alpha = sample(row, colour_type, bit_depth, x, ++i);
+   }
+
+   /* Calculate the scaled values, these are simply the values divided by
+    * 'max' and the error is initialized to the double precision epsilon value
+    * from the header file.
+    */
+   image_pixel_setf(this, max);
+
+   /* Store the input information for use in the transforms - these will
+    * modify the information.
+    */
+   this->colour_type = colour_type;
+   this->bit_depth = bit_depth;
+   this->sample_depth = sample_depth;
+   this->have_tRNS = 0;
+}
+
+/* Convert a palette image to an rgb image.  This necessarily converts the tRNS
+ * chunk at the same time, because the tRNS will be in palette form.
+ */
+static void
+image_pixel_convert_PLTE(image_pixel *this, const standard_display *display)
+{
+   if (this->colour_type == PNG_COLOR_TYPE_PALETTE)
+   {
+      PNG_CONST unsigned int i = this->palette_index;
+
+      this->bit_depth = this->sample_depth;
+      this->red = display->palette[i].red;
+      this->green = display->palette[i].green;
+      this->blue = display->palette[i].blue;
+      this->red_sBIT = display->red_sBIT;
+      this->green_sBIT = display->green_sBIT;
+      this->blue_sBIT = display->blue_sBIT;
+
+      if (this->have_tRNS)
+      {
+         this->alpha = display->palette[i].alpha;
+         this->colour_type = PNG_COLOR_TYPE_RGB_ALPHA;
+         this->have_tRNS = 0;
+      }
+      else
+      {
+         this->alpha = 255;
+         this->colour_type = PNG_COLOR_TYPE_RGB;
+      }
+      this->alpha_sBIT = 8;
+
+      /* And regenerate the scaled values and all the errors, which are now set
+       * back to the initial values.
+       */
+      image_pixel_setf(this, 255);
+   }
+}
+
+/* Add an alpha channel, this will glom in the tRNS information because tRNS is
+ * not valid in an alpha image.  The bit depth will invariably be set to at
+ * least 8.  Palette images will be converted to alpha (using the above API).
+ */
+static void
+image_pixel_add_alpha(image_pixel *this, const standard_display *display)
+{
+   if (this->colour_type == PNG_COLOR_TYPE_PALETTE)
+      image_pixel_convert_PLTE(this, display);
+
+   if ((this->colour_type & PNG_COLOR_MASK_ALPHA) == 0)
+   {
+      if (this->colour_type == PNG_COLOR_TYPE_GRAY)
+      {
+         if (this->bit_depth < 8)
+            this->bit_depth = 8;
+
+         if (this->have_tRNS)
+         {
+            this->have_tRNS = 0;
+
+            /* Check the input, original, channel value here against the
+             * original tRNS gray chunk valie.
+             */
+            if (this->red == display->transparent.red)
+               this->alphaf = 0;
+            else
+               this->alphaf = 1;
+         }
+         else
+            this->alphaf = 1;
+
+         this->colour_type = PNG_COLOR_TYPE_GRAY_ALPHA;
+      }
+
+      else if (this->colour_type == PNG_COLOR_TYPE_RGB)
+      {
+         if (this->have_tRNS)
+         {
+            this->have_tRNS = 0;
+
+            /* Again, check the exact input values, not the current transformed
+             * value!
+             */
+            if (this->red == display->transparent.red &&
+               this->green == display->transparent.green &&
+               this->blue == display->transparent.blue)
+               this->alphaf = 0;
+            else
+               this->alphaf = 1;
+
+            this->colour_type = PNG_COLOR_TYPE_RGB_ALPHA;
+         }
+      }
+
+      /* The error in the alpha is zero and the sBIT value comes from the
+       * original sBIT data (actually it will always be the original bit depth).
+       */
+      this->alphae = 0;
+      this->alpha_sBIT = display->alpha_sBIT;
+   }
+}
+
+struct transform_display;
+typedef struct image_transform
+{
+   /* The name of this transform: a string. */
+   PNG_CONST char *name;
+
+   /* Each transform can be disabled from the command line: */
+   int enable;
+
+   /* The global list of transforms; read only. */
+   struct image_transform *PNG_CONST list;
+
+   /* The global count of the number of times this transform has been set on an
+    * image.
+    */
+   unsigned int global_use;
+
+   /* The local count of the number of times this transform has been set. */
+   unsigned int local_use;
+
+   /* The next transform in the list, each transform must call its own next
+    * transform after it has processed the pixel successfully.
+    */
+   PNG_CONST struct image_transform *next;
+
+   /* A single transform for the image, expressed as a series of function
+    * callbacks and some space for values.
+    *
+    * First a callback to set the transform on the current png_read_struct:
+    */
+   void (*set)(PNG_CONST struct image_transform *this,
+      struct transform_display *that, png_structp pp, png_infop pi);
+
+   /* Then a transform that takes an input pixel in one PNG format or another
+    * and modifies it by a pngvalid implementation of the transform (thus
+    * duplicating the libpng intent without, we hope, duplicating the bugs
+    * in the libpng implementation!)  The png_structp is solely to allow error
+    * reporting via png_error and png_warning.
+    */
+   void (*mod)(PNG_CONST struct image_transform *this, image_pixel *that,
+      png_structp pp, PNG_CONST struct transform_display *display);
+
+   /* Add this transform to the list and return true if the transform is
+    * meaningful for this colour type and bit depth - if false then the
+    * transform should have no effect on the image so there's not a lot of
+    * point running it.
+    */
+   int (*add)(struct image_transform *this,
+      PNG_CONST struct image_transform **that, png_byte colour_type,
+      png_byte bit_depth);
+} image_transform;
+
+typedef struct transform_display
+{
+   standard_display this;
+
+   /* Parameters */
+   png_modifier*              pm;
+   PNG_CONST image_transform* transform_list;
+
+   /* Local variables */
+   png_byte output_colour_type;
+   png_byte output_bit_depth;
+} transform_display;
+
+/* Two functions to end the list: */
+static void
+image_transform_set_end(PNG_CONST image_transform *this,
+   transform_display *that, png_structp pp, png_infop pi)
+{
+   UNUSED(this)
+   UNUSED(that)
+   UNUSED(pp)
+   UNUSED(pi)
+}
+
+/* At the end of the list recalculate the output image pixel value from the
+ * double precision values set up by the preceding 'mod' calls:
+ */
+static unsigned int
+sample_scale(double sample_value, unsigned int scale)
+{
+   sample_value = floor(sample_value * scale + .5);
+
+   /* Return NaN as 0: */
+   if (!(sample_value > 0))
+      sample_value = 0;
+   else if (sample_value > scale)
+      sample_value = scale;
+
+   return (unsigned int)sample_value;
+}
+
+static void
+image_transform_mod_end(PNG_CONST image_transform *this, image_pixel *that,
+    png_structp pp, PNG_CONST transform_display *display)
+{
+   PNG_CONST unsigned int scale = (1U<<that->sample_depth)-1;
+
+   UNUSED(this)
+   UNUSED(pp)
+   UNUSED(display)
+
+   /* At the end recalculate the digitized red green and blue values according
+    * to the current sample_depth of the pixel.
+    *
+    * The sample value is simply scaled to the maximum, checking for over
+    * and underflow (which can both happen for some image transforms,
+    * including simple size scaling, though libpng doesn't do that at present.
+    */
+   that->red = sample_scale(that->redf, scale);
+
+   /* The error value is increased, at the end, according to the lowest sBIT
+    * value seen.  Common sense tells us that the intermediate integer
+    * representations are no more accurate than +/- 0.5 in the integral values,
+    * the sBIT allows the implementation to be worse than this.  In addition the
+    * PNG specification actually permits any error within the range (-1..+1),
+    * but that is ignored here.  Instead the final digitized value is compared,
+    * below to the digitized value of the error limits - this has the net effect
+    * of allowing (almost) +/-1 in the output value.  It's difficult to see how
+    * any algorithm that digitizes intermediate results can be more accurate.
+    */
+   that->rede += 1./(2*((1U<<that->red_sBIT)-1));
+
+   if (that->colour_type & PNG_COLOR_MASK_COLOR)
+   {
+      that->green = sample_scale(that->greenf, scale);
+      that->blue = sample_scale(that->bluef, scale);
+      that->greene += 1./(2*((1U<<that->green_sBIT)-1));
+      that->bluee += 1./(2*((1U<<that->blue_sBIT)-1));
+   }
+   else
+   {
+      that->blue = that->green = that->red;
+      that->bluef = that->greenf = that->redf;
+      that->bluee = that->greene = that->rede;
+   }
+
+   if ((that->colour_type & PNG_COLOR_MASK_ALPHA) ||
+      that->colour_type == PNG_COLOR_TYPE_PALETTE)
+   {
+      that->alpha = sample_scale(that->alphaf, scale);
+      that->alphae += 1./(2*((1U<<that->alpha_sBIT)-1));
+   }
+   else
+   {
+      that->alpha = scale; /* opaque */
+      that->alpha = 1;     /* Override this. */
+      that->alphae = 0;    /* It's exact ;-) */
+   }
+}
+
+/* Static 'end' structure: */
+static image_transform image_transform_end =
+{
+   "(end)", /* name */
+   1, /* enable */
+   0, /* list */
+   0, /* global_use */
+   0, /* local_use */
+   0, /* next */
+   image_transform_set_end,
+   image_transform_mod_end,
+   0 /* never called, I want it to crash if it is! */
+};
+
+/* Reader callbacks and implementations, where they differ from the standard
+ * ones.
+ */
+static void
+transform_display_init(transform_display *dp, png_modifier *pm, png_uint_32 id,
+    PNG_CONST image_transform *transform_list)
+{
+   /* Standard fields */
+   standard_display_init(&dp->this, &pm->this, id, 0/*do_interlace*/);
+
+   /* Parameter fields */
+   dp->pm = pm;
+   dp->transform_list = transform_list;
+
+   /* Local variable fields */
+   dp->output_colour_type = 255; /* invalid */
+   dp->output_bit_depth = 255;  /* invalid */
+}
+
+static void
+transform_info_imp(transform_display *dp, png_structp pp, png_infop pi)
+{
+   /* Reuse the standard stuff as appropriate. */
+   standard_info_part1(&dp->this, pp, pi);
+
+   /* Now set the list of transforms. */
+   dp->transform_list->set(dp->transform_list, dp, pp, pi);
+
+   /* Update the info structure for these transforms: */
+   png_read_update_info(pp, pi);
+
+   /* And get the output information into the standard_display */
+   standard_info_part2(&dp->this, pp, pi, 1/*images*/);
+
+   /* Plus the extra stuff we need for the transform tests: */
+   dp->output_colour_type = png_get_color_type(pp, pi);
+   dp->output_bit_depth = png_get_bit_depth(pp, pi);
+
+   /* Validate the combination of colour type and bit depth that we are getting
+    * out of libpng; the semantics of something not in the PNG spec are, at
+    * best, unclear.
+    */
+   switch (dp->output_colour_type)
+   {
+   case PNG_COLOR_TYPE_PALETTE:
+      if (dp->output_bit_depth > 8) goto error;
+      /*FALL THROUGH*/
+   case PNG_COLOR_TYPE_GRAY:
+      if (dp->output_bit_depth == 1 || dp->output_bit_depth == 2 ||
+         dp->output_bit_depth == 4)
+         break;
+      /*FALL THROUGH*/
+   default:
+      if (dp->output_bit_depth == 8 || dp->output_bit_depth == 16)
+         break;
+      /*FALL THROUGH*/
+   error:
+      {
+         char message[128];
+         size_t pos;
+
+         pos = safecat(message, sizeof message, 0,
+            "invalid final bit depth: colour type(");
+         pos = safecatn(message, sizeof message, pos, dp->output_colour_type);
+         pos = safecat(message, sizeof message, pos, ") with bit depth: ");
+         pos = safecatn(message, sizeof message, pos, dp->output_bit_depth);
+
+         png_error(pp, message);
+      }
+   }
+
+   /* Use a test pixel to check that the output agrees with what we expect -
+    * this avoids running the whole test if the output is unexpected.
+    */
+   {
+      image_pixel test_pixel;
+
+      memset(&test_pixel, 0, sizeof test_pixel);
+      test_pixel.colour_type = dp->this.colour_type; /* input */
+      test_pixel.bit_depth = dp->this.bit_depth;
+      if (test_pixel.colour_type == PNG_COLOR_TYPE_PALETTE)
+         test_pixel.sample_depth = 8;
+      else
+         test_pixel.sample_depth = test_pixel.bit_depth;
+      /* Don't need sBIT here */
+      test_pixel.have_tRNS = dp->this.is_transparent;
+
+      dp->transform_list->mod(dp->transform_list, &test_pixel, pp, dp);
+
+      if (test_pixel.colour_type != dp->output_colour_type)
+      {
+         char message[128];
+         size_t pos = safecat(message, sizeof message, 0, "colour type ");
+
+         pos = safecatn(message, sizeof message, pos, dp->output_colour_type);
+         pos = safecat(message, sizeof message, pos, " expected ");
+         pos = safecatn(message, sizeof message, pos, test_pixel.colour_type);
+
+         png_error(pp, message);
+      }
+
+      if (test_pixel.bit_depth != dp->output_bit_depth)
+      {
+         char message[128];
+         size_t pos = safecat(message, sizeof message, 0, "bit depth ");
+
+         pos = safecatn(message, sizeof message, pos, dp->output_bit_depth);
+         pos = safecat(message, sizeof message, pos, " expected ");
+         pos = safecatn(message, sizeof message, pos, test_pixel.bit_depth);
+
+         png_error(pp, message);
+      }
+
+      /* If both bit depth and colour type are correct check the sample depth.
+       * I believe these are both internal errors.
+       */
+      if (test_pixel.colour_type == PNG_COLOR_TYPE_PALETTE)
+      {
+         if (test_pixel.sample_depth != 8) /* oops - internal error! */
+            png_error(pp, "pngvalid: internal: palette sample depth not 8");
+      }
+      else if (test_pixel.sample_depth != dp->output_bit_depth)
+      {
+         char message[128];
+         size_t pos = safecat(message, sizeof message, 0,
+            "internal: sample depth ");
+
+         pos = safecatn(message, sizeof message, pos, dp->output_bit_depth);
+         pos = safecat(message, sizeof message, pos, " expected ");
+         pos = safecatn(message, sizeof message, pos, test_pixel.sample_depth);
+
+         png_error(pp, message);
+      }
+   }
+}
+
+static void
+transform_info(png_structp pp, png_infop pi)
+{
+   transform_info_imp(png_get_progressive_ptr(pp), pp, pi);
+}
+
+static void
+transform_range_check(png_structp pp, unsigned int r, unsigned int g,
+   unsigned int b, unsigned int a, unsigned int in_digitized, double in,
+   unsigned int out, png_byte sample_depth, double err, PNG_CONST char *name)
+{
+   /* Compare the scaled, digitzed, values of our local calculation (in+-err)
+    * with the digitized values libpng produced;  'sample_depth' is the actual
+    * digitization depth of the libpng output colors (the bit depth except for
+    * palette images where it is always 8.)
+    */
+   unsigned int max = (1U<<sample_depth)-1;
+   double in_min = ceil((in-err)*max - .5);
+   double in_max = floor((in+err)*max + .5);
+   if (!(out >= in_min && out <= in_max))
+   {
+      char message[256];
+      size_t pos;
+
+      pos = safecat(message, sizeof message, 0, name);
+      pos = safecat(message, sizeof message, pos, " output value error: rgba(");
+      pos = safecatn(message, sizeof message, pos, r);
+      pos = safecat(message, sizeof message, pos, ",");
+      pos = safecatn(message, sizeof message, pos, g);
+      pos = safecat(message, sizeof message, pos, ",");
+      pos = safecatn(message, sizeof message, pos, b);
+      pos = safecat(message, sizeof message, pos, ",");
+      pos = safecatn(message, sizeof message, pos, a);
+      pos = safecat(message, sizeof message, pos, "): ");
+      pos = safecatn(message, sizeof message, pos, out);
+      pos = safecat(message, sizeof message, pos, " expected: ");
+      pos = safecatn(message, sizeof message, pos, in_digitized);
+      pos = safecat(message, sizeof message, pos, " (");
+      pos = safecatd(message, sizeof message, pos, (in-err)*max, 3);
+      pos = safecat(message, sizeof message, pos, "..");
+      pos = safecatd(message, sizeof message, pos, (in+err)*max, 3);
+      pos = safecat(message, sizeof message, pos, ")");
+
+      png_error(pp, message);
+   }
+}
+
+static void
+transform_image_validate(transform_display *dp, png_structp pp, png_infop pi,
+    png_const_bytep pRow)
+{
+   /* Constants for the loop below: */
+   PNG_CONST png_byte in_ct = dp->this.colour_type;
+   PNG_CONST png_byte in_bd = dp->this.bit_depth;
+   PNG_CONST png_uint_32 w = dp->this.w;
+   PNG_CONST png_uint_32 h = dp->this.h;
+   PNG_CONST size_t cbRow = dp->this.cbRow;
+   PNG_CONST png_byte out_ct = dp->output_colour_type;
+   PNG_CONST png_byte out_bd = dp->output_bit_depth;
+   PNG_CONST png_byte sample_depth = (png_byte)(out_ct ==
+      PNG_COLOR_TYPE_PALETTE ? 8 : out_bd);
+   PNG_CONST png_byte red_sBIT = dp->this.red_sBIT;
+   PNG_CONST png_byte green_sBIT = dp->this.green_sBIT;
+   PNG_CONST png_byte blue_sBIT = dp->this.blue_sBIT;
+   PNG_CONST png_byte alpha_sBIT = dp->this.alpha_sBIT;
+   PNG_CONST int have_tRNS = dp->this.is_transparent;
+
+   standard_palette out_palette;
+   png_uint_32 y;
+
+   UNUSED(pi)
+
+   /* Read the palette corresponding to the output if the output colour type
+    * indicates a palette, othewise set out_palette to garbage.
+    */
+   if (out_ct == PNG_COLOR_TYPE_PALETTE)
+      (void)standard_palette_init(out_palette, pp, pi);
+   else
+      memset(out_palette, 0x5e, sizeof out_palette);
+
+   for (y=0; y<h; ++y, pRow += cbRow)
+   {
+      png_uint_32 x;
+
+      /* The original, standard, row pre-transforms. */
+      png_byte std[STANDARD_ROWMAX];
+
+      transform_row(pp, std, in_ct, in_bd, y);
+
+      /* Go through each original pixel transforming it and comparing with what
+       * libpng did to the same pixel.
+       */
+      for (x=0; x<w; ++x)
+      {
+         image_pixel in_pixel, out_pixel;
+         unsigned int r, g, b, a;
+
+         /* Find out what we think the pixel should be: */
+         image_pixel_init(&in_pixel, std, in_ct, in_bd, x, dp->this.palette);
+
+         in_pixel.red_sBIT = red_sBIT;
+         in_pixel.green_sBIT = green_sBIT;
+         in_pixel.blue_sBIT = blue_sBIT;
+         in_pixel.alpha_sBIT = alpha_sBIT;
+         in_pixel.have_tRNS = have_tRNS;
+
+         /* For error detection, below. */
+         r = in_pixel.red;
+         g = in_pixel.green;
+         b = in_pixel.blue;
+         a = in_pixel.alpha;
+
+         dp->transform_list->mod(dp->transform_list, &in_pixel, pp, dp);
+
+         /* Read the output pixel and compare it to what we got, we don't
+          * use the error field here, so no need to update sBIT.
+          */
+         image_pixel_init(&out_pixel, pRow, out_ct, out_bd, x, out_palette);
+
+         /* We don't expect changes to the index here even if the bit depth is
+          * changed.
+          */
+         if (in_ct == PNG_COLOR_TYPE_PALETTE &&
+            out_ct == PNG_COLOR_TYPE_PALETTE)
+         {
+            if (in_pixel.palette_index != out_pixel.palette_index)
+               png_error(pp, "unexpected transformed palette index");
+         }
+
+         /* Check the colours for palette images too - in fact the palette could
+          * be separately verified itself in most cases.
+          */
+         if (in_pixel.red != out_pixel.red)
+            transform_range_check(pp, r, g, b, a, in_pixel.red, in_pixel.redf,
+               out_pixel.red, sample_depth, in_pixel.rede, "red/gray");
+
+         if ((out_ct & PNG_COLOR_MASK_COLOR) != 0 &&
+            in_pixel.green != out_pixel.green)
+            transform_range_check(pp, r, g, b, a, in_pixel.green,
+               in_pixel.greenf, out_pixel.green, sample_depth, in_pixel.greene,
+               "green");
+
+         if ((out_ct & PNG_COLOR_MASK_COLOR) != 0 &&
+            in_pixel.blue != out_pixel.blue)
+            transform_range_check(pp, r, g, b, a, in_pixel.blue, in_pixel.bluef,
+               out_pixel.blue, sample_depth, in_pixel.bluee, "blue");
+
+         if ((out_ct & PNG_COLOR_MASK_ALPHA) != 0 &&
+            in_pixel.alpha != out_pixel.alpha)
+            transform_range_check(pp, r, g, b, a, in_pixel.alpha,
+               in_pixel.alphaf, out_pixel.alpha, sample_depth, in_pixel.alphae,
+               "alpha");
+      } /* pixel (x) loop */
+   } /* row (y) loop */
+
+   /* Record that something was actually checked to avoid a false positive. */
+   dp->this.ps->validated = 1;
+}
+
+static void
+transform_end(png_structp pp, png_infop pi)
+{
+   transform_display *dp = png_get_progressive_ptr(pp);
+
+   transform_image_validate(dp, pp, pi, dp->this.ps->image);
+}
+
+/* A single test run. */
+static void
+transform_test(png_modifier *pmIn, PNG_CONST png_uint_32 idIn,
+    PNG_CONST image_transform* transform_listIn, PNG_CONST char *name)
+{
+   transform_display d;
+   context(&pmIn->this, fault);
+
+   transform_display_init(&d, pmIn, idIn, transform_listIn);
+
+   Try
+   {
+      png_structp pp;
+      png_infop pi;
+
+      /* Get a png_struct for writing the image. */
+      pp = set_modifier_for_read(d.pm, &pi, d.this.id, name);
+
+#     if 0
+         /* Logging (debugging only) */
+         {
+            char buffer[256];
+
+            (void)store_message(&d.pm->this, pp, buffer, sizeof buffer, 0,
+               "running test");
+
+            fprintf(stderr, "%s\n", buffer);
+         }
+#     endif
+
+      /* Introduce the correct read function. */
+      if (d.pm->this.progressive)
+      {
+         /* Share the row function with the standard implementation. */
+         png_set_progressive_read_fn(pp, &d, transform_info, progressive_row,
+            transform_end);
+
+         /* Now feed data into the reader until we reach the end: */
+         modifier_progressive_read(d.pm, pp, pi);
+      }
+      else
+      {
+         /* modifier_read expects a png_modifier* */
+         png_set_read_fn(pp, d.pm, modifier_read);
+
+         /* Check the header values: */
+         png_read_info(pp, pi);
+
+         /* Process the 'info' requirements. Only one image is generated */
+         transform_info_imp(&d, pp, pi);
+
+         sequential_row(&d.this, pp, pi, NULL, d.this.ps->image);
+
+         transform_image_validate(&d, pp, pi, d.this.ps->image);
+      }
+
+      modifier_reset(d.pm);
+   }
+
+   Catch(fault)
+      modifier_reset((png_modifier*)fault);
+}
+
+/* The transforms: */
+#define ITSTRUCT(name) image_transform_##name
+#define IT(name,prev)\
+static image_transform ITSTRUCT(name) =\
+{\
+   #name,\
+   1, /*enable*/\
+   &ITSTRUCT(prev), /*list*/\
+   0, /*global_use*/\
+   0, /*local_use*/\
+   0, /*next*/\
+   image_transform_png_set_##name##_set,\
+   image_transform_png_set_##name##_mod,\
+   image_transform_png_set_##name##_add\
+}
+
+/* To save code: */
+static int
+image_transform_default_add(image_transform *this,
+    PNG_CONST image_transform **that, png_byte colour_type, png_byte bit_depth)
+{
+   UNUSED(colour_type)
+   UNUSED(bit_depth)
+
+   this->next = *that;
+   *that = this;
+
+   return 1;
+}
+
+/* png_set_palette_to_rgb */
+static void
+image_transform_png_set_palette_to_rgb_set(PNG_CONST image_transform *this,
+    transform_display *that, png_structp pp, png_infop pi)
+{
+   png_set_palette_to_rgb(pp);
+   this->next->set(this->next, that, pp, pi);
+}
+
+static void
+image_transform_png_set_palette_to_rgb_mod(PNG_CONST image_transform *this,
+    image_pixel *that, png_structp pp, PNG_CONST transform_display *display)
+{
+   if (that->colour_type == PNG_COLOR_TYPE_PALETTE)
+      image_pixel_convert_PLTE(that, &display->this);
+
+   this->next->mod(this->next, that, pp, display);
+}
+
+static int
+image_transform_png_set_palette_to_rgb_add(image_transform *this,
+    PNG_CONST image_transform **that, png_byte colour_type, png_byte bit_depth)
+{
+   UNUSED(bit_depth)
+
+   this->next = *that;
+   *that = this;
+
+   return colour_type == PNG_COLOR_TYPE_PALETTE;
+}
+
+IT(palette_to_rgb, end);
+
+
+/* png_set_tRNS_to_alpha */
+static void
+image_transform_png_set_tRNS_to_alpha_set(PNG_CONST image_transform *this,
+   transform_display *that, png_structp pp, png_infop pi)
+{
+   png_set_tRNS_to_alpha(pp);
+   this->next->set(this->next, that, pp, pi);
+}
+
+static void
+image_transform_png_set_tRNS_to_alpha_mod(PNG_CONST image_transform *this,
+   image_pixel *that, png_structp pp, PNG_CONST transform_display *display)
+{
+   /* LIBPNG BUG: this always forces palette images to RGB. */
+   if (that->colour_type == PNG_COLOR_TYPE_PALETTE)
+      image_pixel_convert_PLTE(that, &display->this);
+
+   /* This effectively does an 'expand' only if there is some transparency to
+    * covert to an alpha channel.
+    */
+   if (that->have_tRNS)
+      image_pixel_add_alpha(that, &display->this);
+
+   /* LIBPNG BUG: otherwise libpng still expands to 8 bits! */
+   else
+   {
+      if (that->bit_depth < 8)
+         that->bit_depth =8;
+      if (that->sample_depth < 8)
+         that->sample_depth = 8;
+   }
+
+   this->next->mod(this->next, that, pp, display);
+}
+
+static int
+image_transform_png_set_tRNS_to_alpha_add(image_transform *this,
+    PNG_CONST image_transform **that, png_byte colour_type, png_byte bit_depth)
+{
+   UNUSED(bit_depth)
+
+   this->next = *that;
+   *that = this;
+
+   /* We don't know yet whether there will be a tRNS chunk, but we know that
+    * this transformation should do nothing if there already is an alpha
+    * channel.
+    */
+   return (colour_type & PNG_COLOR_MASK_ALPHA) == 0;
+}
+
+IT(tRNS_to_alpha,palette_to_rgb);
+
+/* png_set_gray_to_rgb */
+static void
+image_transform_png_set_gray_to_rgb_set(PNG_CONST image_transform *this,
+    transform_display *that, png_structp pp, png_infop pi)
+{
+   png_set_gray_to_rgb(pp);
+   this->next->set(this->next, that, pp, pi);
+}
+
+static void
+image_transform_png_set_gray_to_rgb_mod(PNG_CONST image_transform *this,
+    image_pixel *that, png_structp pp, PNG_CONST transform_display *display)
+{
+   /* NOTE: we can actually pend the tRNS processing at this point because we
+    * can correctly recognize the original pixel value even though we have
+    * mapped the one gray channel to the three RGB ones, but in fact libpng
+    * doesn't do this, so we don't either.
+    */
+   if ((that->colour_type & PNG_COLOR_MASK_COLOR) == 0 && that->have_tRNS)
+      image_pixel_add_alpha(that, &display->this);
+
+   /* Simply expand the bit depth and alter the colour type as required. */
+   if (that->colour_type == PNG_COLOR_TYPE_GRAY)
+   {
+      /* RGB images have a bit depth at least equal to '8' */
+      if (that->bit_depth < 8)
+         that->sample_depth = that->bit_depth = 8;
+
+      /* And just changing the colour type works here because the green and blue
+       * channels are being maintained in lock-step with the red/gray:
+       */
+      that->colour_type = PNG_COLOR_TYPE_RGB;
+   }
+
+   else if (that->colour_type == PNG_COLOR_TYPE_GRAY_ALPHA)
+      that->colour_type = PNG_COLOR_TYPE_RGB_ALPHA;
+
+   this->next->mod(this->next, that, pp, display);
+}
+
+static int
+image_transform_png_set_gray_to_rgb_add(image_transform *this,
+    PNG_CONST image_transform **that, png_byte colour_type, png_byte bit_depth)
+{
+   UNUSED(bit_depth)
+
+   this->next = *that;
+   *that = this;
+
+   return (colour_type & PNG_COLOR_MASK_COLOR) == 0;
+}
+
+IT(gray_to_rgb,tRNS_to_alpha);
+
+/* png_set_expand */
+static void
+image_transform_png_set_expand_set(PNG_CONST image_transform *this,
+    transform_display *that, png_structp pp, png_infop pi)
+{
+   png_set_expand(pp);
+   this->next->set(this->next, that, pp, pi);
+}
+
+static void
+image_transform_png_set_expand_mod(PNG_CONST image_transform *this,
+    image_pixel *that, png_structp pp, PNG_CONST transform_display *display)
+{
+   /* The general expand case depends on what the colour type is: */
+   if (that->colour_type == PNG_COLOR_TYPE_PALETTE)
+      image_pixel_convert_PLTE(that, &display->this);
+   else if (that->bit_depth < 8) /* grayscale */
+      that->sample_depth = that->bit_depth = 8;
+
+   if (that->have_tRNS)
+      image_pixel_add_alpha(that, &display->this);
+
+   this->next->mod(this->next, that, pp, display);
+}
+
+static int
+image_transform_png_set_expand_add(image_transform *this,
+    PNG_CONST image_transform **that, png_byte colour_type, png_byte bit_depth)
+{
+   UNUSED(bit_depth)
+
+   this->next = *that;
+   *that = this;
+
+   /* 'expand' should do nothing for RGBA or GA input - no tRNS and the bit
+    * depth is at least 8 already.
+    */
+   return (colour_type & PNG_COLOR_MASK_ALPHA) == 0;
+}
+
+IT(expand,gray_to_rgb);
+
+/* png_set_expand_gray_1_2_4_to_8
+ * LIBPNG BUG: this just does an 'expand'
+ */
+static void
+image_transform_png_set_expand_gray_1_2_4_to_8_set(
+    PNG_CONST image_transform *this, transform_display *that, png_structp pp,
+    png_infop pi)
+{
+   png_set_expand_gray_1_2_4_to_8(pp);
+   this->next->set(this->next, that, pp, pi);
+}
+
+static void
+image_transform_png_set_expand_gray_1_2_4_to_8_mod(
+    PNG_CONST image_transform *this, image_pixel *that, png_structp pp,
+    PNG_CONST transform_display *display)
+{
+   image_transform_png_set_expand_mod(this, that, pp, display);
+}
+
+static int
+image_transform_png_set_expand_gray_1_2_4_to_8_add(image_transform *this,
+    PNG_CONST image_transform **that, png_byte colour_type, png_byte bit_depth)
+{
+   return image_transform_png_set_expand_add(this, that, colour_type,
+      bit_depth);
+}
+
+IT(expand_gray_1_2_4_to_8, expand);
+
+/* png_set_strip_16 */
+static void
+image_transform_png_set_strip_16_set(PNG_CONST image_transform *this,
+    transform_display *that, png_structp pp, png_infop pi)
+{
+   png_set_strip_16(pp);
+   this->next->set(this->next, that, pp, pi);
+}
+
+static void
+image_transform_png_set_strip_16_mod(PNG_CONST image_transform *this,
+    image_pixel *that, png_structp pp, PNG_CONST transform_display *display)
+{
+   if (that->bit_depth == 16)
+   {
+      that->sample_depth = that->bit_depth = 8;
+      if (that->red_sBIT > 8) that->red_sBIT = 8;
+      if (that->green_sBIT > 8) that->green_sBIT = 8;
+      if (that->blue_sBIT > 8) that->blue_sBIT = 8;
+      if (that->alpha_sBIT > 8) that->alpha_sBIT = 8;
+
+#     ifndef PNG_READ_16_TO_8_ACCURATE_SCALE_SUPPORTED
+         /* The strip 16 algoirithm drops the low 8 bits rather than calculating
+          * 1/257, so we need to adjust the permitted errors appropriately:
+          */
+         {
+            PNG_CONST double d = (255-128.5)/65535;
+            that->rede += d;
+            that->greene += d;
+            that->bluee += d;
+            that->alphae += d;
+         }
+#     endif
+   }
+
+   this->next->mod(this->next, that, pp, display);
+}
+
+static int
+image_transform_png_set_strip_16_add(image_transform *this,
+    PNG_CONST image_transform **that, png_byte colour_type, png_byte bit_depth)
+{
+   UNUSED(colour_type)
+
+   this->next = *that;
+   *that = this;
+
+   return bit_depth > 8;
+}
+
+IT(strip_16, expand_gray_1_2_4_to_8);
+
+/* png_set_strip_alpha */
+static void
+image_transform_png_set_strip_alpha_set(PNG_CONST image_transform *this,
+    transform_display *that, png_structp pp, png_infop pi)
+{
+   png_set_strip_alpha(pp);
+   this->next->set(this->next, that, pp, pi);
+}
+
+static void
+image_transform_png_set_strip_alpha_mod(PNG_CONST image_transform *this,
+    image_pixel *that, png_structp pp, PNG_CONST transform_display *display)
+{
+   if (that->colour_type == PNG_COLOR_TYPE_GRAY_ALPHA)
+      that->colour_type = PNG_COLOR_TYPE_GRAY;
+   else if (that->colour_type == PNG_COLOR_TYPE_RGB_ALPHA)
+      that->colour_type = PNG_COLOR_TYPE_RGB;
+
+   that->have_tRNS = 0;
+   that->alphaf = 1;
+   that->alphae = 0;
+
+   this->next->mod(this->next, that, pp, display);
+}
+
+static int
+image_transform_png_set_strip_alpha_add(image_transform *this,
+    PNG_CONST image_transform **that, png_byte colour_type, png_byte bit_depth)
+{
+   UNUSED(bit_depth)
+
+   this->next = *that;
+   *that = this;
+
+   return (colour_type & PNG_COLOR_MASK_ALPHA) != 0;
+}
+
+IT(strip_alpha,strip_16);
+
+/* png_set_rgb_to_gray(png_structp, int err_action, double red, double green)
+ * png_set_rgb_to_gray_fixed(png_structp, int err_action, png_fixed_point red,
+ *    png_fixed_point green)
+ * png_get_rgb_to_gray_status
+ *
+ * At present the APIs are simply tested using the 16.16 fixed point conversion
+ * values known to be used inside libpng:
+ *
+ *   red:    6968
+ *   green: 23434
+ *   blue:   2366
+ *
+ * NOTE: this currently ignores the gamma because no gamma is being set, the
+ * tests on gamma need to happen in the gamma test set.
+ */
+static void
+image_transform_png_set_rgb_to_gray_set(PNG_CONST image_transform *this,
+    transform_display *that, png_structp pp, png_infop pi)
+{
+   PNG_CONST int error_action = 1; /* no error, no defines in png.h */
+
+#  ifdef PNG_FLOATING_POINT_SUPPORTED
+      png_set_rgb_to_gray(pp, error_action, -1, -1);
+#  else
+      png_set_rgb_to_gray_fixed(pp, error_action, -1, -1);
+#  endif
+
+   this->next->set(this->next, that, pp, pi);
+}
+
+static void
+image_transform_png_set_rgb_to_gray_mod(PNG_CONST image_transform *this,
+    image_pixel *that, png_structp pp, PNG_CONST transform_display *display)
+{
+   if ((that->colour_type & PNG_COLOR_MASK_COLOR) != 0)
+   {
+      if (that->colour_type == PNG_COLOR_TYPE_PALETTE)
+         image_pixel_convert_PLTE(that, &display->this);
+
+      /* Image now has RGB channels... */
+      that->bluef = that->greenf = that->redf = (that->redf * 6968 +
+         that->greenf * 23434 + that->bluef * 2366) / 32768;
+      that->bluee = that->greene = that->rede = (that->rede * 6968 +
+         that->greene * 23434 + that->bluee * 2366) / 32768 *
+         (1 + DBL_EPSILON * 6);
+
+      /* The sBIT is the minium of the three colour channel sBITs. */
+      if (that->red_sBIT > that->green_sBIT)
+         that->red_sBIT = that->green_sBIT;
+      if (that->red_sBIT > that->blue_sBIT)
+         that->red_sBIT = that->blue_sBIT;
+      that->blue_sBIT = that->green_sBIT = that->red_sBIT;
+
+      /* And zap the colour bit in the type: */
+      if (that->colour_type == PNG_COLOR_TYPE_RGB)
+         that->colour_type = PNG_COLOR_TYPE_GRAY;
+      else if (that->colour_type == PNG_COLOR_TYPE_RGB_ALPHA)
+         that->colour_type = PNG_COLOR_TYPE_GRAY_ALPHA;
+   }
+
+   this->next->mod(this->next, that, pp, display);
+}
+
+static int
+image_transform_png_set_rgb_to_gray_add(image_transform *this,
+    PNG_CONST image_transform **that, png_byte colour_type, png_byte bit_depth)
+{
+   UNUSED(bit_depth)
+
+   this->next = *that;
+   *that = this;
+
+   return (colour_type & PNG_COLOR_MASK_COLOR) != 0;
+}
+
+IT(rgb_to_gray,strip_alpha);
+
+/* png_set_background(png_structp, png_const_color_16p background_color,
+ *    int background_gamma_code, int need_expand, double background_gamma)
+ * png_set_background_fixed(png_structp, png_const_color_16p background_color,
+ *    int background_gamma_code, int need_expand,
+ *    png_fixed_point background_gamma)
+ *
+ * As with rgb_to_gray this ignores the gamma.
+*/
+static void
+image_transform_png_set_background_set(PNG_CONST image_transform *this,
+    transform_display *that, png_structp pp, png_infop pi)
+{
+   png_color_16 back;
+
+   /* Since we don't know the output bit depth at this point we must use the
+    * input values and ask libpng to expand the chunk as required.
+    */
+   back.index = 255; /* Should not be used */
+   back.gray = back.blue = back.green = back.red =
+      (png_uint_16)((1U << that->this.bit_depth) >> 1);
+
+#  ifdef PNG_FLOATING_POINT_SUPPORTED
+      png_set_background(pp, &back, PNG_BACKGROUND_GAMMA_FILE, 1, 0);
+#  else
+      png_set_background_fixed(pp, &back, PNG_BACKGROUND_GAMMA_FILE, 1, 0);
+#  endif
+
+   this->next->set(this->next, that, pp, pi);
+}
+
+static void
+image_transform_png_set_background_mod(PNG_CONST image_transform *this,
+    image_pixel *that, png_structp pp, PNG_CONST transform_display *display)
+{
+   /* Check for tRNS first: */
+   if (that->have_tRNS && that->colour_type != PNG_COLOR_TYPE_PALETTE)
+      image_pixel_add_alpha(that, &display->this);
+
+   /* This is only necessary if the alpha value is less than 1. */
+   if (that->alphaf < 1)
+   {
+      /* Repeat the calculation above and scale the result: */
+      unsigned int tmp = (1U << display->this.bit_depth);
+      double component = (tmp >> 1)/(double)(tmp-1);
+
+      /* Now we do the background calculation without any gamma correction. */
+      if (that->alphaf <= 0)
+      {
+         that->bluef = that->greenf = that->redf = component;
+         that->bluee = that->greene = that->rede = component * DBL_EPSILON;
+         that->blue_sBIT = that->green_sBIT = that->red_sBIT = that->bit_depth;
+      }
+
+      else
+      {
+         component *= 1-that->alphaf;
+         that->redf = that->redf * that->alphaf + component;
+         that->rede = that->rede * that->alphaf + that->redf * 3 * DBL_EPSILON;
+         that->greenf = that->greenf * that->alphaf + component;
+         that->greene = that->greene * that->alphaf + that->greenf * 3 *
+            DBL_EPSILON;
+         that->bluef = that->bluef * that->alphaf + component;
+         that->bluee = that->bluee * that->alphaf + that->bluef * 3 *
+            DBL_EPSILON;
+      }
+
+      /* Remove the alpha type and set the alpha. */
+      that->alphaf = 1;
+      that->alphae = 0;
+
+      if (that->colour_type == PNG_COLOR_TYPE_RGB_ALPHA)
+         that->colour_type = PNG_COLOR_TYPE_RGB;
+      else if (that->colour_type == PNG_COLOR_TYPE_GRAY_ALPHA)
+         that->colour_type = PNG_COLOR_TYPE_GRAY;
+   }
+
+   this->next->mod(this->next, that, pp, display);
+}
+
+#define image_transform_png_set_background_add image_transform_default_add
+
+IT(background,rgb_to_gray);
+
+static image_transform *PNG_CONST image_transform_first = &ITSTRUCT(background);
+
+static void
+transform_enable(PNG_CONST char *name)
+{
+   /* Everything starts out enabled, so if we see an 'enable' disabled
+    * everything else the first time round.
+    */
+   static int all_disabled = 0;
+   int found_it = 0;
+   image_transform *list = image_transform_first;
+
+   while (list != &image_transform_end)
+   {
+      if (strcmp(list->name, name) == 0)
+      {
+         list->enable = 1;
+         found_it = 1;
+      }
+      else if (!all_disabled)
+         list->enable = 0;
+
+      list = list->list;
+   }
+
+   all_disabled = 1;
+
+   if (!found_it)
+   {
+      fprintf(stderr, "pngvalid: --transform-enable=%s: unknown transform\n",
+         name);
+      exit(1);
+   }
+}
+
+static void
+transform_disable(PNG_CONST char *name)
+{
+   image_transform *list = image_transform_first;
+
+   while (list != &image_transform_end)
+   {
+      if (strcmp(list->name, name) == 0)
+      {
+         list->enable = 0;
+         return;
+      }
+
+      list = list->list;
+   }
+
+   fprintf(stderr, "pngvalid: --transform-disable=%s: unknown transform\n",
+      name);
+   exit(1);
+}
+
+static void
+image_transform_reset_count(void)
+{
+   image_transform *next = image_transform_first;
+   int count = 0;
+
+   while (next != &image_transform_end)
+   {
+      next->local_use = 0;
+      next->next = 0;
+      next = next->list;
+      ++count;
+   }
+
+   /* This can only happen if we every have more than 32 transforms (excluding
+    * the end) in the list.
+    */
+   if (count > 32) abort();
+}
+
+static int
+image_transform_test_counter(png_uint_32 counter, unsigned int max)
+{
+   /* Test the list to see if there is any point contining, given a current
+    * counter and a 'max' value.
+    */
+   image_transform *next = image_transform_first;
+
+   while (next != &image_transform_end)
+   {
+      /* For max 0 or 1 continue until the counter overflows: */
+      counter >>= 1;
+
+      /* Continue if any entry hasn't reacked the max. */
+      if (max > 1 && next->local_use < max)
+         return 1;
+      next = next->list;
+   }
+
+   return max <= 1 && counter == 0;
+}
+
+static png_uint_32
+image_transform_add(PNG_CONST image_transform **this, unsigned int max,
+   png_uint_32 counter, char *name, size_t sizeof_name, size_t *pos,
+   png_byte colour_type, png_byte bit_depth)
+{
+   for (;;) /* until we manage to add something */
+   {
+      png_uint_32 mask;
+      image_transform *list;
+
+      /* Find the next counter value, if the counter is zero this is the start
+       * of the list.  This routine always returns the current counter (not the
+       * next) so it returns 0 at the end and expects 0 at the beginning.
+       */
+      if (counter == 0) /* first time */
+      {
+         image_transform_reset_count();
+         if (max <= 1)
+            counter = 1;
+         else
+            counter = random_32();
+      }
+      else /* advance the counter */
+      {
+         switch (max)
+         {
+            case 0:  ++counter; break;
+            case 1:  counter <<= 1; break;
+            default: counter = random_32(); break;
+         }
+      }
+
+      /* Now add all these items, if possible */
+      *this = &image_transform_end;
+      list = image_transform_first;
+      mask = 1;
+
+      /* Go through the whole list adding anything that the counter selects: */
+      while (list != &image_transform_end)
+      {
+         if ((counter & mask) != 0 && list->enable &&
+             (max == 0 || list->local_use < max))
+         {
+            /* Candidate to add: */
+            if (list->add(list, this, colour_type, bit_depth) || max == 0)
+            {
+               /* Added, so add to the name too. */
+               *pos = safecat(name, sizeof_name, *pos, " +");
+               *pos = safecat(name, sizeof_name, *pos, list->name);
+            }
+
+            else
+            {
+               /* Not useful and max>0, so remvoe it from *this: */
+               *this = list->next;
+               list->next = 0;
+
+               /* And, since we know it isn't useful, stop it being added again
+                * in this run:
+                */
+               list->local_use = max;
+            }
+         }
+
+         mask <<= 1;
+         list = list->list;
+      }
+
+      /* Now if anything was added we have something to do. */
+      if (*this != &image_transform_end)
+         return counter;
+
+      /* Nothing added, but was there anything in there to add? */
+      if (!image_transform_test_counter(counter, max))
+         return 0;
+   }
+}
+
+#ifdef THIS_IS_THE_PROFORMA
+static void
+image_transform_png_set_@_set(PNG_CONST image_transform *this,
+    transform_display *that, png_structp pp, png_infop pi)
+{
+   png_set_@(pp);
+   this->next->set(this->next, that, pp, pi);
+}
+
+static void
+image_transform_png_set_@_mod(PNG_CONST image_transform *this,
+    image_pixel *that, png_structp pp, PNG_CONST transform_display *display)
+{
+   this->next->mod(this->next, that, pp, display);
+}
+
+static int
+image_transform_png_set_@_add(image_transform *this,
+    PNG_CONST image_transform **that, char *name, size_t sizeof_name,
+    size_t *pos, png_byte colour_type, png_byte bit_depth)
+{
+   this->next = *that;
+   *that = this;
+
+   *pos = safecat(name, sizeof_name, *pos, " +@");
+
+   return 1;
+}
+
+IT(@);
+#endif
+
+/* png_set_quantize(png_structp, png_colorp palette, int num_palette,
+ *    int maximum_colors, png_const_uint_16p histogram, int full_quantize)
+ *
+ * Very difficult to validate this!
+ */
+/*NOTE: TBD NYI */
+
+/* The data layout transforms are handled by swapping our own channel data,
+ * necessarily these need to happen at the end of the transform list because the
+ * semantic of the channels changes after these are executed.  Some of these,
+ * like set_shift and set_packing, can't be done at present because they change
+ * the layout of the data at the sub-sample level so sample() won't get the
+ * right answer.
+ */
+/* png_set_invert_alpha */
+/*NOTE: TBD NYI */
+
+/* png_set_bgr */
+/*NOTE: TBD NYI */
+
+/* png_set_swap_alpha */
+/*NOTE: TBD NYI */
+
+/* png_set_swap */
+/*NOTE: TBD NYI */
+
+/* png_set_filler, (png_structp png_ptr, png_uint_32 filler, int flags)); */
+/*NOTE: TBD NYI */
+
+/* png_set_add_alpha, (png_structp png_ptr, png_uint_32 filler, int flags)); */
+/*NOTE: TBD NYI */
+
+/* png_set_packing */
+/*NOTE: TBD NYI */
+
+/* png_set_packswap */
+/*NOTE: TBD NYI */
+
+/* png_set_invert_mono */
+/*NOTE: TBD NYI */
+
+/* png_set_shift(png_structp, png_const_color_8p true_bits) */
+/*NOTE: TBD NYI */
+
+static int
+test_transform(png_modifier* PNG_CONST pm, png_byte PNG_CONST colour_type,
+    int bdlo, int PNG_CONST bdhi, png_uint_32 max)
+{
+   for (; bdlo <= bdhi; ++bdlo)
+   {
+      PNG_CONST png_byte bit_depth = DEPTH(bdlo);
+      png_uint_32 counter = 0;
+      size_t base_pos;
+      char name[64];
+
+      base_pos = safecat(name, sizeof name, 0, "transform:");
+
+      for (;;)
+      {
+         size_t pos = base_pos;
+         PNG_CONST image_transform *list = 0;
+
+         counter = image_transform_add(&list, max, counter, name, sizeof name,
+            &pos, colour_type, bit_depth);
+
+         if (counter == 0)
+            break;
+
+         /* The command line can change this to checking interlaced images. */
+         transform_test(pm, FILEID(colour_type, bit_depth, pm->interlace_type,
+            0, 0, 0), list, name);
+
+         if (fail(pm))
+            return 0;
+      }
+   }
+
+   return 1; /* keep going */
+}
+
+static void
+perform_transform_test(png_modifier *pm)
+{
+   /* Test each colour type over the valid range of bit depths (expressed as
+    * log2(bit_depth) in turn, stop as soon as any error is detected.
+    */
+   if (!test_transform(pm, 0, 0, READ_BDHI, 1))
+      return;
+
+   if (!test_transform(pm, 2, 3, READ_BDHI, 1))
+      return;
+
+   if (!test_transform(pm, 3, 0, 3, 1))
+      return;
+
+   if (!test_transform(pm, 4, 3, READ_BDHI, 1))
+      return;
+
+   if (!test_transform(pm, 6, 3, READ_BDHI, 1))
+      return;
+}
+
+
 /********************************* GAMMA TESTS ********************************/
 /* Gamma test images. */
 typedef struct gamma_modification
@@ -3224,7 +5033,7 @@ typedef struct gamma_modification
 static int
 gamma_modify(png_modifier *pm, png_modification *me, int add)
 {
-   UNUSED(add);
+   UNUSED(add)
    /* This simply dumps the given gamma value into the buffer. */
    png_save_uint_32(pm->buffer, 4);
    png_save_uint_32(pm->buffer+4, CHUNK_gAMA);
@@ -3233,7 +5042,7 @@ gamma_modify(png_modifier *pm, png_modification *me, int add)
 }
 
 static void
-gamma_modification_init(gamma_modification *me, png_modifier *pm, double gamma)
+gamma_modification_init(gamma_modification *me, png_modifier *pm, double gammad)
 {
    double g;
 
@@ -3241,7 +5050,7 @@ gamma_modification_init(gamma_modification *me, png_modifier *pm, double gamma)
    me->this.chunk = CHUNK_gAMA;
    me->this.modify_fn = gamma_modify;
    me->this.add = CHUNK_PLTE;
-   g = floor(gamma * 100000 + .5);
+   g = floor(gammad * 100000 + .5);
    me->gamma = (png_fixed_point)g;
    me->this.next = pm->modifications;
    pm->modifications = &me->this;
@@ -3256,7 +5065,7 @@ typedef struct srgb_modification
 static int
 srgb_modify(png_modifier *pm, png_modification *me, int add)
 {
-   UNUSED(add);
+   UNUSED(add)
    /* As above, ignore add and just make a new chunk */
    png_save_uint_32(pm->buffer, 1);
    png_save_uint_32(pm->buffer+4, CHUNK_sRGB);
@@ -3498,7 +5307,7 @@ gamma_image_validate(gamma_display *dp, png_structp pp, png_infop pi,
 
    PNG_CONST unsigned int samples_per_pixel = (out_ct & 2U) ? 3U : 1U;
 
-   PNG_CONST double gamma = 1/(file_gamma*screen_gamma); /* Overall */
+   PNG_CONST double gamma_correction = 1/(file_gamma*screen_gamma);/* Overall */
 
    double maxerrout = 0, maxerrabs = 0, maxerrpc = 0;
    png_uint_32 y;
@@ -3524,7 +5333,8 @@ gamma_image_validate(gamma_display *dp, png_structp pp, png_infop pi,
             PNG_CONST unsigned int
                isbit = id >> (in_bd-sbit);
 
-            double i, sample, encoded_sample, output, encoded_error, error;
+            double i, input_sample, encoded_sample, output;
+            double encoded_error, error;
             double es_lo, es_hi;
 
             /* First check on the 'perfect' result obtained from the
@@ -3543,7 +5353,7 @@ gamma_image_validate(gamma_display *dp, png_structp pp, png_infop pi,
              * value (nevertheless the error is still recorded - it's
              * interesting ;-)
              */
-            encoded_sample = pow(i, gamma) * outmax;
+            encoded_sample = pow(i, gamma_correction) * outmax;
             encoded_error = fabs(od-encoded_sample);
 
             if (encoded_error > maxerrout)
@@ -3561,7 +5371,7 @@ gamma_image_validate(gamma_display *dp, png_structp pp, png_infop pi,
              * know what it is - so assume the unencoded value is
              * perceptually linear.
              */
-            sample = pow(i, 1/file_gamma); /* In range 0..1 */
+            input_sample = pow(i, 1/file_gamma); /* In range 0..1 */
             output = od;
             output /= outmax;
             output = pow(output, screen_gamma);
@@ -3569,7 +5379,7 @@ gamma_image_validate(gamma_display *dp, png_structp pp, png_infop pi,
             /* Now we have the numbers for real errors, both absolute
              * values as as a percentage of the correct value (output):
              */
-            error = fabs(sample-output);
+            error = fabs(input_sample-output);
 
             if (error > maxerrabs)
                maxerrabs = error;
@@ -3578,10 +5388,10 @@ gamma_image_validate(gamma_display *dp, png_structp pp, png_infop pi,
              * quantization to dominate the percentage errors for low
              * output sample values:
              */
-            if (sample*maxpc > .5+maxabs)
+            if (input_sample*maxpc > .5+maxabs)
             {
-               double pcerr = error/sample;
-               if (pcerr > maxerrpc) maxerrpc = pcerr;
+               double percentage_error = error/input_sample;
+               if (percentage_error > maxerrpc) maxerrpc = percentage_error;
             }
 
             /* Now calculate the digitization limits for
@@ -3593,16 +5403,17 @@ gamma_image_validate(gamma_display *dp, png_structp pp, png_infop pi,
              * range 0..1:
              */
             {
-               double tmp = sample * maxpc;
+               double tmp = input_sample * maxpc;
                if (tmp < maxabs) tmp = maxabs;
 
                /* Low bound - the minimum of the three: */
                es_lo = encoded_sample - maxout;
 
-               if (es_lo > 0 && sample-tmp > 0)
+               if (es_lo > 0 && input_sample-tmp > 0)
                {
-                  double l = outmax * pow(sample-tmp, 1/screen_gamma);
-                  if (l < es_lo) es_lo = l;
+                  double low_value = outmax * pow(input_sample-tmp,
+                     1/screen_gamma);
+                  if (low_value < es_lo) es_lo = low_value;
                }
 
                else
@@ -3610,10 +5421,11 @@ gamma_image_validate(gamma_display *dp, png_structp pp, png_infop pi,
 
                es_hi = encoded_sample + maxout;
 
-               if (es_hi < outmax && sample+tmp < 1)
+               if (es_hi < outmax && input_sample+tmp < 1)
                {
-                  double h = outmax * pow(sample+tmp, 1/screen_gamma);
-                  if (h > es_hi) es_hi = h;
+                  double high_value = outmax * pow(input_sample+tmp,
+                     1/screen_gamma);
+                  if (high_value > es_hi) es_hi = high_value;
                }
 
                else
@@ -3642,7 +5454,7 @@ gamma_image_validate(gamma_display *dp, png_structp pp, png_infop pi,
 
                   if (tmp > 0)
                   {
-                     is_lo = outmax * pow(tmp, gamma) - maxout;
+                     is_lo = outmax * pow(tmp, gamma_correction) - maxout;
                      if (is_lo < 0) is_lo = 0;
                   }
 
@@ -3653,7 +5465,7 @@ gamma_image_validate(gamma_display *dp, png_structp pp, png_infop pi,
 
                   if (tmp < 1)
                   {
-                     is_hi = outmax * pow(tmp, gamma) + maxout;
+                     is_hi = outmax * pow(tmp, gamma_correction) + maxout;
                      if (is_hi > outmax) is_hi = outmax;
                   }
 
@@ -3880,15 +5692,15 @@ perform_gamma_threshold_tests(png_modifier *pm)
 
    while (next_format(&colour_type, &bit_depth))
    {
-      double gamma = 1.0;
-      while (gamma >= .4)
+      double test_gamma = 1.0;
+      while (test_gamma >= .4)
       {
          /* There's little point testing the interlacing vs non-interlacing,
           * but this can be set from the command line.
           */
          gamma_threshold_test(pm, colour_type, bit_depth, pm->interlace_type,
-            gamma, 1/gamma);
-         gamma *= .95;
+            test_gamma, 1/test_gamma);
+         test_gamma *= .95;
       }
 
       /* And a special test for sRGB */
@@ -4071,7 +5883,7 @@ static void
 perform_gamma_test(png_modifier *pm, int speed, int summary)
 {
    /* First some arbitrary no-transform tests: */
-   if (!speed && pm->test_threshold)
+   if (!speed && pm->test_gamma_threshold)
    {
       perform_gamma_threshold_tests(pm);
 
@@ -4080,7 +5892,7 @@ perform_gamma_test(png_modifier *pm, int speed, int summary)
    }
 
    /* Now some real transforms. */
-   if (pm->test_transform)
+   if (pm->test_gamma_transform)
    {
       perform_gamma_transform_tests(pm, speed);
 
@@ -4111,7 +5923,7 @@ perform_gamma_test(png_modifier *pm, int speed, int summary)
    }
 
    /* The sbit tests produce much larger errors: */
-   if (pm->test_sbit)
+   if (pm->test_gamma_sbit)
    {
       pm->error_gray_2 = pm->error_gray_4 = pm->error_gray_8 =
       pm->error_gray_16 = pm->error_color_8 = pm->error_color_16 = 0;
@@ -4137,7 +5949,7 @@ perform_gamma_test(png_modifier *pm, int speed, int summary)
    }
 
 #ifdef PNG_READ_16_TO_8_SUPPORTED
-   if (pm->test_strip16)
+   if (pm->test_gamma_strip16)
    {
       /* The 16 to 8 bit strip operations: */
       pm->error_gray_2 = pm->error_gray_4 = pm->error_gray_8 =
@@ -4540,7 +6352,7 @@ int main(int argc, PNG_CONST char **argv)
 
    /* Store the test gammas */
    pm.gammas = gammas;
-   pm.ngammas = 3U; /* for speed */
+   pm.ngammas = 0; /* default to off */
    pm.sbitlow = 8U; /* because libpng doesn't do sBIT below 8! */
    pm.use_input_precision_16to8 = 1U; /* Because of the way libpng does it */
 
@@ -4579,9 +6391,6 @@ int main(int argc, PNG_CONST char **argv)
       else if (strcmp(*argv, "-q") == 0)
          summary = pm.this.verbose = pm.log = 0;
 
-      else if (strcmp(*argv, "-g") == 0)
-         pm.ngammas = (sizeof gammas)/(sizeof gammas[0]);
-
       else if (strcmp(*argv, "-w") == 0)
          pm.this.treat_warnings_as_errors = 0;
 
@@ -4592,23 +6401,74 @@ int main(int argc, PNG_CONST char **argv)
       else if (strcmp(*argv, "--size") == 0)
          pm.test_size = 1;
 
+      else if (strcmp(*argv, "--nosize") == 0)
+         pm.test_size = 0;
+
+      else if (strcmp(*argv, "--standard") == 0)
+         pm.test_standard = 1;
+
       else if (strcmp(*argv, "--nostandard") == 0)
          pm.test_standard = 0;
+
+      else if (strcmp(*argv, "--transform") == 0)
+         pm.test_transform = 1;
+
+      else if (strcmp(*argv, "--notransform") == 0)
+         pm.test_transform = 0;
+
+      else if (strncmp(*argv, "--transform-disable=",
+         sizeof "--transform-disable") == 0)
+         {
+         pm.test_transform = 1;
+         transform_disable(*argv + sizeof "--transform-disable");
+         }
+
+      else if (strncmp(*argv, "--transform-enable=",
+         sizeof "--transform-enable") == 0)
+         {
+         pm.test_transform = 1;
+         transform_enable(*argv + sizeof "--transform-enable");
+         }
+
+      else if (strcmp(*argv, "--gamma") == 0)
+         {
+         /* Just do two gamma tests here (2.2 and linear) for speed: */
+         pm.ngammas = 2U;
+         pm.test_gamma_threshold = 1;
+         pm.test_gamma_transform = 1;
+         pm.test_gamma_sbit = 1;
+         pm.test_gamma_strip16 = 1;
+         }
 
       else if (strcmp(*argv, "--nogamma") == 0)
          pm.ngammas = 0;
 
+      else if (strcmp(*argv, "--gamma-threshold") == 0)
+         pm.ngammas = 2U, pm.test_gamma_threshold = 1;
+
       else if (strcmp(*argv, "--nogamma-threshold") == 0)
-         pm.test_threshold = 0;
+         pm.test_gamma_threshold = 0;
+
+      else if (strcmp(*argv, "--gamma-transform") == 0)
+         pm.ngammas = 2U, pm.test_gamma_transform = 1;
 
       else if (strcmp(*argv, "--nogamma-transform") == 0)
-         pm.test_transform = 0;
+         pm.test_gamma_transform = 0;
+
+      else if (strcmp(*argv, "--gamma-sbit") == 0)
+         pm.ngammas = 2U, pm.test_gamma_sbit = 1;
 
       else if (strcmp(*argv, "--nogamma-sbit") == 0)
-         pm.test_sbit = 0;
+         pm.test_gamma_sbit = 0;
+
+      else if (strcmp(*argv, "--gamma-16-to-8") == 0)
+         pm.ngammas = 2U, pm.test_gamma_strip16 = 1;
 
       else if (strcmp(*argv, "--nogamma-16-to-8") == 0)
-         pm.test_strip16 = 0;
+         pm.test_gamma_strip16 = 0;
+
+      else if (strcmp(*argv, "--all-gammas") == 0)
+         pm.ngammas = (sizeof gammas)/(sizeof gammas[0]);
 
       else if (strcmp(*argv, "--progressive-read") == 0)
          pm.this.progressive = 1;
@@ -4658,6 +6518,37 @@ int main(int argc, PNG_CONST char **argv)
       }
    }
 
+   /* If pngvalid is run with no arguments default to a reasonable set of the
+    * tests.
+    */
+   if (pm.test_standard == 0 && pm.test_size == 0 && pm.test_transform == 0 &&
+      pm.ngammas == 0)
+   {
+      pm.test_standard = 1;
+      pm.test_size = 1;
+      pm.test_transform = 1;
+      pm.ngammas = 3U;
+   }
+
+   if (pm.ngammas > 0 &&
+      pm.test_gamma_threshold == 0 && pm.test_gamma_transform == 0 &&
+      pm.test_gamma_sbit == 0 && pm.test_gamma_strip16 == 0)
+   {
+      pm.test_gamma_threshold = 1;
+      pm.test_gamma_transform = 1;
+      pm.test_gamma_sbit = 1;
+      pm.test_gamma_strip16 = 1;
+   }
+   
+   else if (pm.ngammas == 0)
+   {
+      /* Nothing to test so turn everything off: */
+      pm.test_gamma_threshold = 0;
+      pm.test_gamma_transform = 0;
+      pm.test_gamma_sbit = 0;
+      pm.test_gamma_strip16 = 0;
+   }
+
    Try
    {
       /* Make useful base images */
@@ -4677,6 +6568,10 @@ int main(int argc, PNG_CONST char **argv)
          make_size_images(&pm.this);
          perform_size_test(&pm);
       }
+
+      /* Combinatorial transforms: */
+      if (pm.test_transform)
+         perform_transform_test(&pm);
 
       if (pm.ngammas > 0)
          perform_gamma_test(&pm, pm.this.speed != 0,

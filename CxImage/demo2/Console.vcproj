@@ -70,7 +70,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="../png/Unicode_Release/png.lib ../jpeg/Unicode_Release/jpeg.lib ../zlib/Unicode_Release/zlib.lib ../tiff/Unicode_Release/tiff.lib ../jbig/Unicode_Release/jbig.lib ../mng/Unicode_Release/mng.lib ../jasper/Unicode_Release/jasper.lib ../raw/Unicode_Release/libdcr.lib ../libpsd/Unicode_Release/libpsd.lib ../cximage/Unicode_Release/cximage.lib"
+				AdditionalDependencies="../png/Unicode_Release/png.lib ../jpeg/Unicode_Release/jpeg.lib ../zlib/Unicode_Release/zlib.lib ../tiff/Unicode_Release/tiff.lib ../jbig/Unicode_Release/jbig.lib ../mng/Unicode_Release/mng.lib ../jasper/Unicode_Release/jasper.lib ../raw/Unicode_Release/libdcr.lib ../libpsd/Unicode_Release/libpsd.lib ../cximage/Unicode_Release/cximage.lib gdi32.lib user32.lib"
 				OutputFile="../bin/consoleu.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
@@ -161,7 +161,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="../png/Debug/png.lib ../jpeg/Debug/jpeg.lib ../zlib/Debug/zlib.lib ../tiff/Debug/tiff.lib ../jbig/Debug/jbig.lib ../mng/Debug/mng.lib ../jasper/Debug/jasper.lib ../raw/Debug/libdcr.lib ../libpsd/Debug/libpsd.lib ../cximage/Debug/cximage.lib"
+				AdditionalDependencies="../png/Debug/png.lib ../jpeg/Debug/jpeg.lib ../zlib/Debug/zlib.lib ../tiff/Debug/tiff.lib ../jbig/Debug/jbig.lib ../mng/Debug/mng.lib ../jasper/Debug/jasper.lib ../raw/Debug/libdcr.lib ../libpsd/Debug/libpsd.lib ../cximage/Debug/cximage.lib gdi32.lib user32.lib"
 				OutputFile="../bin/consoled.exe"
 				LinkIncremental="2"
 				SuppressStartupBanner="true"
@@ -253,7 +253,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="../png/Unicode_Debug/png.lib ../jpeg/Unicode_Debug/jpeg.lib ../zlib/Unicode_Debug/zlib.lib ../tiff/Unicode_Debug/tiff.lib ../jbig/Unicode_Debug/jbig.lib ../mng/Unicode_Debug/mng.lib ../jasper/Unicode_Debug/jasper.lib ../raw/Unicode_Debug/libdcr.lib ../libpsd/Unicode_Debug/libpsd.lib ../cximage/Unicode_Debug/cximage.lib"
+				AdditionalDependencies="../png/Unicode_Debug/png.lib ../jpeg/Unicode_Debug/jpeg.lib ../zlib/Unicode_Debug/zlib.lib ../tiff/Unicode_Debug/tiff.lib ../jbig/Unicode_Debug/jbig.lib ../mng/Unicode_Debug/mng.lib ../jasper/Unicode_Debug/jasper.lib ../raw/Unicode_Debug/libdcr.lib ../libpsd/Unicode_Debug/libpsd.lib ../cximage/Unicode_Debug/cximage.lib gdi32.lib user32.lib"
 				OutputFile="../bin/consoledu.exe"
 				LinkIncremental="2"
 				SuppressStartupBanner="true"
@@ -345,7 +345,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="../png/Release/png.lib ../jpeg/Release/jpeg.lib ../zlib/Release/zlib.lib ../tiff/Release/tiff.lib ../jbig/Release/jbig.lib ../mng/Release/mng.lib ../jasper/Release/jasper.lib ../raw/Release/libdcr.lib ../libpsd/Release/libpsd.lib ../cximage/Release/cximage.lib"
+				AdditionalDependencies="../png/Release/png.lib ../jpeg/Release/jpeg.lib ../zlib/Release/zlib.lib ../tiff/Release/tiff.lib ../jbig/Release/jbig.lib ../mng/Release/mng.lib ../jasper/Release/jasper.lib ../raw/Release/libdcr.lib ../libpsd/Release/libpsd.lib ../cximage/Release/cximage.lib gdi32.lib user32.lib"
 				OutputFile="../bin/console.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"

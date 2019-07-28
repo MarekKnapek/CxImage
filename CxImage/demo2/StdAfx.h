@@ -14,9 +14,9 @@
 
 #include <stdio.h>
 
-#ifndef __MINGW32__ 
- #include <afxwin.h>         // MFC core and standard components
-#endif
+//#ifndef __MINGW32__ 
+// #include <afxwin.h>         // MFC core and standard components
+//#endif
 
 // TODO: reference additional headers your program requires here
 

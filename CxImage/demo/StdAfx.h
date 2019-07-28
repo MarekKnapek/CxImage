@@ -6,7 +6,11 @@
 #define VC_EXTRALEAN		// Exclude rarely-used stuff from Windows headers
 
 #ifndef WINVER 
-#define WINVER  0x0400
+ #if _MSC_VER<1500
+  #define WINVER  0x0400
+ #else
+  #define WINVER  0x0501
+ #endif
 #endif
 
 #include <afxwin.h>         // MFC core and standard components

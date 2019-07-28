@@ -1,7 +1,7 @@
 
 /* pngconf.h - machine configurable file for libpng
  *
- * libpng version 1.5.0 - January 6, 2011
+ * libpng version 1.5.1 - February 3, 2011
  *
  * Copyright (c) 1998-2011 Glenn Randers-Pehrson
  * (Version 0.96 Copyright (c) 1996, 1997 Andreas Dilger)
@@ -310,7 +310,7 @@
     * scripts directory.
     */
 #ifndef PNG_EXPORTA
-#if defined(_MSC_VER)&&(_MSC_VER<1400)
+#if defined(_MSC_VER)&&(_MSC_VER<1300)
 #  define PNG_EXPORTA(ordinal, type, name, args, attributes)\
       extern PNG_FUNCTION(PNG_EXPORT_TYPE(type),(PNGAPI name),PNGARG(args),\
          PNG_H)
@@ -400,7 +400,7 @@
 #      define PNG_PTR_NORETURN /*not supported*/
 #    endif
 #    ifndef PNG_ALLOCATED
-#      if _MSC_VER<1400
+#      if _MSC_VER<1300
 #        define PNG_ALLOCATED
 #      else
 #        define PNG_ALLOCATED __declspec(restrict)
